@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "dbworkload"
+version = "0.0.0"
+description = "Workload framework"
+authors = ["Fabio Ghirardello"]
+license = "GPLv3+"
+readme = "README.md"
+homepage = "https://github.com/fabiog1901/dbworkload"
+repository = "https://github.com/fabiog1901/dbworkload"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Operating System :: OS Independent"
+]
+
+[tool.poetry.scripts]
+dbworkload = 'dbworkload.cli.main:app'
+
+[tool.poetry.dependencies]
+python = "^3.8"
+psycopg = "^3.1.4"
+psycopg-binary = "^3.1.4"
+pandas = "^1.5.2"
+tabulate = "^0.9.0"
+numpy = "^1.23.5"
+prometheus-client = "^0.15.0"
+pyyaml = "^6.0"
+typer = {extras = ["all"], version = "^0.7.0"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
