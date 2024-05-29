@@ -6,7 +6,6 @@ import logging
 import numpy as np
 import os
 import dbworkload.utils.builtin_workloads
-import psycopg
 import random
 import socket
 import socketserver
@@ -118,6 +117,24 @@ class Stats:
         ]
 
 
+def get_driver_from_uri(uri: str):
+    scheme, _, _, _, _, _ = urllib.parse.urlparse(uri)
+
+    if scheme in ["postgres", "postgresql"]:
+        return "postgres"
+    elif scheme in ["mongo", "mongodb", "mongodb+srv"]:
+        return "mongo"
+    elif scheme in ["mysql", "mysqldb"]:
+        return "mysql"
+    elif scheme in ["maria", "mariadb"]:
+        return "maria"
+    elif scheme == "oracle":
+        return "oracle"
+    elif scheme == "cassanbra":
+        return "cassandra"
+    elif scheme == "sqlserver":
+        return "sqlserver"
+    
 def set_query_parameter(url: str, param_name: str, param_value: str):
     """convenience function to add a query parameter string such as '&application_name=myapp' to a url
 
@@ -169,33 +186,6 @@ def import_class_at_runtime(path: str):
     except ImportError as e:
         logger.error(e)
         sys.exit(1)
-
-
-def run_transaction(conn: psycopg.Connection, op, max_retries=3):
-    """
-    Execute the operation *op(conn)* retrying serialization failure.
-
-    If the database returns an error asking to retry the transaction, retry it
-    *max_retries* times before giving up (and propagate it).
-    """
-    for retry in range(1, max_retries + 1):
-        try:
-            op(conn)
-            # If we reach this point, we were able to commit, so we break
-            # from the retry loop.
-            return retry - 1
-        except psycopg.errors.SerializationFailure as e:
-            # This is a retry error, so we roll back the current
-            # transaction and sleep for a bit before retrying. The
-            # sleep time increases for each failed transaction.
-            logger.debug(f"psycopg.SerializationFailure:: {e}")
-            conn.rollback()
-            time.sleep((2**retry) * 0.1 * (random.random() + 0.5))
-        except psycopg.Error as e:
-            raise e
-
-    logger.debug(f"Transaction did not succeed after {max_retries} retries")
-    return retry
 
 
 def get_based_name_dir(filepath: str):
@@ -255,28 +245,6 @@ def get_new_dburl(dburl: str, db_name: str):
     scheme, netloc, path, query_string, fragment = urllib.parse.urlsplit(dburl)
     path = "/" + db_name
     return urllib.parse.urlunsplit((scheme, netloc, path, query_string, fragment))
-
-
-def get_dbms(dburl: str):
-    """Identify the DBMS technology
-
-    Args:
-        dburl: The connection string to the database
-
-    Returns:
-        str: the dmbs name (CockroachDB, PostgreSQL, ...)
-    """
-    try:
-        with psycopg.connect(dburl, autocommit=True) as conn:
-            with conn.cursor() as cur:
-                cur.execute("select version();")
-                v: str = cur.fetchone()[0]
-                x: str = v.split(" ")[0]
-                if x not in SUPPORTED_DBMS:
-                    raise ValueError("Unknown DBMS: %s" % x)
-                return x
-    except Exception as e:
-        raise Exception(e)
 
 
 def httpserver(path: str, port: int = 3000):

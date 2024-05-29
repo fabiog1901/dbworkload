@@ -37,7 +37,7 @@ class Bank:
     # that dbworkload will execute, sequentially.
     # Once every func has been executed, run() is re-evaluated.
     # This process continues until dbworkload exits.
-    def run(self):
+    def loop(self):
         if random.random() < self.read_pct:
             return [self.read]
         return [self.txn1_new, self.txn2_verify, self.txn3_finalize]

@@ -32,10 +32,10 @@ class Param:
         show_default=False,
     )
 
-    DBUrl = typer.Option(
-        "postgres://root@localhost:26257/postgres?sslmode=disable",
-        "--url",
-        help="The connection string to the database.",
+    db_uri = typer.Option(
+        None,
+        "--uri",
+        help="The connection URI to the database.",
     )
 
     Args = typer.Option(

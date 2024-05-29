@@ -2,7 +2,6 @@
 
 from pathlib import Path
 from typing import Optional
-import dbworkload.models.init
 import dbworkload.models.run
 import dbworkload.models.util
 import dbworkload.utils.common

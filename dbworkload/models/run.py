@@ -2,8 +2,13 @@
 
 import logging
 import multiprocessing as mp
+
+import mysql.connector.errorcode
 import dbworkload.utils.common
 import psycopg
+from mysql.connector import MySQLConnection, errorcode
+from pymongo import MongoClient
+import mysql.connector
 import queue
 import random
 import signal
@@ -13,11 +18,22 @@ import time
 import traceback
 import logging.handlers
 import tabulate
+from cassandra.cluster import Cluster, ExecutionProfile, EXEC_PROFILE_DEFAULT, Session
+from cassandra.policies import (
+    WhiteListRoundRobinPolicy,
+    DowngradingConsistencyRetryPolicy,
+)
+from cassandra.query import tuple_factory
+from cassandra.policies import ConsistencyLevel
 
 DEFAULT_SLEEP = 3
 MAX_RETRIES = 3
 
 logger = logging.getLogger("dbworkload")
+
+# Conn = mysql.connector.MySQLConnection #psycopg.Connection
+# SerializationFailure = mysql.connector.errors.Error #type("SerializationFailure", (psycopg.errors.SerializationFailure,))
+# GenericError = mysql.connector.errors.Error #type("GenericError", (psycopg.Error,))
 
 HEADERS: list = [
     "id",
@@ -73,9 +89,9 @@ def signal_handler(sig, frame):
     sys.exit(0)
 
 
-def __ramp_up(processes: list, ramp_interval: int):
+def ramp_up(processes: list, ramp_interval: int):
     for p in processes:
-        logger.info("Starting a new Process...")
+        logger.debug("Starting a new Process...")
         p.start()
         time.sleep(ramp_interval)
 
@@ -89,11 +105,11 @@ def run(
     iterations: int,
     procs: int,
     ramp: int,
-    dburl: str,
-    autocommit: bool,
+    conn_info: dict,
     duration: int,
     conn_duration: int,
     args: dict,
+    driver: str,
     log_level: str,
 ):
     logger.setLevel(log_level)
@@ -102,6 +118,10 @@ def run(
     global concurrency
     global kill_q
     global kill_q2
+
+    global connx
+    global SerializationFailure
+    global GenericError
 
     concurrency = conc
 
@@ -147,8 +167,7 @@ def run(
                     kill_q,
                     kill_q2,
                     log_level,
-                    dburl,
-                    autocommit,
+                    conn_info,
                     workload,
                     args,
                     iterations,
@@ -158,13 +177,14 @@ def run(
                     conc,
                     id_base_counter,
                     id_base_counter,
+                    driver,
                 ),
             )
         )
         id_base_counter += x
 
     threading.Thread(
-        target=__ramp_up, daemon=True, args=(processes, ramp_interval)
+        target=ramp_up, daemon=True, args=(processes, ramp_interval)
     ).start()
 
     try:
@@ -213,8 +233,7 @@ def worker(
     kill_q: mp.Queue,
     kill_q2: mp.Queue,
     log_level: str,
-    dburl: str,
-    autocommit: bool,
+    conn_info: dict,
     workload: object,
     args: dict,
     iterations: int,
@@ -224,6 +243,7 @@ def worker(
     conc: int,
     id_base_counter: int = 0,
     id: int = 0,
+    driver: str = None,
 ):
     """Process worker function to run the workload in a multiprocessing env
 
@@ -233,7 +253,6 @@ def worker(
         kill_q (mp.Queue): queue to handle stopping the worker
         kill_q2 (mp.Queue): queue to handle stopping the worker
         dburl (str): connection string to the database
-        autocommit (bool): whether to set autocommit for the connection
         workload (object): workload class object
         args (dict): args to init the workload class
         iterations (int): count of workload iteration before returning
@@ -259,8 +278,7 @@ def worker(
                 kill_q,
                 kill_q2,
                 log_level,
-                dburl,
-                autocommit,
+                conn_info,
                 workload,
                 args,
                 iterations,
@@ -270,6 +288,7 @@ def worker(
                 conc,
                 None,
                 id_base_counter + i + 1,
+                driver,
             ),
         )
         thread.start()
@@ -311,8 +330,13 @@ def worker(
             return
         except queue.Empty:
             pass
+
         try:
-            with psycopg.connect(dburl, autocommit=autocommit) as conn:
+            # with mysql.connector.connect(user='root', password='London123', host='localhost', database='bank', autocommit=autocommit) as conn: #dburl, autocommit=autocommit) as conn:
+            # with psycopg.connect(**conn_info) as conn:
+            logger.debug(f"driver: {driver}, conn_info: {conn_info}")
+            # with Cluster().connect('bank') as conn:
+            with get_connection(driver, conn_info) as conn:
                 logger.debug("Connection started")
 
                 # execute setup() only once per thread
@@ -321,7 +345,7 @@ def worker(
 
                     if hasattr(w, "setup") and callable(w.setup):
                         logger.debug("Executing setup() function")
-                        dbworkload.utils.common.run_transaction(
+                        run_transaction(
                             conn,
                             lambda conn: w.setup(conn, id, conc),
                             max_retries=MAX_RETRIES,
@@ -362,9 +386,9 @@ def worker(
                         break
 
                     cycle_start = time.time()
-                    for txn in w.run():
+                    for txn in w.loop():
                         start = time.time()
-                        retries = dbworkload.utils.common.run_transaction(
+                        retries = run_transaction(
                             conn, lambda conn: txn(conn), max_retries=MAX_RETRIES
                         )
 
@@ -402,3 +426,51 @@ def worker(
 
 def __print_stats():
     print(tabulate.tabulate(stats.calculate_stats(), HEADERS), "\n")
+
+
+def run_transaction(conn, op, max_retries=3):
+    """
+    Execute the operation *op(conn)* retrying serialization failure.
+
+    If the database returns an error asking to retry the transaction, retry it
+    *max_retries* times before giving up (and propagate it).
+    """
+    for retry in range(1, max_retries + 1):
+        try:
+            op(conn)
+            # If we reach this point, we were able to commit, so we break
+            # from the retry loop.
+            return retry - 1
+        except psycopg.errors.SerializationFailure as e:
+            # This is a retry error, so we roll back the current
+            # transaction and sleep for a bit before retrying. The
+            # sleep time increases for each failed transaction.
+            logger.debug(f"SerializationFailure:: {e}")
+            conn.rollback()
+            time.sleep((2**retry) * 0.1 * (random.random() + 0.5))
+        except (psycopg.Error, Exception) as e:
+            raise e
+
+    logger.debug(f"Transaction did not succeed after {max_retries} retries")
+    return retry
+
+
+def get_connection(driver: str, conn_info: dict):
+    if driver == "postgres":
+        return psycopg.connect(**conn_info)
+    elif driver == "mysql":
+        return mysql.connector.connect(**conn_info)
+    elif driver == "mongo":
+        return MongoClient(**conn_info)
+    elif driver == "cassandra":
+        profile = ExecutionProfile(
+            load_balancing_policy=WhiteListRoundRobinPolicy(["127.0.0.1"]),
+            retry_policy=DowngradingConsistencyRetryPolicy(),
+            consistency_level=ConsistencyLevel.LOCAL_QUORUM,
+            serial_consistency_level=ConsistencyLevel.LOCAL_SERIAL,
+            request_timeout=15,
+            row_factory=tuple_factory,
+        )
+        cluster = Cluster(execution_profiles={EXEC_PROFILE_DEFAULT: profile})
+        # session = cluster.connect()
+        return cluster.connect()

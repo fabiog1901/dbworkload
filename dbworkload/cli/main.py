@@ -9,7 +9,6 @@ import json
 import logging
 import os
 import dbworkload.cli.util
-import dbworkload.models.init
 import dbworkload.models.run
 import dbworkload.models.util
 import dbworkload.utils.common
@@ -45,7 +44,20 @@ class LogLevel(str, Enum):
 def run(
     workload_path: Optional[Path] = Param.WorkloadPath,
     builtin_workload: str = typer.Option(None, help="Built-in workload"),
-    dburl: str = Param.DBUrl,
+    driver: str = typer.Option(None, help="Driver name"),
+    uri: str = Param.db_uri,
+    conn_args_file: Optional[Path] = typer.Option(
+        None,
+        "--conn-args-file",
+        "-i",
+        help="Filepath to the connection arguments file.",
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        writable=False,
+        readable=True,
+        resolve_path=True,
+    ),
     procs: int = Param.Procs,
     args: str = Param.Args,
     concurrency: int = typer.Option(
@@ -101,11 +113,43 @@ def run(
 
     logger.debug("Executing run()")
 
+    if not procs:
+        procs = os.cpu_count()
+
+    if not driver:
+        driver = dbworkload.utils.common.get_driver_from_uri(uri)
+
+    # check workload is a valid module and class
     if workload_path:
-        procs, dburl, args = __validate(procs, dburl, app_name, args, workload_path)
+        workload = dbworkload.utils.common.import_class_at_runtime(workload_path)
+    else:
+        workload = dbworkload.utils.common.import_class_at_runtime(builtin_workload)
+
+    conn_info = {}
+
+    # check if the URI is actually a URI
+    if not re.search(r".*://.*/(.*)\?", uri):
+        # if not, split the key-value pairs
+        for pair in uri.replace(" ", "").split(","):
+            k, v = pair.split("=")
+            conn_info[k] = v
 
     else:
-        procs, dburl, args = __validate(procs, dburl, app_name, args, builtin_workload)
+        uri = dbworkload.utils.common.set_query_parameter(
+            url=uri,
+            param_name="application_name",
+            param_value=app_name if app_name else workload.__name__,
+        )
+        if driver == "postgres":
+            conn_info["conninfo"] = uri
+
+        elif driver == "mongo":
+            conn_info["host"] = uri
+        
+
+    conn_info["autocommit"] = autocommit
+    
+    args = load_args(args)
 
     dbworkload.models.run.run(
         conc=concurrency,
@@ -116,87 +160,16 @@ def run(
         iterations=iterations,
         procs=procs,
         ramp=ramp,
-        dburl=dburl,
-        autocommit=autocommit,
+        conn_info=conn_info,
         duration=duration,
         conn_duration=conn_duration,
         args=args,
+        driver=driver,
         log_level=log_level.upper(),
     )
 
 
-# @app.command(help="Init the workload.", epilog=EPILOG, no_args_is_help=True)
-def init(
-    workload_path: Optional[Path] = Param.WorkloadPath,
-    procs: int = Param.Procs,
-    dburl: str = Param.DBUrl,
-    drop: bool = typer.Option(False, "--drop", help="Drop the database if it exists."),
-    csv_max_rows: int = Param.CSVMaxRows,
-    skip_schema: bool = typer.Option(
-        False, "-s", "--skip-schema", help="Don't run the schema creation script."
-    ),
-    skip_gen: bool = typer.Option(
-        False, "-g", "--skip-gen", help="Don't generate the CSV data files."
-    ),
-    skip_import: bool = typer.Option(
-        False, "-i", "--skip-import", help="Don't import the CSV data files."
-    ),
-    db: str = typer.Option(
-        None, show_default=False, help="Override the default DB name."
-    ),
-    http_server_hostname: str = Param.HTTPServerHostName,
-    http_server_port: int = Param.HTTPServerPort,
-    args: str = Param.Args,
-    log_level: LogLevel = Param.LogLevel,
-):
-    logger.debug("Executing init()")
-
-    procs, dburl, args = __validate(procs, dburl, None, args, workload_path)
-
-    dbworkload.models.init.init(
-        db=db,
-        workload_path=workload_path,
-        dburl=dburl,
-        skip_schema=skip_schema,
-        drop=drop,
-        skip_gen=skip_gen,
-        procs=procs,
-        csv_max_rows=csv_max_rows,
-        skip_import=skip_import,
-        http_server_hostname=http_server_hostname,
-        http_server_port=http_server_port,
-        args=args,
-        log_level=log_level.upper(),
-    )
-
-
-def __validate(procs: int, dburl: str, app_name: str, args: str, workload_path: str):
-    """Performs dbworkload initialization steps
-
-    Args:
-        args (argparse.Namespace): args passed at the CLI
-
-    Returns:
-        argparse.Namespace: updated args
-    """
-
-    workload = dbworkload.utils.common.import_class_at_runtime(workload_path)
-
-    if not procs:
-        procs = os.cpu_count()
-
-    if not re.search(r".*://.*/(.*)\?", dburl):
-        logger.error(
-            "The connection string needs to point to a database. Example: postgres://root@localhost:26257/postgres?sslmode=disable"
-        )
-        sys.exit(1)
-
-    dburl = dbworkload.utils.common.set_query_parameter(
-        url=dburl,
-        param_name="application_name",
-        param_value=app_name if app_name else workload.__name__,
-    )
-
+def load_args(args: str):
     # load args dict from file or string
     if args:
         if os.path.exists(args):
@@ -204,7 +177,7 @@ def __validate(procs: int, dburl: str, app_name: str, args: str, workload_path: 
                 args = f.read()
                 # parse into JSON if it's a JSON string
                 try:
-                    args = json.load(args)
+                    return json.load(args)
                 except Exception as e:
                     pass
         else:
@@ -214,9 +187,9 @@ def __validate(procs: int, dburl: str, app_name: str, args: str, workload_path: 
                     f"The value passed to '--args' is not a valid path to a JSON/YAML file, nor has no key:value pairs: '{args}'"
                 )
                 sys.exit(1)
-    else:
-        args = {}
-    return procs, dburl, args
+            else:
+                return args
+    return {}
 
 
 def _version_callback(value: bool) -> None:

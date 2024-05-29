@@ -6,7 +6,6 @@ import logging
 import os
 import dbworkload.utils.simplefaker
 import dbworkload.utils.common
-import sys
 import yaml
 
 logger = logging.getLogger("dbworkload")
