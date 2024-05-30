@@ -48,7 +48,7 @@ class Bank:
     def read(self, conn: MySQLConnection):
         with conn.cursor() as cur:
             cur.execute(
-                "select * from transactions where lane = %s and id = %s",
+                "select * from transactions1 where lane = %s and id = %s",
                 (self.lane, self.uuid_bytes),
             )
             cur.fetchall()

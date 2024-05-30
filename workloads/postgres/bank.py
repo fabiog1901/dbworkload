@@ -31,7 +31,7 @@ class Bank:
             print(
                 f"My thread ID is {id}. The total count of threads is {total_thread_count}"
             )
-            print(cur.execute(f"select version()").fetchone())
+            print(cur.execute(f"select version()").fetchone()[0])
 
     # the run() function returns a list of functions
     # that dbworkload will execute, sequentially.

@@ -21,10 +21,21 @@ import yaml
 
 logger = logging.getLogger("dbworkload")
 
+
+class Driver(str, Enum):
+    postgres = "postgres"
+    mysql = "mysql"
+    maria = "maria"
+    oracle = "oracle"
+    sqlserver = "sqlserver"
+    mongo = "mongo"
+    cassandra = "cassandra"
+
+
 app = typer.Typer(
     epilog=EPILOG,
     no_args_is_help=True,
-    help=f"dbworkload v{__version__}: Workload utility for the PostgreSQL protocol.",
+    help=f"dbworkload v{__version__}: DBMS workload utility.",
 )
 
 
@@ -43,8 +54,9 @@ class LogLevel(str, Enum):
 @app.command(help="Run the workload.", epilog=EPILOG, no_args_is_help=True)
 def run(
     workload_path: Optional[Path] = Param.WorkloadPath,
-    builtin_workload: str = typer.Option(None, help="Built-in workload"),
-    driver: str = typer.Option(None, help="Driver name"),
+    builtin_workload: str = typer.Option(None, help="Built-in workload."),
+    # driver: str = typer.Option(None, help="Driver name"),
+    driver: Driver = typer.Option(None, help="DBMS driver."),
     uri: str = Param.db_uri,
     conn_args_file: Optional[Path] = typer.Option(
         None,
@@ -116,9 +128,6 @@ def run(
     if not procs:
         procs = os.cpu_count()
 
-    if not driver:
-        driver = dbworkload.utils.common.get_driver_from_uri(uri)
-
     # check workload is a valid module and class
     if workload_path:
         workload = dbworkload.utils.common.import_class_at_runtime(workload_path)
@@ -127,14 +136,10 @@ def run(
 
     conn_info = {}
 
-    # check if the URI is actually a URI
-    if not re.search(r".*://.*/(.*)\?", uri):
-        # if not, split the key-value pairs
-        for pair in uri.replace(" ", "").split(","):
-            k, v = pair.split("=")
-            conn_info[k] = v
-
-    else:
+    # check if the uri parameter is actually a URI
+    if re.search(r".*://.*/(.*)\?", uri):
+        driver = dbworkload.utils.common.get_driver_from_uri(uri)
+        
         uri = dbworkload.utils.common.set_query_parameter(
             url=uri,
             param_name="application_name",
@@ -145,27 +150,35 @@ def run(
 
         elif driver == "mongo":
             conn_info["host"] = uri
-        
 
-    conn_info["autocommit"] = autocommit
+    else:
+        driver = driver.value
+        # if not, split the key-value pairs
+        for pair in uri.replace(" ", "").split(","):
+            k, v = pair.split("=")
+            conn_info[k] = v
+
     
+        if driver == "mysql":
+            conn_info["autocommit"] = autocommit
+
     args = load_args(args)
 
     dbworkload.models.run.run(
-        conc=concurrency,
-        workload_path=workload_path,
-        builtin_workload=builtin_workload,
-        frequency=frequency,
-        prom_port=prom_port,
-        iterations=iterations,
-        procs=procs,
-        ramp=ramp,
-        conn_info=conn_info,
-        duration=duration,
-        conn_duration=conn_duration,
-        args=args,
-        driver=driver,
-        log_level=log_level.upper(),
+        concurrency,
+        workload_path,
+        builtin_workload,
+        frequency,
+        prom_port,
+        iterations,
+        procs,
+        ramp,
+        conn_info,
+        duration,
+        conn_duration,
+        args,
+        driver,
+        log_level.upper(),
     )
 
 

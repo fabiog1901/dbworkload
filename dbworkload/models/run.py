@@ -3,10 +3,10 @@
 import logging
 import multiprocessing as mp
 
-import mysql.connector.errorcode
+import mysql.connector.errors
 import dbworkload.utils.common
 import psycopg
-from mysql.connector import MySQLConnection, errorcode
+import mysql.connector.errorcode
 from pymongo import MongoClient
 import mysql.connector
 import queue
@@ -31,9 +31,6 @@ MAX_RETRIES = 3
 
 logger = logging.getLogger("dbworkload")
 
-# Conn = mysql.connector.MySQLConnection #psycopg.Connection
-# SerializationFailure = mysql.connector.errors.Error #type("SerializationFailure", (psycopg.errors.SerializationFailure,))
-# GenericError = mysql.connector.errors.Error #type("GenericError", (psycopg.Error,))
 
 HEADERS: list = [
     "id",
@@ -85,7 +82,16 @@ def signal_handler(sig, frame):
         logger.info("Timeout reached - forcing processes to stop")
 
     logger.info("Printing final stats")
-    __print_stats()
+    # empty the queue before printing final stats
+    while True:
+        try:
+            msg = q.get(block=False)
+            if isinstance(msg, tuple):
+                stats.add_latency_measurement(*msg)
+        except queue.Empty:
+            __print_stats()
+            break
+
     sys.exit(0)
 
 
@@ -118,10 +124,7 @@ def run(
     global concurrency
     global kill_q
     global kill_q2
-
-    global connx
-    global SerializationFailure
-    global GenericError
+    global q
 
     concurrency = conc
 
@@ -142,7 +145,7 @@ def run(
     if iterations:
         iterations = iterations // concurrency
 
-    q = mp.Queue(maxsize=1000)
+    q = mp.Queue(maxsize=0)
     kill_q = mp.Queue()
     kill_q2 = mp.Queue()
 
@@ -192,32 +195,40 @@ def run(
         while True:
             try:
                 # read from the queue for stats or completion messages
-                tup = q.get(block=False)
-                if isinstance(tup, tuple):
-                    stats.add_latency_measurement(*tup)
+                msg = q.get(block=False)
+                if isinstance(msg, tuple):
+                    stats.add_latency_measurement(*msg)
                 else:
+                    # if it's not a stat message, then the worker returned
                     c += 1
             except queue.Empty:
                 pass
 
             if c >= concurrency:
-                if isinstance(tup, psycopg.errors.UndefinedTable):
-                    logger.error(tup)
-                    logger.error(
-                        "The schema is not present. Did you initialize the workload?"
-                    )
+                if isinstance(msg, Exception):
+                    logger.error(f'error_type={msg.__class__.__name__}, msg={msg}')
                     sys.exit(1)
-                elif isinstance(tup, Exception):
-                    logger.error("Exception raised: %s" % tup)
-                    sys.exit(1)
-                else:
+                elif msg is None:
                     logger.info(
                         "Requested iteration/duration limit reached. Printing final stats"
                     )
-                    __print_stats()
+
+                    # empty the queue before printing final stats
+                    while True:
+                        try:
+                            msg = q.get(block=False)
+                            if isinstance(msg, tuple):
+                                stats.add_latency_measurement(*msg)
+                        except queue.Empty:
+                            __print_stats()
+                            break
 
                     sys.exit(0)
-
+                    
+                else:
+                    logger.error(f"unrecognized message: {msg}")
+                    sys.exit(1)
+                    
             if time.time() >= stat_time:
                 __print_stats()
                 stats.new_window()
@@ -332,8 +343,6 @@ def worker(
             pass
 
         try:
-            # with mysql.connector.connect(user='root', password='London123', host='localhost', database='bank', autocommit=autocommit) as conn: #dburl, autocommit=autocommit) as conn:
-            # with psycopg.connect(**conn_info) as conn:
             logger.debug(f"driver: {driver}, conn_info: {conn_info}")
             # with Cluster().connect('bank') as conn:
             with get_connection(driver, conn_info) as conn:
@@ -389,13 +398,19 @@ def worker(
                     for txn in w.loop():
                         start = time.time()
                         retries = run_transaction(
-                            conn, lambda conn: txn(conn), max_retries=MAX_RETRIES
+                            conn,
+                            lambda conn: txn(conn),
+                            max_retries=MAX_RETRIES,
                         )
 
                         # record how many retries there were, if any
                         for _ in range(retries):
-                            q.put(("40001", 0))
+                            q.put(("__retries__", 0))
 
+                        if q.full():
+                            logger.warning(
+                                "==============  THE QUEUE IS FULL - STATS ARE NOT RELIABLE!!  ================"
+                            )
                         # if retries matches max_retries, then it's a total failure and we don't record the txn time
                         if not q.full() and not disable_stats and retries < MAX_RETRIES:
                             q.put((txn.__name__, time.time() - start))
@@ -404,24 +419,29 @@ def worker(
                     if not q.full() and not disable_stats:
                         q.put(("__cycle__", time.time() - cycle_start))
 
-        # catch any error, pass that error to the MainProcess
-        except psycopg.errors.UndefinedTable as e:
-            q.put(e)
-            return
-        # psycopg.OperationalErrors can either mean a disconnection
-        # or some other errors.
-        # We don't stop if a node goes doesn, instead, wait few seconds and attempt
-        # a new connection.
-        # If the error is not beacuse of a disconnection, then unfortunately
-        # the worker will continue forever
-        except psycopg.Error as e:
-            logger.error(f"{e.__class__.__name__} {e}")
-            logger.info("Sleeping for %s seconds" % (DEFAULT_SLEEP))
-            time.sleep(DEFAULT_SLEEP)
         except Exception as e:
-            logger.error("Exception: %s" % (e), stack_info=True)
-            q.put(e)
-            return
+            if isinstance(e, psycopg.Error):
+                if isinstance(e, psycopg.errors.UndefinedTable):
+                    q.put(e)
+                    return
+                log_and_sleep(e)
+
+            elif isinstance(e, mysql.connector.Error):
+                if e.errno == mysql.connector.errorcode.ER_NO_SUCH_TABLE:
+                    q.put(e)
+                    return
+                log_and_sleep(e)
+
+            else:
+                # for all other Exceptions, report and return
+                q.put(e)
+                return
+
+
+def log_and_sleep(e: Exception):
+    logger.error(f"error_type={e.__class__.__name__}, msg={e}")
+    logger.info("Sleeping for %s seconds" % (DEFAULT_SLEEP))
+    time.sleep(DEFAULT_SLEEP)
 
 
 def __print_stats():
@@ -462,6 +482,12 @@ def get_connection(driver: str, conn_info: dict):
         return mysql.connector.connect(**conn_info)
     elif driver == "mongo":
         return MongoClient(**conn_info)
+    elif driver == "maria":
+        return
+    elif driver == "oracle":
+        return
+    elif driver == "sqlserver":
+        return
     elif driver == "cassandra":
         profile = ExecutionProfile(
             load_balancing_policy=WhiteListRoundRobinPolicy(["127.0.0.1"]),
