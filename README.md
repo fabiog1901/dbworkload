@@ -1,4 +1,4 @@
-# dbworkload - workload utility
+# dbworkload - DBMS workload
 
 ## Overview
 
@@ -10,13 +10,35 @@ The user has complete control of what statements the transactions actually execu
 
 `dbworkload` can seed a database with random generated data, whose definition is supplied in a YAML file and can be extracted from a DDL SQL file.
 
-## Example
+## Supported DBMS
 
-Class `Bank` in file `workloads/bank.py` is an example of one such user-created workload.
+### PostgreSQL, CockroachDB
+
+`dbworkload` uses the excellent [Psycopg 3](https://www.psycopg.org/psycopg3/docs/) to connect.
+No other ORMs or drivers/libraries are used.
+Psycopg has a very simple, neat way to [create connections and execute statements](https://www.psycopg.org/psycopg3/docs/basic/usage.html) and [transactions](https://www.psycopg.org/psycopg3/docs/basic/transactions.html).
+
+**psycopg** will _PREPARE_ statements automatically after 5 executions.
+
+### MySQL, TiDB, Singlestore
+
+### MariaDB
+
+### Oracle
+
+### MS SQLServer
+
+### MongoDB
+
+### Cassandra
+
+## Example (using PostgreSQL Server and CockroachDB)
+
+Class `Bank` in file `workloads/postgres/bank.py` is an example of one such user-created workload.
 The class defines 3 simple transactions that have to be executed by `dbworkload`.
-Have a look at the `bank.py`, `bank.yaml` and `bank.sql` in the `workload` folder in this project.
+Have a look at the `bank.py`, `bank.yaml` and `bank.sql` in the `workload/postgres/` folder in this project.
 
-Head to file `workload/bank.sql` to see what the database schema look like. We have 2 tables:
+Head to file `workload/postgres/bank.sql` to see what the database schema look like. We have 2 tables:
 
 - the `transactions` table, where we record the bank payment transactions.
 - the `ref_data` table.
@@ -29,7 +51,7 @@ This file is meant as a guide to show what type of data can be generated, and wh
 
 File `bank.py` defines the workload.
 The workload is defined as a class object.
-The class defines 2 methods: `run()` and the constructor, `__init__()`.
+The class defines 2 methods: `loop()` and the constructor, `__init__()`.
 All other methods are part of the application logic of the workload.
 Read the comments along the code for more information.
 
@@ -47,13 +69,13 @@ mkdir workloads
 cd workloads
 
 # the workload class
-wget https://raw.githubusercontent.com/fabiog1901/dbworkload/main/workloads/bank.py
+wget https://raw.githubusercontent.com/fabiog1901/dbworkload/main/workloads/postgres/bank.py
 
 # the DDL file
-wget https://raw.githubusercontent.com/fabiog1901/dbworkload/main/workloads/bank.sql
+wget https://raw.githubusercontent.com/fabiog1901/dbworkload/main/workloads/postgres/bank.sql
 
 # the data generation definition file
-wget https://raw.githubusercontent.com/fabiog1901/dbworkload/main/workloads/bank.yaml
+wget https://raw.githubusercontent.com/fabiog1901/dbworkload/main/workloads/postgres/bank.yaml
 ```
 
 ### Step 1 - init the workload
@@ -117,15 +139,11 @@ Run the workload using 4 connections for 120 seconds or 100k cycles, whichever c
 
 ```bash
 # CockroachDB
-dbworkload run -w bank.py -c 4 --url 'postgres://root@localhost:26257/bank?sslmode=disable&application_name=Bank' -d 120 -i 100000
+dbworkload run -w bank.py -c 4 --uri 'postgres://root@localhost:26257/bank?sslmode=disable' -d 120 -i 100000
 
 # PostgreSQL
-dbworkload run -w bank.py -c 4 --url 'postgres://fabio:postgres@localhost:5432/bank?sslmode=disable&application_name=Bank' -d 120 -i 100000
+dbworkload run -w bank.py -c 4 --uri 'postgres://fabio:postgres@localhost:5432/bank?sslmode=disable' -d 120 -i 100000
 ```
-
-`dbworkload` uses the excellent [Psycopg 3](https://www.psycopg.org/psycopg3/docs/) to connect.
-No other ORMs or drivers/libraries are used.
-Psycopg has a very simple, neat way to [create connections and execute statements](https://www.psycopg.org/psycopg3/docs/basic/usage.html) and [transactions](https://www.psycopg.org/psycopg3/docs/basic/transactions.html).
 
 `dbworkload` will output rolling statistics about throughput and latency for each transaction in your workload class
 
@@ -152,8 +170,6 @@ txn3_finalize        121      20212       167.32           123            12.3  
 
 You can always use **pgAdmin** for PostgreSQL Server or the **DB Console** for CockroachDB to view your workload, too.
 
-![pg_admin](media/pg_admin.png)
-
 There are many built-in options.
 Check them out with
 
@@ -168,10 +184,9 @@ It’s helpful to understand first what `dbworkload` does:
 - At runtime, `dbworkload` first imports the class you pass, `bank.py`.
 - It spawns _n_ threads for concurrent execution (see next section on Concurrency).
 - By default, it sets the connection to `autocommit` mode.
-- **psycopg v3** will _PREPARE_ statements automatically after 5 executions.
 - Each thread creates a database connection - no need for a connection pool.
 - In a loop, each `dbworkload` thread will:
-  - execute function `run()` which returns a list of functions.
+  - execute function `loop()` which returns a list of functions.
   - execute each function in the list sequentially. Each function, typically, executes a SQL statement/transaction.
 - Execution stats are funneled back to the _MainThread_, which aggregates and prints them to _stdout_.
 - If the connection drops, it will recreate it. You can also program how long you want the connection to last.

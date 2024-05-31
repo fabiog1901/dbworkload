@@ -17,6 +17,7 @@ import re
 import sys
 import typer
 import yaml
+from mysql.connector import ClientFlag
 
 
 logger = logging.getLogger("dbworkload")
@@ -58,18 +59,18 @@ def run(
     # driver: str = typer.Option(None, help="Driver name"),
     driver: Driver = typer.Option(None, help="DBMS driver."),
     uri: str = Param.db_uri,
-    conn_args_file: Optional[Path] = typer.Option(
-        None,
-        "--conn-args-file",
-        "-i",
-        help="Filepath to the connection arguments file.",
-        exists=True,
-        file_okay=True,
-        dir_okay=False,
-        writable=False,
-        readable=True,
-        resolve_path=True,
-    ),
+    # conn_args_file: Optional[Path] = typer.Option(
+    #     None,
+    #     "--conn-args-file",
+    #     "-i",
+    #     help="Filepath to the connection arguments file.",
+    #     exists=True,
+    #     file_okay=True,
+    #     dir_okay=False,
+    #     writable=False,
+    #     readable=True,
+    #     resolve_path=True,
+    # ),
     procs: int = Param.Procs,
     args: str = Param.Args,
     concurrency: int = typer.Option(
@@ -140,11 +141,13 @@ def run(
     if re.search(r".*://.*/(.*)\?", uri):
         driver = dbworkload.utils.common.get_driver_from_uri(uri)
         
-        uri = dbworkload.utils.common.set_query_parameter(
-            url=uri,
-            param_name="application_name",
-            param_value=app_name if app_name else workload.__name__,
-        )
+        if get_app_name(driver):
+            uri = dbworkload.utils.common.set_query_parameter(
+                url=uri,
+                param_name=get_app_name(driver),
+                param_value=app_name if app_name else workload.__name__,
+            )
+            
         if driver == "postgres":
             conn_info["conninfo"] = uri
 
@@ -152,16 +155,38 @@ def run(
             conn_info["host"] = uri
 
     else:
-        driver = driver.value
         # if not, split the key-value pairs
         for pair in uri.replace(" ", "").split(","):
             k, v = pair.split("=")
             conn_info[k] = v
 
-    
-        if driver == "mysql":
-            conn_info["autocommit"] = autocommit
-
+        driver = driver.value
+        
+    if driver == "postgres":
+        conn_info["autocommit"] = autocommit
+        
+    if driver == "mysql":
+        
+        conn_info["autocommit"] = autocommit
+        
+        if "client_flags" in conn_info:
+            client_flags = []
+            flags: list[str] = [x.replace("ClientFlag.", "") for x in conn_info['client_flags'].split(';')]
+            for f in flags:
+                if f.startswith("-"):
+                    if f[1:].isdigit():
+                        client_flags.append(int(f))
+                    else:
+                        client_flags.append(-1 * getattr(ClientFlag, f[1:]))
+                else:
+                    if f.isdigit():
+                        client_flags.append(int(f))
+                    else:
+                        client_flags.append(getattr(ClientFlag, f))
+            
+            conn_info['client_flags'] = client_flags
+            
+            
     args = load_args(args)
 
     dbworkload.models.run.run(
@@ -182,6 +207,22 @@ def run(
     )
 
 
+def get_app_name(driver: str):
+    if driver == "postgres":
+        return "application_name"
+    elif driver == "mysql":
+        return 
+    elif driver == "mongo":
+        return "appName"
+    elif driver == "maria":
+        return
+    elif driver == "oracle":
+        return
+    elif driver == "sqlserver":
+        return
+    elif driver == "cassandra":
+        return
+            
 def load_args(args: str):
     # load args dict from file or string
     if args:

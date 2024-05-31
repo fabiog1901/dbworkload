@@ -34,9 +34,9 @@ class Bank:
             cur.execute(f"select version()")
             print(f"MySQL version: {cur.fetchone()[0]}")
 
-    # the run() function returns a list of functions
+    # the loop() function returns a list of functions
     # that dbworkload will execute, sequentially.
-    # Once every func has been executed, run() is re-evaluated.
+    # Once every func has been executed, loop() is re-evaluated.
     # This process continues until dbworkload exits.
     def loop(self):
         if random.random() < self.read_pct:
@@ -48,13 +48,14 @@ class Bank:
     def read(self, conn: MySQLConnection):
         with conn.cursor() as cur:
             cur.execute(
-                "select * from transactions1 where lane = %s and id = %s",
+                "select * from transactions where lane = %s and id = %s",
                 (self.lane, self.uuid_bytes),
             )
             cur.fetchall()
 
     def txn1_new(self, conn: MySQLConnection):
         # simulate microservice doing something
+        time.sleep(0.01)
         self.uuid_bytes = uuid.uuid4().bytes
         self.ts = dt.datetime.now()
         self.event = 0
@@ -84,7 +85,7 @@ class Bank:
             stmt = """
                 insert into transactions values (%s, %s, %s, %s);
                 """
-            # as we're inside 'tx', the below will not autocommit
+            # as we're inside a transaction, the below will not autocommit
             cur.execute(stmt, (self.lane, self.uuid_bytes, self.event, self.ts))
 
         conn.commit()
