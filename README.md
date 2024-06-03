@@ -14,23 +14,47 @@ The user has complete control of what statements the transactions actually execu
 
 ### psycopg (PostgreSQL, CockroachDB)
 
-`dbworkload` uses the excellent [Psycopg 3](https://www.psycopg.org/psycopg3/docs/) to connect.
-No other ORMs or drivers/libraries are used.
-Psycopg has a very simple, neat way to [create connections and execute statements](https://www.psycopg.org/psycopg3/docs/basic/usage.html) and [transactions](https://www.psycopg.org/psycopg3/docs/basic/transactions.html).
-
-**psycopg** will _PREPARE_ statements automatically after 5 executions.
+Link to the [Psycopg 3](https://www.psycopg.org/psycopg3/docs/) driver.
 
 ### mysql-connector-python (MySQL, TiDB, Singlestore)
 
+Here are the official docs for the [MySQL Connector/Python Developer Guide](https://dev.mysql.com/doc/connector-python/en/).
+
+Example command:
+
+```bash
+dbworkload run -w workloads/mysql/bank.py --uri 'user=root,password=London123,host=localhost,port=3306,database=bank' -l debug --args '{"read_pct":50}' --driver mysql -i 10
+```
+
 ### mariadb (MariaDB)
+
+Link to the [MariaDB Connector/Python](https://mariadb.com/docs/server/connect/programming-languages/python/).
+
+Example command:
+
+```bash
+dbworkload run -w workloads/mariadb/bank.py --uri 'user=user1,password=password1,host=localhost,port=3306,database=bank' -l debug --args '{"read_pct":50}' --driver maria -i 10
+```
 
 ### oracledb (Oracle)
 
+Under construction...
+
 ### pyodbc (MS SQLServer)
+
+Under construction...
 
 ### pymongo (MongoDB)
 
-### cassandra-driver (Cassandra)
+Link to the official [MongoDB PyMongo Documentation](https://www.mongodb.com/docs/languages/python/pymongo-driver/current/).
+
+```bash
+dbworkload run -w workloads/mongo/bank.py --uri "mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000" --args='{"read_pct":50}' -i 10
+```
+
+### cassandra-driver|scylla-driver (Cassandra, ScyllaDB)
+
+Under construction...
 
 ## Example (using PostgreSQL Server and CockroachDB)
 

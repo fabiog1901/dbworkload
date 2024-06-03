@@ -44,11 +44,10 @@ class Bank:
     # conn is an instance of a psycopg connection object
     # conn is set by default with autocommit=True, so no need to send a commit message
     def read(self, client: MongoClient):
-        print(
-            client["bank"].transactions.find_one(
+        client["bank"].transactions.find_one(
                 {"lane": self.lane, "id": str(self.id)}
             )
-        )
+        
 
     def txn1_new(self, client: MongoClient):
         # simulate microservice doing something
