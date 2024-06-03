@@ -140,14 +140,14 @@ def run(
     # check if the uri parameter is actually a URI
     if re.search(r".*://.*/(.*)\?", uri):
         driver = dbworkload.utils.common.get_driver_from_uri(uri)
-        
+
         if get_app_name(driver):
             uri = dbworkload.utils.common.set_query_parameter(
                 url=uri,
                 param_name=get_app_name(driver),
                 param_value=app_name if app_name else workload.__name__,
             )
-            
+
         if driver == "postgres":
             conn_info["conninfo"] = uri
 
@@ -158,20 +158,25 @@ def run(
         # if not, split the key-value pairs
         for pair in uri.replace(" ", "").split(","):
             k, v = pair.split("=")
+            if v.isdigit():
+                v = int(v)
             conn_info[k] = v
 
         driver = driver.value
-        
+
     if driver == "postgres":
         conn_info["autocommit"] = autocommit
-        
-    if driver == "mysql":
-        
+
+    if driver in ["mysql", "maria"]:
+
         conn_info["autocommit"] = autocommit
-        
+
         if "client_flags" in conn_info:
             client_flags = []
-            flags: list[str] = [x.replace("ClientFlag.", "") for x in conn_info['client_flags'].split(';')]
+            flags: list[str] = [
+                x.replace("ClientFlag.", "")
+                for x in conn_info["client_flags"].split(";")
+            ]
             for f in flags:
                 if f.startswith("-"):
                     if f[1:].isdigit():
@@ -183,10 +188,9 @@ def run(
                         client_flags.append(int(f))
                     else:
                         client_flags.append(getattr(ClientFlag, f))
-            
-            conn_info['client_flags'] = client_flags
-            
-            
+
+            conn_info["client_flags"] = client_flags
+
     args = load_args(args)
 
     dbworkload.models.run.run(
@@ -211,7 +215,7 @@ def get_app_name(driver: str):
     if driver == "postgres":
         return "application_name"
     elif driver == "mysql":
-        return 
+        return
     elif driver == "mongo":
         return "appName"
     elif driver == "maria":
@@ -222,7 +226,8 @@ def get_app_name(driver: str):
         return
     elif driver == "cassandra":
         return
-            
+
+
 def load_args(args: str):
     # load args dict from file or string
     if args:

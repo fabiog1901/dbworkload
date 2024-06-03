@@ -1,4 +1,4 @@
-# dbworkload - DBMS workload
+# dbworkload - DBMS workload utility
 
 ## Overview
 
@@ -10,9 +10,9 @@ The user has complete control of what statements the transactions actually execu
 
 `dbworkload` can seed a database with random generated data, whose definition is supplied in a YAML file and can be extracted from a DDL SQL file.
 
-## Supported DBMS
+## Supported DBMS drivers
 
-### PostgreSQL, CockroachDB
+### psycopg (PostgreSQL, CockroachDB)
 
 `dbworkload` uses the excellent [Psycopg 3](https://www.psycopg.org/psycopg3/docs/) to connect.
 No other ORMs or drivers/libraries are used.
@@ -20,17 +20,17 @@ Psycopg has a very simple, neat way to [create connections and execute statement
 
 **psycopg** will _PREPARE_ statements automatically after 5 executions.
 
-### MySQL, TiDB, Singlestore
+### mysql-connector-python (MySQL, TiDB, Singlestore)
 
-### MariaDB
+### mariadb (MariaDB)
 
-### Oracle
+### oracledb (Oracle)
 
-### MS SQLServer
+### pyodbc (MS SQLServer)
 
-### MongoDB
+### pymongo (MongoDB)
 
-### Cassandra
+### cassandra-driver (Cassandra)
 
 ## Example (using PostgreSQL Server and CockroachDB)
 
@@ -205,10 +205,10 @@ There are 2 parameters that can be used to configure how many processes you want
 
 Example: if we set `--procs 4` and `--concurrency 10`, dbworkload will create as follows:
 
-- Process-1: MainThread + 1 extra threads. Total = 2
-- Process-2: MainThread + 1 extra threads. Total = 2
-- Process-3: MainThread + 2 extra thread.  Total = 3
-- Process-4: MainThread + 2 extra thread.  Total = 3
+- Process-1: MainThread + 1 extra thread. Total = 2
+- Process-2: MainThread + 1 extra thread. Total = 2
+- Process-3: MainThread + 2 extra threads. Total = 3
+- Process-4: MainThread + 2 extra threads. Total = 3
 
 Total executing threads/connections = 10
 

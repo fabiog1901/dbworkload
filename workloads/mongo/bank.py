@@ -22,7 +22,6 @@ class Bank:
         self.id: uuid.UUID = uuid.uuid4()
         self.ts: dt.datetime = ""
         self.event: str = ""
-        
 
     # the setup() function is executed only once
     # when a new executing thread is started.
@@ -40,21 +39,26 @@ class Bank:
     def loop(self):
         if random.random() < self.read_pct:
             return [self.read]
-        return [self.txn1_new] #, self.txn2_verify, self.txn3_finalize]
+        return [self.txn1_new]  # , self.txn2_verify, self.txn3_finalize]
 
     # conn is an instance of a psycopg connection object
     # conn is set by default with autocommit=True, so no need to send a commit message
     def read(self, client: MongoClient):
-        print(client['bank'].transactions.find_one({"lane": self.lane, "id": str(self.id)}))
-        
-        
+        print(
+            client["bank"].transactions.find_one(
+                {"lane": self.lane, "id": str(self.id)}
+            )
+        )
+
     def txn1_new(self, client: MongoClient):
         # simulate microservice doing something
         self.id = uuid.uuid4()
         self.ts = dt.datetime.now()
         self.event = 0
 
-        client['bank'].transactions.insert_one({"lane": self.lane, "id": str(self.id), "event": self.event, "ts": self.ts})
+        client["bank"].transactions.insert_one(
+            {"lane": self.lane, "id": str(self.id), "event": self.event, "ts": self.ts}
+        )
 
     # example on how to create a transaction with multiple queries
     # def txn2_verify(self, client: MongoClient):
@@ -77,8 +81,6 @@ class Bank:
     #         # as we're inside 'tx', the below will not autocommit
     #         cur.execute(stmt, (self.lane, self.uuid_bytes, self.event, self.ts))
 
-
-
     # def txn3_finalize(self, conn: MySQLConnection):
     #     with conn.cursor() as cur:
     #         cur.execute(
@@ -93,7 +95,7 @@ class Bank:
     #         time.sleep(0.01)
 
     #         stmt = """
-        #         insert into transactions values (%s, %s, %s, %s);
-        #         """
-        #     cur.execute(stmt, (self.lane, self.uuid_bytes, self.event, self.ts))
-        # conn.commit()
+    #         insert into transactions values (%s, %s, %s, %s);
+    #         """
+    #     cur.execute(stmt, (self.lane, self.uuid_bytes, self.event, self.ts))
+    # conn.commit()

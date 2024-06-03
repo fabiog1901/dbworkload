@@ -136,7 +136,8 @@ def get_driver_from_uri(uri: str):
         return "sqlserver"
     else:
         raise ValueError(f"Invalid scheme '{scheme}' from URI: {uri}")
-    
+
+
 def set_query_parameter(url: str, param_name: str, param_value: str):
     """convenience function to add a query parameter string such as '&application_name=myapp' to a url
 

@@ -277,6 +277,30 @@ click = "*"
 six = "*"
 
 [[package]]
+name = "mariadb"
+version = "1.1.10"
+description = "Python MariaDB extension"
+category = "main"
+optional = true
+python-versions = ">=3.8"
+files = [
+    {file = "mariadb-1.1.10-cp310-cp310-win32.whl", hash = "sha256:1d81b22efbaaf4c5bc5e4cc4e2ef3c459538c1a939371089d8c5591d6f26a62e"},
+    {file = "mariadb-1.1.10-cp310-cp310-win_amd64.whl", hash = "sha256:dff8b28ce4044574870d7bdd2d9f9f5da8e5f95a7ff6d226185db733060d1a93"},
+    {file = "mariadb-1.1.10-cp311-cp311-win32.whl", hash = "sha256:1ce87971c02375236ff8933e6c593c748e7b2f2950b86eabfab4289fd250ea63"},
+    {file = "mariadb-1.1.10-cp311-cp311-win_amd64.whl", hash = "sha256:4521aa721f926946bd71491f872e8babc78fa97755ed2114f5684b77363107cb"},
+    {file = "mariadb-1.1.10-cp312-cp312-win32.whl", hash = "sha256:03d6284ef713d1cad40146576a4cc2d6cbc1662060f2a0e59b174e1694521698"},
+    {file = "mariadb-1.1.10-cp312-cp312-win_amd64.whl", hash = "sha256:8c8c6b27486b0e1772a23002c702b5fd244eecf9f05633dd6cb345fc26755a20"},
+    {file = "mariadb-1.1.10-cp38-cp38-win32.whl", hash = "sha256:5d652117e2fdf12b9723e7452a05fce9e6ccbae6ea48871b21a3a8fde259dc48"},
+    {file = "mariadb-1.1.10-cp38-cp38-win_amd64.whl", hash = "sha256:49200378c614984f5ec875481662a49d7c97c2be27970b01b32fa4b7520d4e22"},
+    {file = "mariadb-1.1.10-cp39-cp39-win32.whl", hash = "sha256:d7b09ec4abd02ed235257feb769f90cd4066e8f536b55b92f5166103d5b66a63"},
+    {file = "mariadb-1.1.10-cp39-cp39-win_amd64.whl", hash = "sha256:29040e426f877ddc45f337c6eb381b6bbab63cc6bf8431a28effe30162142513"},
+    {file = "mariadb-1.1.10.tar.gz", hash = "sha256:a332893e3ef7ceb7970ab4bd7c844bcb4bd68a051ca51313566f9808d7411f2d"},
+]
+
+[package.dependencies]
+packaging = "*"
+
+[[package]]
 name = "mysql-connector-python"
 version = "8.4.0"
 description = "MySQL driver written in Python"
@@ -399,6 +423,18 @@ files = [
 
 [package.dependencies]
 cryptography = ">=3.2.1"
+
+[[package]]
+name = "packaging"
+version = "24.0"
+description = "Core utilities for Python packages"
+category = "main"
+optional = true
+python-versions = ">=3.7"
+files = [
+    {file = "packaging-24.0-py3-none-any.whl", hash = "sha256:2ddfb553fdf02fb784c234c7ba6ccc288296ceabec964ad2eae3777778130bc5"},
+    {file = "packaging-24.0.tar.gz", hash = "sha256:eb82c5e3e56209074766e6885bb04b8c38a0c015d0a30036ebe7ece34c9989e9"},
+]
 
 [[package]]
 name = "pandas"
@@ -885,14 +921,14 @@ test = ["black (>=22.3.0,<23.0.0)", "coverage (>=6.2,<7.0)", "isort (>=5.0.6,<6.
 
 [[package]]
 name = "typing-extensions"
-version = "4.12.0"
+version = "4.12.1"
 description = "Backported and Experimental Type Hints for Python 3.8+"
 category = "main"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "typing_extensions-4.12.0-py3-none-any.whl", hash = "sha256:b349c66bea9016ac22978d800cfff206d5f9816951f12a7d0ec5578b0a819594"},
-    {file = "typing_extensions-4.12.0.tar.gz", hash = "sha256:8cbcdc8606ebcb0d95453ad7dc5065e6237b6aa230a31e81d0f440c30fed5fd8"},
+    {file = "typing_extensions-4.12.1-py3-none-any.whl", hash = "sha256:6024b58b69089e5a89c347397254e35f1bf02a907728ec7fee9bf0fe837d203a"},
+    {file = "typing_extensions-4.12.1.tar.gz", hash = "sha256:915f5e35ff76f56588223f15fdd5938f9a1cf9195c0de25130c627e4d597f6d1"},
 ]
 
 [[package]]
@@ -909,6 +945,7 @@ files = [
 
 [extras]
 cassandra = ["cassandra-driver"]
+mariadb = ["mariadb"]
 mongo = ["pymongo"]
 mysql = ["mysql-connector-python"]
 odbc = ["pyodbc"]
@@ -918,4 +955,4 @@ pgsql = ["psycopg", "psycopg-binary"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "dea1770ca8a410e1eae6649c60d1c2d0345c4e1311a241dd803bfea9626d4788"
+content-hash = "39dc2a2c57cfb13a35027d7d22afe515dfe81dbb1913ad4f6bac461f770928fe"

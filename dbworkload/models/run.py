@@ -1,23 +1,29 @@
 #!/usr/bin/python
 
-import logging
-import multiprocessing as mp
-
-import mysql.connector.errors
 import dbworkload.utils.common
-import psycopg
-import mysql.connector.errorcode
-from pymongo import MongoClient
-import mysql.connector
+import logging
+import logging.handlers
+import multiprocessing as mp
 import queue
 import random
 import signal
 import sys
+import tabulate
 import threading
 import time
 import traceback
-import logging.handlers
-import tabulate
+
+# drivers
+import psycopg
+import mysql.connector
+import mysql.connector.errorcode
+import mysql.connector.errors
+import mariadb
+import oracledb
+
+# import pyodbc
+
+import pymongo
 from cassandra.cluster import Cluster, ExecutionProfile, EXEC_PROFILE_DEFAULT, Session
 from cassandra.policies import (
     WhiteListRoundRobinPolicy,
@@ -25,6 +31,7 @@ from cassandra.policies import (
 )
 from cassandra.query import tuple_factory
 from cassandra.policies import ConsistencyLevel
+
 
 DEFAULT_SLEEP = 3
 MAX_RETRIES = 3
@@ -206,7 +213,7 @@ def run(
 
             if c >= concurrency:
                 if isinstance(msg, Exception):
-                    logger.error(f'error_type={msg.__class__.__name__}, msg={msg}')
+                    logger.error(f"error_type={msg.__class__.__name__}, msg={msg}")
                     sys.exit(1)
                 elif msg is None:
                     logger.info(
@@ -224,11 +231,11 @@ def run(
                             break
 
                     sys.exit(0)
-                    
+
                 else:
                     logger.error(f"unrecognized message: {msg}")
                     sys.exit(1)
-                    
+
             if time.time() >= stat_time:
                 __print_stats()
                 stats.new_window()
@@ -481,9 +488,9 @@ def get_connection(driver: str, conn_info: dict):
     elif driver == "mysql":
         return mysql.connector.connect(**conn_info)
     elif driver == "mongo":
-        return MongoClient(**conn_info)
+        return pymongo.MongoClient(**conn_info)
     elif driver == "maria":
-        return
+        return mariadb.connect(**conn_info)
     elif driver == "oracle":
         return
     elif driver == "sqlserver":
