@@ -17,7 +17,6 @@ import re
 import sys
 import typer
 import yaml
-from mysql.connector import ClientFlag
 
 
 logger = logging.getLogger("dbworkload")
@@ -164,6 +163,7 @@ def run(
 
         driver = driver.value
 
+    
     if driver == "postgres":
         conn_info["autocommit"] = autocommit
 
@@ -172,6 +172,11 @@ def run(
         conn_info["autocommit"] = autocommit
 
         if "client_flags" in conn_info:
+            try:
+                from mysql.connector import ClientFlag
+            except:
+                logger.error("Could not import MySQL driver. Did you install it?")
+                
             client_flags = []
             flags: list[str] = [
                 x.replace("ClientFlag.", "")

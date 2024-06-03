@@ -23,7 +23,7 @@ Here are the official docs for the [MySQL Connector/Python Developer Guide](http
 Example command:
 
 ```bash
-dbworkload run -w workloads/mysql/bank.py --uri 'user=root,password=London123,host=localhost,port=3306,database=bank' -l debug --args '{"read_pct":50}' --driver mysql -i 10
+dbworkload run -w workloads/mysql/bank.py --uri 'user=root,password=London123,host=localhost,port=3306,database=bank,client_flags=SSL' -l debug --args '{"read_pct":50}' --driver mysql -i 10
 ```
 
 ### mariadb (MariaDB)
@@ -87,7 +87,7 @@ Let's run the sample **Bank** workload.
 # upgrade pip - must have pip version 20.3+ 
 pip3 install --upgrade pip
 
-pip3 install dbworkload
+pip3 install dbworkload[postgres]
 
 mkdir workloads
 cd workloads

@@ -944,15 +944,16 @@ files = [
 ]
 
 [extras]
+all = ["cassandra-driver", "mariadb", "mysql-connector-python", "oracledb", "psycopg", "psycopg-binary", "pymongo", "pyodbc"]
 cassandra = ["cassandra-driver"]
 mariadb = ["mariadb"]
 mongo = ["pymongo"]
 mysql = ["mysql-connector-python"]
 odbc = ["pyodbc"]
 oracle = ["oracledb"]
-pgsql = ["psycopg", "psycopg-binary"]
+postgres = ["psycopg", "psycopg-binary"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "39dc2a2c57cfb13a35027d7d22afe515dfe81dbb1913ad4f6bac461f770928fe"
+content-hash = "55885989c2ebee96b12e744062b4b1e68e6f7b7f5a0d29f8f96593b714122d78"

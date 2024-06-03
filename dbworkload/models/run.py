@@ -12,25 +12,26 @@ import tabulate
 import threading
 import time
 import traceback
+import sys
 
 # drivers
-import psycopg
-import mysql.connector
-import mysql.connector.errorcode
-import mysql.connector.errors
-import mariadb
-import oracledb
+# import psycopg
+# import mysql.connector
+# import mysql.connector.errorcode
+# import mysql.connector.errors
+# import mariadb
+# import oracledb
 
 # import pyodbc
 
-import pymongo
-from cassandra.cluster import Cluster, ExecutionProfile, EXEC_PROFILE_DEFAULT, Session
-from cassandra.policies import (
-    WhiteListRoundRobinPolicy,
-    DowngradingConsistencyRetryPolicy,
-)
-from cassandra.query import tuple_factory
-from cassandra.policies import ConsistencyLevel
+# import pymongo
+# from cassandra.cluster import Cluster, ExecutionProfile, EXEC_PROFILE_DEFAULT, Session
+# from cassandra.policies import (
+#     WhiteListRoundRobinPolicy,
+#     DowngradingConsistencyRetryPolicy,
+# )
+# from cassandra.query import tuple_factory
+# from cassandra.policies import ConsistencyLevel
 
 
 DEFAULT_SLEEP = 3
@@ -364,6 +365,7 @@ def worker(
                         run_transaction(
                             conn,
                             lambda conn: w.setup(conn, id, conc),
+                            driver,
                             max_retries=MAX_RETRIES,
                         )
                     else:
@@ -407,6 +409,7 @@ def worker(
                         retries = run_transaction(
                             conn,
                             lambda conn: txn(conn),
+                            driver,
                             max_retries=MAX_RETRIES,
                         )
 
@@ -427,13 +430,16 @@ def worker(
                         q.put(("__cycle__", time.time() - cycle_start))
 
         except Exception as e:
-            if isinstance(e, psycopg.Error):
+            if driver == "psycopg":
+                import psycopg
                 if isinstance(e, psycopg.errors.UndefinedTable):
                     q.put(e)
                     return
                 log_and_sleep(e)
 
-            elif isinstance(e, mysql.connector.Error):
+            elif driver == "mysql":
+                import mysql.connector.errorcode
+                # if isinstance(e, mysql.connector.Error):
                 if e.errno == mysql.connector.errorcode.ER_NO_SUCH_TABLE:
                     q.put(e)
                     return
@@ -455,7 +461,7 @@ def __print_stats():
     print(tabulate.tabulate(stats.calculate_stats(), HEADERS), "\n")
 
 
-def run_transaction(conn, op, max_retries=3):
+def run_transaction(conn, op, driver: str, max_retries=3):
     """
     Execute the operation *op(conn)* retrying serialization failure.
 
@@ -468,15 +474,18 @@ def run_transaction(conn, op, max_retries=3):
             # If we reach this point, we were able to commit, so we break
             # from the retry loop.
             return retry - 1
-        except psycopg.errors.SerializationFailure as e:
-            # This is a retry error, so we roll back the current
-            # transaction and sleep for a bit before retrying. The
-            # sleep time increases for each failed transaction.
-            logger.debug(f"SerializationFailure:: {e}")
-            conn.rollback()
-            time.sleep((2**retry) * 0.1 * (random.random() + 0.5))
-        except (psycopg.Error, Exception) as e:
-            raise e
+        except Exception as e:
+            if driver == "psycopg":
+                import psycopg.errors
+                if isinstance(e, psycopg.errors.SerializationFailure):
+                    # This is a retry error, so we roll back the current
+                    # transaction and sleep for a bit before retrying. The
+                    # sleep time increases for each failed transaction.
+                    logger.debug(f"SerializationFailure:: {e}")
+                    conn.rollback()
+                    time.sleep((2**retry) * 0.1 * (random.random() + 0.5))
+            else:
+                raise e
 
     logger.debug(f"Transaction did not succeed after {max_retries} retries")
     return retry
@@ -484,26 +493,31 @@ def run_transaction(conn, op, max_retries=3):
 
 def get_connection(driver: str, conn_info: dict):
     if driver == "postgres":
+        import psycopg
         return psycopg.connect(**conn_info)
     elif driver == "mysql":
+        import mysql.connector        
         return mysql.connector.connect(**conn_info)
     elif driver == "mongo":
+        import pymongo
         return pymongo.MongoClient(**conn_info)
     elif driver == "maria":
+        import mariadb
         return mariadb.connect(**conn_info)
-    elif driver == "oracle":
-        return
-    elif driver == "sqlserver":
-        return
-    elif driver == "cassandra":
-        profile = ExecutionProfile(
-            load_balancing_policy=WhiteListRoundRobinPolicy(["127.0.0.1"]),
-            retry_policy=DowngradingConsistencyRetryPolicy(),
-            consistency_level=ConsistencyLevel.LOCAL_QUORUM,
-            serial_consistency_level=ConsistencyLevel.LOCAL_SERIAL,
-            request_timeout=15,
-            row_factory=tuple_factory,
-        )
-        cluster = Cluster(execution_profiles={EXEC_PROFILE_DEFAULT: profile})
-        # session = cluster.connect()
-        return cluster.connect()
+    # elif driver == "oracle":
+    #     return
+    # elif driver == "sqlserver":
+    #     return
+    # elif driver == "cassandra":
+    #     profile = ExecutionProfile(
+    #         load_balancing_policy=WhiteListRoundRobinPolicy(["127.0.0.1"]),
+    #         retry_policy=DowngradingConsistencyRetryPolicy(),
+    #         consistency_level=ConsistencyLevel.LOCAL_QUORUM,
+    #         serial_consistency_level=ConsistencyLevel.LOCAL_SERIAL,
+    #         request_timeout=15,
+    #         row_factory=tuple_factory,
+    #     )
+    #     cluster = Cluster(execution_profiles={EXEC_PROFILE_DEFAULT: profile})
+    #     # session = cluster.connect()
+    #     return cluster.connect()
+
