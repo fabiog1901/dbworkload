@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import dbworkload.utils.common
+from dbworkload.cli.dep import ConnInfo
 import logging
 import logging.handlers
 import multiprocessing as mp
@@ -439,15 +440,27 @@ def worker(
 
             elif driver == "mysql":
                 import mysql.connector.errorcode
-                # if isinstance(e, mysql.connector.Error):
                 if e.errno == mysql.connector.errorcode.ER_NO_SUCH_TABLE:
                     q.put(e)
                     return
                 log_and_sleep(e)
+                
+            elif driver == "maria":
+                if str(e).endswith(" doesn't exist"):
+                    q.put(e)
+                    return
+                log_and_sleep(e)
+            
+            elif driver == "oracle":
+                if e == ("ORA-00942: table or view does not exist"):
+                    q.put(e)
+                    return
+                log_and_sleep(e)
+                
 
             else:
                 # for all other Exceptions, report and return
-                logger.error(e, stack_info=True)
+                logger.error(type(e), stack_info=True)
                 q.put(e)
                 return
 
@@ -492,23 +505,26 @@ def run_transaction(conn, op, driver: str, max_retries=3):
     return retry
 
 
-def get_connection(driver: str, conn_info: dict):
+def get_connection(driver: str, conn_info: ConnInfo):
     if driver == "postgres":
         import psycopg
-        return psycopg.connect(**conn_info)
+        return psycopg.connect(**conn_info.params)
     elif driver == "mysql":
         import mysql.connector        
-        return mysql.connector.connect(**conn_info)
+        return mysql.connector.connect(**conn_info.params)
+    elif driver == "maria":
+        import mariadb
+        return mariadb.connect(**conn_info.params)
+    elif driver == "oracle":
+        import oracledb
+        conn = oracledb.connect(**conn_info.params)
+        conn.autocommit = conn_info.extras.get("autocommit", False)
+        return conn
+    # elif driver == "sqlserver":
+    #     return
     elif driver == "mongo":
         import pymongo
         return pymongo.MongoClient(**conn_info)
-    elif driver == "maria":
-        import mariadb
-        return mariadb.connect(**conn_info)
-    # elif driver == "oracle":
-    #     return
-    # elif driver == "sqlserver":
-    #     return
     # elif driver == "cassandra":
     #     profile = ExecutionProfile(
     #         load_balancing_policy=WhiteListRoundRobinPolicy(["127.0.0.1"]),

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from dbworkload.cli.dep import Param, EPILOG
+from dbworkload.cli.dep import Param, EPILOG, ConnInfo
 from .. import __version__
 from enum import Enum
 from pathlib import Path
@@ -134,7 +134,7 @@ def run(
     else:
         workload = dbworkload.utils.common.import_class_at_runtime(builtin_workload)
 
-    conn_info = {}
+    conn_info = ConnInfo()
 
     # check if the uri parameter is actually a URI
     if re.search(r".*://.*/(.*)\?", uri):
@@ -148,10 +148,10 @@ def run(
             )
 
         if driver == "postgres":
-            conn_info["conninfo"] = uri
+            conn_info.params["conninfo"] = uri
 
         elif driver == "mongo":
-            conn_info["host"] = uri
+            conn_info.params["host"] = uri
 
     else:
         # if not, split the key-value pairs
@@ -159,19 +159,19 @@ def run(
             k, v = pair.split("=")
             if v.isdigit():
                 v = int(v)
-            conn_info[k] = v
+            conn_info.params[k] = v
 
         driver = driver.value
 
     
     if driver == "postgres":
-        conn_info["autocommit"] = autocommit
+        conn_info.params["autocommit"] = autocommit
 
     if driver in ["mysql", "maria"]:
 
-        conn_info["autocommit"] = autocommit
+        conn_info.params["autocommit"] = autocommit
 
-        if "client_flags" in conn_info:
+        if "client_flags" in conn_info.params:
             try:
                 from mysql.connector import ClientFlag
             except:
@@ -180,7 +180,7 @@ def run(
             client_flags = []
             flags: list[str] = [
                 x.replace("ClientFlag.", "")
-                for x in conn_info["client_flags"].split(";")
+                for x in conn_info.params["client_flags"].split(";")
             ]
             for f in flags:
                 if f.startswith("-"):
@@ -194,8 +194,11 @@ def run(
                     else:
                         client_flags.append(getattr(ClientFlag, f))
 
-            conn_info["client_flags"] = client_flags
+            conn_info.params["client_flags"] = client_flags
 
+    if driver == "oracle":
+        conn_info.extras['autocommit'] = autocommit
+        
     args = load_args(args)
 
     dbworkload.models.run.run(

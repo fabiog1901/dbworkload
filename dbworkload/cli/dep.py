@@ -5,7 +5,11 @@ import typer
 
 EPILOG = "GitHub: <https://github.com/fabiog1901/dbworkload>"
 
-
+class ConnInfo:
+    def __init__(self) -> None:
+        self.params: dict = {}
+        self.extras: dict = {}
+    
 class Param:
     LogLevel = typer.Option(
         "info", "--log-level", "-l", show_choices=True, help="Set the logging level."

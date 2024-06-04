@@ -1,8 +1,9 @@
 import datetime as dt
-from mariadb import Connection
+from oracledb import Connection
 import random
 import time
 import uuid
+
 
 class Bank:
     def __init__(self, args: dict):
@@ -30,8 +31,8 @@ class Bank:
             print(
                 f"My thread ID is {id}. The total count of threads is {total_thread_count}"
             )
-            cur.execute(f"select version()")
-            print(f"MariaDB version: {cur.fetchone()[0]}")
+            cur.execute(f"select version from v$instance;")
+            print(f"Oracle version: {cur.fetchone()[0]}")
 
     # the loop() function returns a list of functions
     # that dbworkload will execute, sequentially.
