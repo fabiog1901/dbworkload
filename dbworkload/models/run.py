@@ -447,6 +447,7 @@ def worker(
 
             else:
                 # for all other Exceptions, report and return
+                logger.error(e, stack_info=True)
                 q.put(e)
                 return
 

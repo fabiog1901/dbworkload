@@ -12,49 +12,109 @@ The user has complete control of what statements the transactions actually execu
 
 ## Supported DBMS drivers
 
-### psycopg (PostgreSQL, CockroachDB)
+### 1. psycopg (PostgreSQL, CockroachDB)
 
-Link to the [Psycopg 3](https://www.psycopg.org/psycopg3/docs/) driver.
-
-### mysql-connector-python (MySQL, TiDB, Singlestore)
-
-Here are the official docs for the [MySQL Connector/Python Developer Guide](https://dev.mysql.com/doc/connector-python/en/).
-
-Example command:
+Driver documentation: [Psycopg 3](https://www.psycopg.org/psycopg3/docs/).
 
 ```bash
-dbworkload run -w workloads/mysql/bank.py --uri 'user=root,password=London123,host=localhost,port=3306,database=bank,client_flags=SSL' -l debug --args '{"read_pct":50}' --driver mysql -i 10
+# installation
+pip install dbworkload[postgres]
+
+# sample use
+dbworkload run -w workloads/postgres/bank.py \
+  --uri 'postgres://cockroach:cockroach@localhost:26257/bank?sslmode=require' \
+  -l debug --args '{"read_pct":50}' -i 1 -c 1
 ```
 
-### mariadb (MariaDB)
+### 2. mysql-connector-python (MySQL, TiDB, Singlestore)
 
-Link to the [MariaDB Connector/Python](https://mariadb.com/docs/server/connect/programming-languages/python/).
-
-Example command:
+Driver documentation: [MySQL Connector/Python Developer Guide](https://dev.mysql.com/doc/connector-python/en/).
 
 ```bash
-dbworkload run -w workloads/mariadb/bank.py --uri 'user=user1,password=password1,host=localhost,port=3306,database=bank' -l debug --args '{"read_pct":50}' --driver maria -i 10
+# installation
+pip3 install dbworkload[mysql]
+
+# sample use
+dbworkload run -w workloads/mysql/bank.py \
+  --uri 'user=root,password=London123,host=localhost,port=3306,database=bank,client_flags=SSL' \
+  -l debug --args '{"read_pct":50}' --driver mysql -i 10
 ```
 
-### oracledb (Oracle)
+### 3. mariadb (MariaDB)
+
+Driver documentation: [MariaDB Connector/Python](https://mariadb.com/docs/server/connect/programming-languages/python/).
+
+```bash
+# installation
+pip3 install dbworkload[mariadb]
+
+# sample use
+dbworkload run -w workloads/mariadb/bank.py \
+  --uri 'user=user1,password=password1,host=localhost,port=3306,database=bank' \
+  -l debug --args '{"read_pct":50}' --driver maria -i 10
+```
+
+### 4. oracledb (Oracle)
 
 Under construction...
 
-### pyodbc (MS SQLServer)
-
-Under construction...
-
-### pymongo (MongoDB)
-
-Link to the official [MongoDB PyMongo Documentation](https://www.mongodb.com/docs/languages/python/pymongo-driver/current/).
+Driver documentation: [python-oracledb’s documentation](https://python-oracledb.readthedocs.io/en/latest/index.html).
 
 ```bash
-dbworkload run -w workloads/mongo/bank.py --uri "mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000" --args='{"read_pct":50}' -i 10
+# installation
+pip3 install dbworkload[oracle]
+
+# sample use
+dbworkload run -w workloads/oracle/bank.py \
+  --uri "" \
+  --args='{"read_pct":50}' -i 10
 ```
 
-### cassandra-driver|scylla-driver (Cassandra, ScyllaDB)
+### 5. pyodbc (MS SQLServer)
 
 Under construction...
+
+Driver documentation: [Python SQL driver](https://learn.microsoft.com/en-us/sql/connect/python/python-driver-for-sql-server?view=sql-server-ver16).
+
+```bash
+# installation
+pip3 install dbworkload[sqlserver]
+
+# sample use
+dbworkload run -w workloads/sqlserver/bank.py \
+  --uri "" \
+  --args='{"read_pct":50}' -i 10
+```
+
+### 6. pymongo (MongoDB)
+
+Driver documentation: [MongoDB PyMongo Documentation](https://www.mongodb.com/docs/languages/python/pymongo-driver/current/).
+
+```bash
+# installation
+pip3 install dbworkload[mongo]
+
+# sample use
+dbworkload run -w workloads/mongo/bank.py \
+  --uri "mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000" \
+  --args='{"read_pct":50}' -i 10
+```
+
+### 7. scylla-driver (Cassandra, ScyllaDB)
+
+Under construction...
+
+Driver documentation: [Python Driver for Scylla and Apache Cassandra](https://python-driver.docs.scylladb.com/stable/).
+
+```bash
+# installation
+pip3 install dbworkload[cassandra]
+
+# sample use
+dbworkload run -w workloads/cassandra/bank.py \
+  --uri "" \
+  --args='{"read_pct":50}' -i 10
+```
 
 ## Example (using PostgreSQL Server and CockroachDB)
 
