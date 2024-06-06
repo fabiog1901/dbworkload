@@ -15,17 +15,6 @@ import time
 import traceback
 import sys
 
-# drivers
-# import psycopg
-# import mysql.connector
-# import mysql.connector.errorcode
-# import mysql.connector.errors
-# import mariadb
-# import oracledb
-
-# import pyodbc
-
-# import pymongo
 # from cassandra.cluster import Cluster, ExecutionProfile, EXEC_PROFILE_DEFAULT, Session
 # from cassandra.policies import (
 #     WhiteListRoundRobinPolicy,
@@ -98,7 +87,7 @@ def signal_handler(sig, frame):
             if isinstance(msg, tuple):
                 stats.add_latency_measurement(*msg)
         except queue.Empty:
-            __print_stats()
+            print_stats()
             break
 
     sys.exit(0)
@@ -114,7 +103,6 @@ def ramp_up(processes: list, ramp_interval: int):
 def run(
     conc: int,
     workload_path: str,
-    builtin_workload: str,
     frequency: int,
     prom_port: int,
     iterations: int,
@@ -137,9 +125,7 @@ def run(
 
     concurrency = conc
 
-    workload = dbworkload.utils.common.import_class_at_runtime(
-        workload_path if workload_path else builtin_workload
-    )
+    workload = dbworkload.utils.common.import_class_at_runtime(workload_path)
 
     signal.signal(signal.SIGINT, signal_handler)
 
@@ -229,7 +215,7 @@ def run(
                             if isinstance(msg, tuple):
                                 stats.add_latency_measurement(*msg)
                         except queue.Empty:
-                            __print_stats()
+                            print_stats()
                             break
 
                     sys.exit(0)
@@ -239,7 +225,7 @@ def run(
                     sys.exit(1)
 
             if time.time() >= stat_time:
-                __print_stats()
+                print_stats()
                 stats.new_window()
                 stat_time = time.time() + frequency
 
@@ -282,6 +268,7 @@ def worker(
         conc: (int): the total number of threads
         id_base_counter (int): the base counter to generate ID for each Process
         id (int): the ID of the thread
+        driver (str): the friendly driver name
     """
     logger.setLevel(log_level)
 
@@ -433,6 +420,7 @@ def worker(
         except Exception as e:
             if driver == "psycopg":
                 import psycopg
+
                 if isinstance(e, psycopg.errors.UndefinedTable):
                     q.put(e)
                     return
@@ -440,23 +428,23 @@ def worker(
 
             elif driver == "mysql":
                 import mysql.connector.errorcode
+
                 if e.errno == mysql.connector.errorcode.ER_NO_SUCH_TABLE:
                     q.put(e)
                     return
                 log_and_sleep(e)
-                
+
             elif driver == "maria":
                 if str(e).endswith(" doesn't exist"):
                     q.put(e)
                     return
                 log_and_sleep(e)
-            
+
             elif driver == "oracle":
-                if e == ("ORA-00942: table or view does not exist"):
+                if str(e).startswith("ORA-00942: table or view does not exist"):
                     q.put(e)
                     return
                 log_and_sleep(e)
-                
 
             else:
                 # for all other Exceptions, report and return
@@ -471,7 +459,7 @@ def log_and_sleep(e: Exception):
     time.sleep(DEFAULT_SLEEP)
 
 
-def __print_stats():
+def print_stats():
     print(tabulate.tabulate(stats.calculate_stats(), HEADERS), "\n")
 
 
@@ -491,6 +479,7 @@ def run_transaction(conn, op, driver: str, max_retries=3):
         except Exception as e:
             if driver == "psycopg":
                 import psycopg.errors
+
                 if isinstance(e, psycopg.errors.SerializationFailure):
                     # This is a retry error, so we roll back the current
                     # transaction and sleep for a bit before retrying. The
@@ -508,15 +497,19 @@ def run_transaction(conn, op, driver: str, max_retries=3):
 def get_connection(driver: str, conn_info: ConnInfo):
     if driver == "postgres":
         import psycopg
+
         return psycopg.connect(**conn_info.params)
     elif driver == "mysql":
-        import mysql.connector        
+        import mysql.connector
+
         return mysql.connector.connect(**conn_info.params)
     elif driver == "maria":
         import mariadb
+
         return mariadb.connect(**conn_info.params)
     elif driver == "oracle":
         import oracledb
+
         conn = oracledb.connect(**conn_info.params)
         conn.autocommit = conn_info.extras.get("autocommit", False)
         return conn
@@ -524,6 +517,7 @@ def get_connection(driver: str, conn_info: ConnInfo):
     #     return
     elif driver == "mongo":
         import pymongo
+
         return pymongo.MongoClient(**conn_info)
     # elif driver == "cassandra":
     #     profile = ExecutionProfile(
@@ -537,4 +531,3 @@ def get_connection(driver: str, conn_info: ConnInfo):
     #     cluster = Cluster(execution_profiles={EXEC_PROFILE_DEFAULT: profile})
     #     # session = cluster.connect()
     #     return cluster.connect()
-

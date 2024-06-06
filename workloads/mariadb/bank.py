@@ -4,6 +4,7 @@ import random
 import time
 import uuid
 
+
 class Bank:
     def __init__(self, args: dict):
         # args is a dict of string passed with the --args flag

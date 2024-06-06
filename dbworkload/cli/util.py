@@ -50,8 +50,19 @@ def util_csv(
     ),
     procs: int = Param.Procs,
     csv_max_rows: int = Param.CSVMaxRows,
-    http_server_hostname: str = Param.HTTPServerHostName,
-    http_server_port: int = Param.HTTPServerPort,
+    http_server_hostname: str = typer.Option(
+        None,
+        "-n",
+        "--hostname",
+        show_default=False,
+        help="The hostname of the http server that serves the CSV files.",
+    ),
+    http_server_port: int = typer.Option(
+        3000,
+        "-p",
+        "--port",
+        help="The port of the http server that servers the CSV files.",
+    ),
     table_name: str = typer.Option(
         "table_name",
         "--table-name",

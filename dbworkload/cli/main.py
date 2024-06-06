@@ -53,11 +53,27 @@ class LogLevel(str, Enum):
 
 @app.command(help="Run the workload.", epilog=EPILOG, no_args_is_help=True)
 def run(
-    workload_path: Optional[Path] = Param.WorkloadPath,
-    builtin_workload: str = typer.Option(None, help="Built-in workload."),
-    # driver: str = typer.Option(None, help="Driver name"),
-    driver: Driver = typer.Option(None, help="DBMS driver."),
-    uri: str = Param.db_uri,
+    workload_path: Optional[Path] = typer.Option(
+        None,
+        "--workload",
+        "-w",
+        help="Filepath to the workload module.",
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        writable=False,
+        readable=True,
+        resolve_path=True,
+    ),
+    driver: Driver = typer.Option(
+        None,
+        help="DBMS driver.",
+    ),
+    uri: str = typer.Option(
+        None,
+        "--uri",
+        help="The connection URI to the database.",
+    ),
     # conn_args_file: Optional[Path] = typer.Option(
     #     None,
     #     "--conn-args-file",
@@ -71,7 +87,9 @@ def run(
     #     resolve_path=True,
     # ),
     procs: int = Param.Procs,
-    args: str = Param.Args,
+    args: str = typer.Option(
+        None, help="JSON string, or filepath to a JSON/YAML file, to pass to Workload."
+    ),
     concurrency: int = typer.Option(
         1, "-c", "--concurrency", help="Number of concurrent workers."
     ),
@@ -129,10 +147,7 @@ def run(
         procs = os.cpu_count()
 
     # check workload is a valid module and class
-    if workload_path:
-        workload = dbworkload.utils.common.import_class_at_runtime(workload_path)
-    else:
-        workload = dbworkload.utils.common.import_class_at_runtime(builtin_workload)
+    workload = dbworkload.utils.common.import_class_at_runtime(workload_path)
 
     conn_info = ConnInfo()
 
@@ -163,7 +178,6 @@ def run(
 
         driver = driver.value
 
-    
     if driver == "postgres":
         conn_info.params["autocommit"] = autocommit
 
@@ -176,7 +190,7 @@ def run(
                 from mysql.connector import ClientFlag
             except:
                 logger.error("Could not import MySQL driver. Did you install it?")
-                
+
             client_flags = []
             flags: list[str] = [
                 x.replace("ClientFlag.", "")
@@ -197,14 +211,13 @@ def run(
             conn_info.params["client_flags"] = client_flags
 
     if driver == "oracle":
-        conn_info.extras['autocommit'] = autocommit
-        
+        conn_info.extras["autocommit"] = autocommit
+
     args = load_args(args)
 
     dbworkload.models.run.run(
         concurrency,
         workload_path,
-        builtin_workload,
         frequency,
         prom_port,
         iterations,

@@ -19,7 +19,7 @@ class Bank:
         )
 
         # you can arbitrarely add any variables you want
-        self.uuid_bytes: uuid.UUID = uuid.uuid4().bytes
+        self.uuid: str = str(uuid.uuid4())
         self.ts: dt.datetime = ""
         self.event: str = ""
 
@@ -31,7 +31,7 @@ class Bank:
             print(
                 f"My thread ID is {id}. The total count of threads is {total_thread_count}"
             )
-            cur.execute(f"select version from v$instance;")
+            cur.execute(f"select version from v$instance")
             print(f"Oracle version: {cur.fetchone()[0]}")
 
     # the loop() function returns a list of functions
@@ -48,23 +48,23 @@ class Bank:
     def read(self, conn: Connection):
         with conn.cursor() as cur:
             cur.execute(
-                "select * from transactions where lane = %s and id = %s",
-                (self.lane, self.uuid_bytes),
+                "select * from transactions where lane = :1 and id = :2",
+                (self.lane, self.uuid),
             )
-            cur.fetchall()
+            print(cur.fetchall())
 
     def txn1_new(self, conn: Connection):
         # simulate microservice doing something
         time.sleep(0.01)
-        self.uuid_bytes = uuid.uuid4().bytes
+        self.uuid = str(uuid.uuid4())
         self.ts = dt.datetime.now()
         self.event = 0
 
         with conn.cursor() as cur:
             stmt = """
-                insert into transactions values (%s, %s, %s, %s);
+                insert into transactions values (:1, :2, :3, :4)
                 """
-            cur.execute(stmt, (self.lane, self.uuid_bytes, self.event, self.ts))
+            cur.execute(stmt, (self.lane, self.uuid, self.event, self.ts))
 
     # example on how to create a transaction with multiple queries
     def txn2_verify(self, conn: Connection):
@@ -72,7 +72,7 @@ class Bank:
 
         with conn.cursor() as cur:
             cur.execute(
-                "select * from ref_data where my_sequence = %s",
+                "select * from ref_data where my_sequence = :1",
                 (random.randint(0, 100000),),
             )
             cur.fetchone()
@@ -83,10 +83,10 @@ class Bank:
             self.event = 1
 
             stmt = """
-                insert into transactions values (%s, %s, %s, %s);
+                insert into transactions values (:1, :2, :3, :4)
                 """
             # as we're inside a transaction, the below will not autocommit
-            cur.execute(stmt, (self.lane, self.uuid_bytes, self.event, self.ts))
+            cur.execute(stmt, (self.lane, self.uuid, self.event, self.ts))
 
         conn.commit()
 
@@ -94,7 +94,7 @@ class Bank:
         conn.begin()
         with conn.cursor() as cur:
             cur.execute(
-                "select * from ref_data where my_sequence = %s",
+                "select * from ref_data where my_sequence = :1",
                 (random.randint(0, 100000),),
             )
             cur.fetchone()
@@ -105,7 +105,7 @@ class Bank:
             time.sleep(0.01)
 
             stmt = """
-                insert into transactions values (%s, %s, %s, %s);
+                insert into transactions values (:1, :2, :3, :4)
                 """
-            cur.execute(stmt, (self.lane, self.uuid_bytes, self.event, self.ts))
+            cur.execute(stmt, (self.lane, self.uuid, self.event, self.ts))
         conn.commit()

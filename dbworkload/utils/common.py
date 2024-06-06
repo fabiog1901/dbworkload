@@ -5,7 +5,6 @@ import importlib
 import logging
 import numpy as np
 import os
-import dbworkload.utils.builtin_workloads
 import random
 import socket
 import socketserver
@@ -166,15 +165,6 @@ def import_class_at_runtime(path: str):
     Returns:
         class: the imported class
     """
-    # check if path is one of the built-in workloads
-    try:
-        workload = getattr(
-            dbworkload.utils.builtin_workloads, path.lower().capitalize()
-        )
-        logger.info(f"Loading built-in workload '{path.lower().capitalize()}'")
-        return workload
-    except AttributeError:
-        pass
 
     # load the module at runtime
     sys.path.append(os.path.dirname(path))

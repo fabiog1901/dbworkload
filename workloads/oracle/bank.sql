@@ -1,29 +1,26 @@
-CREATE DATABASE bank;
 
-USE bank;
-
-CREATE TABLE IF NOT EXISTS ref_data (
+CREATE TABLE ref_data (
     my_sequence INT,
     my_costant VARCHAR(50),
-    my_uuid BINARY(16),
+    my_uuid CHAR(36),
     my_choice VARCHAR(50),
     my_integer INT,
     my_float FLOAT,
-    my_decimal DECIMAL(15, 4),
+    my_decimal NUMERIC(15, 4),
     my_timestamp TIMESTAMP,
     my_date DATE,
-    my_time TIME,
-    my_bit BIT(10),
-    my_bytes BINARY,
+    my_time TIMESTAMP,
+    my_bit BLOB,
+    my_bytes BLOB,
     my_string VARCHAR(50),
-    my_bool BOOL,
-    my_json JSON,
+    my_bool NUMBER(1),
+    my_json VARCHAR(300),
     CONSTRAINT pk PRIMARY KEY (my_sequence)
 );
 
-CREATE TABLE IF NOT EXISTS transactions (
+CREATE TABLE transactions (
     lane VARCHAR(10),
-    id BINARY(16),
+    id CHAR(36),
     event INT,
     ts TIMESTAMP,
     PRIMARY KEY (lane, id, event)

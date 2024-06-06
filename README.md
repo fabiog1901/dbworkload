@@ -56,8 +56,6 @@ dbworkload run -w workloads/mariadb/bank.py \
 
 ### 4. oracledb (Oracle)
 
-Under construction...
-
 Driver documentation: [python-oracledb’s documentation](https://python-oracledb.readthedocs.io/en/latest/index.html).
 
 ```bash
@@ -66,7 +64,7 @@ pip3 install dbworkload[oracle]
 
 # sample use
 dbworkload run -w workloads/oracle/bank.py \
-  --uri "" \
+  --uri "user=admin,password=password1,dsn="myhost.host2.us-east-1.rds.amazonaws.com:1521/OMS" \
   --args='{"read_pct":50}' -i 10
 ```
 
@@ -320,36 +318,7 @@ Find out more on the `yaml`, `csv` and `merge` commands by running
 dbworkload util --help
 ```
 
-Consult file `workloads/bank.yaml` for a list of all available generators and options.
-
-## Built-in Workloads
-
-`dbworkload` has the following workload already built-in and can be called without the need to pass a class file
-
-### Querybench
-
-Querybench runs a list of SQL Statements sequentially and iteratively.
-It assumes the schema and data have been created and loaded.
-
-SQL statements file `mystmts.sql`
-
-```sql
--- Query 1
-select 1;
-select 
-  version();
--- select now();
-
--- Query 2
-SELECT * FROM my_table 
-WHERE id = 1234;
-```
-
-Run **Querybench** like this:
-
-```bash
-dbworkload run --builtin-workload Querybench --args mystmts.sql --url <conn-string>
-```
+Consult file `workloads/postgres/bank.yaml` for a list of all available generators and options.
 
 ## Acknowledgments
 
