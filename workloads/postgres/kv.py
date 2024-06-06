@@ -125,7 +125,7 @@ class Kv:
                     ).fetchall()
                 )
 
-    def run(self):
+    def loop(self):
         rnd = random.random()
         if rnd < self.read_pct:
             return [self.read_kv, self.__think__] * self.cycle_size
