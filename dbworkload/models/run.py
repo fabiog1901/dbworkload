@@ -145,6 +145,7 @@ def run(
     kill_q2 = mp.Queue()
 
     c = 0
+    s = 0
 
     threads_per_proc = dbworkload.utils.common.get_threads_per_proc(procs, conc)
     ramp_interval = int(ramp / len(threads_per_proc))
@@ -191,8 +192,10 @@ def run(
             try:
                 # read from the queue for stats or completion messages
                 msg = q.get(block=False)
-                if isinstance(msg, tuple):
-                    stats.add_latency_measurement(*msg)
+                if isinstance(msg, list):
+
+                    stats.add_tds(msg)
+                    s += 1
                 else:
                     # if it's not a stat message, then the worker returned
                     c += 1
@@ -224,10 +227,10 @@ def run(
                     logger.error(f"unrecognized message: {msg}")
                     sys.exit(1)
 
-            if time.time() >= stat_time:
+            if s >= concurrency:
                 print_stats()
                 stats.new_window()
-                stat_time = time.time() + frequency
+                s = 0
 
     except Exception as e:
         logger.error(traceback.format_exc())
@@ -316,11 +319,14 @@ def worker(
     c = 0
     endtime = 0
     conn_endtime = 0
+    
+    st = dbworkload.utils.common.Stats2()
 
     if duration:
         endtime = time.time() + duration
 
     run_init = True
+
 
     while True:
         if conn_duration:
@@ -338,6 +344,7 @@ def worker(
         except queue.Empty:
             pass
 
+        stat_time = time.time() + 10
         try:
             logger.debug(f"driver: {driver}, conn_info: {conn_info}")
             # with Cluster().connect('bank') as conn:
@@ -403,19 +410,22 @@ def worker(
 
                         # record how many retries there were, if any
                         for _ in range(retries):
-                            q.put(("__retries__", 0))
+                            st.add_latency_measurement2("__retries__", 0)
 
-                        if q.full():
-                            logger.warning(
-                                "==============  THE QUEUE IS FULL - STATS ARE NOT RELIABLE!!  ================"
-                            )
                         # if retries matches max_retries, then it's a total failure and we don't record the txn time
-                        if not q.full() and not disable_stats and retries < MAX_RETRIES:
-                            q.put((txn.__name__, time.time() - start))
+                        if not disable_stats and retries < MAX_RETRIES:
+                            st.add_latency_measurement2(txn.__name__, time.time() - start)
 
                     c += 1
-                    if not q.full() and not disable_stats:
-                        q.put(("__cycle__", time.time() - cycle_start))
+                    if not disable_stats:
+                        st.add_latency_measurement2("__cycle__", time.time() - cycle_start)
+                      
+                    if q.full():
+                        logger.error("===========Q FULL!!!! ======================")  
+                    if time.time() >= stat_time:
+                        q.put(st.get_tdigests(), block=False)
+                        st.new_window()
+                        stat_time = time.time() + 10 #frequency
 
         except Exception as e:
             if driver == "psycopg":
