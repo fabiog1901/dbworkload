@@ -79,17 +79,23 @@ def signal_handler(sig, frame):
     if not timeout:
         logger.info("Timeout reached - forcing processes to stop")
 
-    logger.info("Printing final stats")
     # empty the queue before printing final stats
-    while True:
+    s = 0
+    
+    while s < concurrency:
         try:
             msg = q.get(block=False)
-            if isinstance(msg, tuple):
-                stats.add_latency_measurement(*msg)
+            if isinstance(msg, list):
+                stats.add_tds(msg)
+            s += 1
+            print(s)
         except queue.Empty:
-            print_stats()
-            break
-
+            pass
+            #print("mona")    
+            
+    logger.info("Printing final stats")
+    print_stats()
+        
     sys.exit(0)
 
 
@@ -212,15 +218,14 @@ def run(
                     )
 
                     # empty the queue before printing final stats
-                    while True:
-                        try:
-                            msg = q.get(block=False)
-                            if isinstance(msg, tuple):
-                                stats.add_latency_measurement(*msg)
-                        except queue.Empty:
-                            print_stats()
-                            break
-
+                    s = 0
+                    while s < concurrency:
+                        msg = q.get()
+                        if isinstance(msg, list):
+                            stats.add_tds(msg)
+                        s += 1
+                        
+                    print_stats()
                     sys.exit(0)
 
                 else:
@@ -336,6 +341,8 @@ def worker(
         try:
             kill_q.get(block=False)
             logger.debug("Poison pill received")
+            # send final stats
+            q.put(st.get_tdigests(), block=False)
             kill_q2.put(None)
             for x in threads:
                 x.join()
@@ -371,6 +378,8 @@ def worker(
                     try:
                         kill_q.get(block=False)
                         logger.debug("Poison pill received")
+                        # send final stats
+                        q.put(st.get_tdigests(), block=False)
                         kill_q2.put(None)
                         for x in threads:
                             x.join()
@@ -386,6 +395,7 @@ def worker(
 
                         # send task completed notification (a None)
                         q.put(None)
+                        q.put(st.get_tdigests(), block=False)
                         for x in threads:
                             x.join()
                         return
