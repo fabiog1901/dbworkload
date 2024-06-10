@@ -749,6 +749,22 @@ files = [
 ]
 
 [[package]]
+name = "pytdigest"
+version = "0.1.4"
+description = "Python package for *fast* TDigest calculation."
+category = "main"
+optional = false
+python-versions = ">=3.7, <4"
+files = [
+    {file = "pytdigest-0.1.4-cp310-cp310-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:e29e083ed4564fff0484ad8a9ba2e95d613bdef4d8c04caf05dbf455da76f59d"},
+    {file = "pytdigest-0.1.4.tar.gz", hash = "sha256:573dfee19bb0f26fc1f43d8a571b513f9d8f09ff1add98ce99826357e0070f0d"},
+]
+
+[package.dependencies]
+numpy = ">=1.19.0"
+pandas = ">=1.1.0"
+
+[[package]]
 name = "python-dateutil"
 version = "2.9.0.post0"
 description = "Extensions to the standard Python datetime module"
@@ -956,4 +972,4 @@ postgres = ["psycopg", "psycopg-binary"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "55885989c2ebee96b12e744062b4b1e68e6f7b7f5a0d29f8f96593b714122d78"
+content-hash = "3f940b0f01ef234cf3b961f73713e0f1a1a574dbcb0c2ed1f43a0db58ec2a8ac"

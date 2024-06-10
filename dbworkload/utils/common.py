@@ -13,6 +13,7 @@ import time
 import urllib.parse
 import yaml
 import prometheus_client
+from pytdigest import TDigest
 
 RESERVED_WORDS = [
     "unique",
@@ -68,17 +69,18 @@ class Stats:
 
         self.prom_latency: dict[str, prometheus_client.Summary] = {}
         prometheus_client.start_http_server(prom_port)
+        self.quantiles = [0.50, 0.90, 0.95, 0.99, 1.]
 
         self.new_window()
 
     # reset stats while keeping cumulative counts
     def new_window(self) -> None:
         self.window_start_time: float = time.time()
-        self.window_stats: dict[str, list[float]] = {}
+        self.window_stats: dict[str, TDigest] = {}
 
     # add one latency measurement in seconds
     def add_latency_measurement(self, action: str, measurement: float) -> None:
-        self.window_stats.setdefault(action, []).append(measurement)
+        self.window_stats.setdefault(action, TDigest(10000)).update(measurement)
         self.cumulative_counts.setdefault(action, 0)
         self.cumulative_counts[action] += 1
 
@@ -93,23 +95,17 @@ class Stats:
     def calculate_stats(self) -> list:
         def get_stats_row(action: str):
             elapsed: float = time.time() - self.instantiation_time
-
-            arr = np.array(self.window_stats[action])
+            td = self.window_stats[action]
 
             return [
                 action,
                 round(elapsed, 0),
                 self.cumulative_counts[action],
                 round(self.cumulative_counts[action] / elapsed, 2),
-                len(arr),
-                round(len(arr) / self.frequency, 2),
-                round(np.mean(arr) * 1000, 2),
-                round(np.percentile(arr, 50) * 1000, 2),
-                round(np.percentile(arr, 90) * 1000, 2),
-                round(np.percentile(arr, 95) * 1000, 2),
-                round(np.percentile(arr, 99) * 1000, 2),
-                round(np.max(arr) * 1000, 2),
-            ]
+                td.weight,
+                round(td.weight / self.frequency, 2),
+                round(td.mean * 1000, 2),
+            ] + [round(x * 1000, 2) for x in td.inverse_cdf(self.quantiles)]
 
         return [
             get_stats_row(action) for action in sorted(list(self.window_stats.keys()))

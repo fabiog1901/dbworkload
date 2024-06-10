@@ -42,7 +42,7 @@ HEADERS: list = [
     "p90(ms)",
     "p95(ms)",
     "p99(ms)",
-    "pMax(ms)",
+    "max(ms)",
 ]
 
 
