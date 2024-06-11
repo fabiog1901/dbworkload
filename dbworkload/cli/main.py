@@ -182,7 +182,6 @@ def run(
         conn_info.params["autocommit"] = autocommit
 
     if driver in ["mysql", "maria"]:
-
         conn_info.params["autocommit"] = autocommit
 
         if "client_flags" in conn_info.params:

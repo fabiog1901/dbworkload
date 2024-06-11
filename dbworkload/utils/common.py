@@ -69,7 +69,7 @@ class Stats:
 
         # self.prom_latency: dict[str, prometheus_client.Summary] = {}
         # prometheus_client.start_http_server(prom_port)
-        self.quantiles = [0.50, 0.90, 0.95, 0.99, 1.]
+        self.quantiles = [0.50, 0.90, 0.95, 0.99, 1.0]
 
         self.new_window()
 
@@ -79,12 +79,11 @@ class Stats:
         self.window_stats: dict[str, list] = {}
 
     def add_tds(self, l: list):
-        
         for x in l:
             self.cumulative_counts.setdefault(x[0], 0)
             self.window_stats.setdefault(x[0], [])
             self.window_stats[x[0]].append(TDigest(100).of_centroids(x[1]))
-            
+
         # if action not in self.prom_latency:
         #     self.prom_latency[action] = prometheus_client.Summary(
         #         f"latency_{action.replace(' ', '')}",
@@ -95,29 +94,28 @@ class Stats:
     # calculate the current stats this instance has collected.
     def calculate_stats(self) -> list:
         def get_stats_row(id: str):
-            elapsed: float = time.time() - self.instantiation_time
+            elapsed: int = int(time.time() - self.instantiation_time)
             td = TDigest(100).combine(self.window_stats[id])
             self.cumulative_counts[id] += td.weight
             return [
                 id,
-                round(elapsed, 0),
-                self.cumulative_counts[id],
-                round(self.cumulative_counts[id] / elapsed, 2),
-                td.weight,
-                round(td.weight / self.frequency, 2),
-                round(td.mean * 1000, 2),
-            ] + [round(x * 1000, 2) for x in td.inverse_cdf(self.quantiles)]
-
+                elapsed,
+                int(self.cumulative_counts[id]),
+                self.cumulative_counts[id] / elapsed,
+                int(td.weight),
+                td.weight / self.frequency,
+                td.mean * 1000,
+            ] + [x * 1000 for x in td.inverse_cdf(self.quantiles)]
 
         return [
             get_stats_row(action) for action in sorted(list(self.window_stats.keys()))
         ]
 
-class Stats2:
 
+class WorkerStats:
     def __init__(self):
-        self.quantiles = [0.50, 0.90, 0.95, 0.99, 1.]
-
+        self.quantiles = [0.50, 0.90, 0.95, 0.99, 1.0]
+        
         self.new_window()
 
     # reset stats while keeping cumulative counts
@@ -126,13 +124,11 @@ class Stats2:
         self.window_stats: dict[str, TDigest] = {}
 
     # add one latency measurement in seconds
-    def add_latency_measurement2(self, id: str, measurement: float) -> None:
+    def add_latency_measurement(self, id: str, measurement: float) -> None:
         self.window_stats.setdefault(id, TDigest(100)).update(measurement)
-    
+
     def get_tdigests(self):
-        
         return [(id, td.get_centroids()) for id, td in self.window_stats.items()]
-    
 
 
 def get_driver_from_uri(uri: str):
