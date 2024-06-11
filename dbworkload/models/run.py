@@ -42,7 +42,7 @@ HEADERS: list = [
     "p90(ms)",
     "p95(ms)",
     "p99(ms)",
-    "pMax(ms)",
+    "max(ms)",
 ]
 
 
@@ -54,43 +54,22 @@ def signal_handler(sig, frame):
         sig (_type_):
         frame (_type_):
     """
-    global stats
-    global concurrency
     logger.info("KeyboardInterrupt signal detected. Stopping processes...")
 
-    # send the poison pill to each worker
+    # send the poison pill to each worker.
+    # if dbworkload cannot graceful shutdown due
+    # to processes being still in the init phase
+    # when the pill is sent, a subsequent Ctrl+C will cause
+    # the pill to overflow the kill_q
+    # and raise the queue.Full exception, forcing to quit.
     for _ in range(concurrency):
-        kill_q.put(None)
-
-    # wait until all workers return
-    start = time.time()
-    c = 0
-    timeout = True
-    while c < concurrency and timeout:
         try:
-            kill_q2.get(block=False)
-            c += 1
-        except:
-            pass
+            kill_q.put(None, timeout=0.1)
+        except queue.Full:
+            logger.error("Timed out")
+            sys.exit(1)
 
-        time.sleep(0.01)
-        timeout = time.time() < start + 5
-
-    if not timeout:
-        logger.info("Timeout reached - forcing processes to stop")
-
-    logger.info("Printing final stats")
-    # empty the queue before printing final stats
-    while True:
-        try:
-            msg = q.get(block=False)
-            if isinstance(msg, tuple):
-                stats.add_latency_measurement(*msg)
-        except queue.Empty:
-            print_stats()
-            break
-
-    sys.exit(0)
+    logger.debug("Sent poison pill to all threads")
 
 
 def ramp_up(processes: list, ramp_interval: int):
@@ -115,18 +94,32 @@ def run(
     driver: str,
     log_level: str,
 ):
+    def gracefully_shutdown(s):
+        # wait for final stats reports to come in,
+        # then print final stats and quit
+        while s < concurrency:
+            msg = q.get(block=True, timeout=2.0)
+            if isinstance(msg, list):
+                stats.add_tds(msg)
+            else:
+                logger.error("Timed out, quitting")
+                sys.exit(1)
+            s += 1
+
+        print_stats(stats)
+        sys.exit(0)
+
     logger.setLevel(log_level)
 
-    global stats
     global concurrency
-    global kill_q
-    global kill_q2
-    global q
-
     concurrency = conc
+    
+    global kill_q
+    global q
 
     workload = dbworkload.utils.common.import_class_at_runtime(workload_path)
 
+    # register Ctrl+C handler
     signal.signal(signal.SIGINT, signal_handler)
 
     disable_stats = False
@@ -141,10 +134,10 @@ def run(
         iterations = iterations // concurrency
 
     q = mp.Queue(maxsize=0)
-    kill_q = mp.Queue()
-    kill_q2 = mp.Queue()
+    kill_q = mp.Queue(maxsize=concurrency)
 
     c = 0
+    s = 0
 
     threads_per_proc = dbworkload.utils.common.get_threads_per_proc(procs, conc)
     ramp_interval = int(ramp / len(threads_per_proc))
@@ -163,7 +156,6 @@ def run(
                     x - 1,
                     q,
                     kill_q,
-                    kill_q2,
                     log_level,
                     conn_info,
                     workload,
@@ -185,61 +177,52 @@ def run(
         target=ramp_up, daemon=True, args=(processes, ramp_interval)
     ).start()
 
-    try:
-        stat_time = time.time() + frequency
-        while True:
-            try:
-                # read from the queue for stats or completion messages
-                msg = q.get(block=False)
-                if isinstance(msg, tuple):
-                    stats.add_latency_measurement(*msg)
-                else:
-                    # if it's not a stat message, then the worker returned
-                    c += 1
-            except queue.Empty:
-                pass
 
-            if c >= concurrency:
-                if isinstance(msg, Exception):
-                    logger.error(f"error_type={msg.__class__.__name__}, msg={msg}")
-                    sys.exit(1)
-                elif msg is None:
-                    logger.info(
-                        "Requested iteration/duration limit reached. Printing final stats"
-                    )
+    while True:
+        try:
+            # read from the queue for stats or completion messages
+            msg = q.get(block=False)
+            # a stats report is a list obj
+            if isinstance(msg, list):
+                stats.add_tds(msg)
+                s += 1
+            else:
+                # if it's not a stat message, then the worker returned
+                c += 1
+        except queue.Empty:
+            pass
 
-                    # empty the queue before printing final stats
-                    while True:
-                        try:
-                            msg = q.get(block=False)
-                            if isinstance(msg, tuple):
-                                stats.add_latency_measurement(*msg)
-                        except queue.Empty:
-                            print_stats()
-                            break
+        # once the sum of the completion messages matches 
+        # the count of threads, identify what type of 
+        # completion message it was
+        if c >= concurrency:
+            if msg == "task_done":
+                logger.info(
+                    "Requested iteration/duration limit reached. Printing final stats"
+                )
+                gracefully_shutdown(s)
+            elif msg == "poison_pill":
+                logger.info("Printing final stats")
+                gracefully_shutdown(s)
+            elif isinstance(msg, Exception):
+                logger.error(f"error_type={msg.__class__.__name__}, msg={msg}")
+                sys.exit(1)
+            else:
+                logger.error(f"unrecognized message: {msg}")
+                sys.exit(1)
 
-                    sys.exit(0)
-
-                else:
-                    logger.error(f"unrecognized message: {msg}")
-                    sys.exit(1)
-
-            if time.time() >= stat_time:
-                print_stats()
-                stats.new_window()
-                stat_time = time.time() + frequency
-
-    except Exception as e:
-        logger.error(traceback.format_exc())
+        if s >= concurrency:
+            print_stats(stats)
+            stats.new_window()
+            s = 0
 
 
 def worker(
     thread_count: int,
     q: mp.Queue,
     kill_q: mp.Queue,
-    kill_q2: mp.Queue,
     log_level: str,
-    conn_info: dict,
+    conn_info: ConnInfo,
     workload: object,
     args: dict,
     iterations: int,
@@ -257,8 +240,8 @@ def worker(
         thread_count (int): The number of threads to create
         q (mp.Queue): queue to report query metrics
         kill_q (mp.Queue): queue to handle stopping the worker
-        kill_q2 (mp.Queue): queue to handle stopping the worker
-        dburl (str): connection string to the database
+        log_level (str): log level to set the logger to
+        conn_info (ConnInfo): connection data
         workload (object): workload class object
         args (dict): args to init the workload class
         iterations (int): count of workload iteration before returning
@@ -270,40 +253,55 @@ def worker(
         id (int): the ID of the thread
         driver (str): the friendly driver name
     """
+
+    def gracefully_return(msg):
+        # send notification to MainThread
+        q.put(msg)
+        # send final stats
+        q.put(ws.get_tdigests(), block=False)
+
+        # wait for all Processes children threads to return before
+        # letting the Process MainThread return
+        if threading.current_thread().name == "MainThread":
+            for x in threads:
+                x.join()
+
     logger.setLevel(log_level)
 
     logger.debug(f"My ID is {id}")
 
     threads: list[threading.Thread] = []
-    for i in range(thread_count):
-        thread = threading.Thread(
-            target=worker,
-            daemon=True,
-            args=(
-                0,
-                q,
-                kill_q,
-                kill_q2,
-                log_level,
-                conn_info,
-                workload,
-                args,
-                iterations,
-                duration,
-                conn_duration,
-                disable_stats,
-                conc,
-                None,
-                id_base_counter + i + 1,
-                driver,
-            ),
-        )
-        thread.start()
-        threads.append(thread)
 
     if threading.current_thread().name == "MainThread":
+        
         # capture KeyboardInterrupt and do nothing
         signal.signal(signal.SIGINT, signal.SIG_IGN)
+        
+        # only the MainThread of a child Process spawns Threads    
+        for i in range(thread_count):
+            thread = threading.Thread(
+                target=worker,
+                daemon=True,
+                args=(
+                    0,
+                    q,
+                    kill_q,
+                    log_level,
+                    conn_info,
+                    workload,
+                    args,
+                    iterations,
+                    duration,
+                    conn_duration,
+                    disable_stats,
+                    conc,
+                    None,
+                    id_base_counter + i + 1,
+                    driver,
+                ),
+            )
+            thread.start()
+            threads.append(thread)
 
     # catch exception while instantiating the workload class
     try:
@@ -317,6 +315,8 @@ def worker(
     endtime = 0
     conn_endtime = 0
 
+    ws = dbworkload.utils.common.WorkerStats()
+
     if duration:
         endtime = time.time() + duration
 
@@ -326,20 +326,18 @@ def worker(
         if conn_duration:
             # reconnect every conn_duration +/- 20%
             conn_endtime = time.time() + int(conn_duration * random.uniform(0.8, 1.2))
+
         # listen for termination messages (poison pill)
         try:
             kill_q.get(block=False)
             logger.debug("Poison pill received")
-            kill_q2.put(None)
-            for x in threads:
-                x.join()
-
-            return
+            return gracefully_return("poison_pill")
         except queue.Empty:
             pass
 
+        stat_time = time.time() + 10
         try:
-            logger.debug(f"driver: {driver}, conn_info: {conn_info}")
+            logger.debug(f"driver: {driver}, params: {conn_info.params}")
             # with Cluster().connect('bank') as conn:
             with get_connection(driver, conn_info) as conn:
                 logger.debug("Connection started")
@@ -356,18 +354,13 @@ def worker(
                             driver,
                             max_retries=MAX_RETRIES,
                         )
-                    else:
-                        logger.debug("No setup() function found.")
 
                 while True:
                     # listen for termination messages (poison pill)
                     try:
                         kill_q.get(block=False)
                         logger.debug("Poison pill received")
-                        kill_q2.put(None)
-                        for x in threads:
-                            x.join()
-                        return
+                        return gracefully_return("poison_pill")
                     except queue.Empty:
                         pass
 
@@ -376,12 +369,7 @@ def worker(
                         duration and time.time() >= endtime
                     ):
                         logger.debug("Task completed!")
-
-                        # send task completed notification (a None)
-                        q.put(None)
-                        for x in threads:
-                            x.join()
-                        return
+                        return gracefully_return("task_done")
 
                     # break from the inner loop if limit for connection duration has been reached
                     # this will cause for the outer loop to reset the timer and restart with a new conn
@@ -403,19 +391,26 @@ def worker(
 
                         # record how many retries there were, if any
                         for _ in range(retries):
-                            q.put(("__retries__", 0))
+                            ws.add_latency_measurement("__retries__", 0)
 
-                        if q.full():
-                            logger.warning(
-                                "==============  THE QUEUE IS FULL - STATS ARE NOT RELIABLE!!  ================"
-                            )
                         # if retries matches max_retries, then it's a total failure and we don't record the txn time
-                        if not q.full() and not disable_stats and retries < MAX_RETRIES:
-                            q.put((txn.__name__, time.time() - start))
+                        if not disable_stats and retries < MAX_RETRIES:
+                            ws.add_latency_measurement(
+                                txn.__name__, time.time() - start
+                            )
 
                     c += 1
-                    if not q.full() and not disable_stats:
-                        q.put(("__cycle__", time.time() - cycle_start))
+                    if not disable_stats:
+                        ws.add_latency_measurement(
+                            "__cycle__", time.time() - cycle_start
+                        )
+
+                    if q.full():
+                        logger.error("=========== Q FULL!!!! ======================")
+                    if time.time() >= stat_time:
+                        q.put(ws.get_tdigests(), block=False)
+                        ws.new_window()
+                        stat_time = time.time() + 10  # frequency
 
         except Exception as e:
             if driver == "psycopg":
@@ -459,8 +454,8 @@ def log_and_sleep(e: Exception):
     time.sleep(DEFAULT_SLEEP)
 
 
-def print_stats():
-    print(tabulate.tabulate(stats.calculate_stats(), HEADERS), "\n")
+def print_stats(stats: dbworkload.utils.common.Stats):
+    print(tabulate.tabulate(stats.calculate_stats(), HEADERS, intfmt=",", floatfmt=",.2f"), "\n")
 
 
 def run_transaction(conn, op, driver: str, max_retries=3):

@@ -13,6 +13,7 @@ import time
 import urllib.parse
 import yaml
 import prometheus_client
+from pytdigest import TDigest
 
 RESERVED_WORDS = [
     "unique",
@@ -66,54 +67,68 @@ class Stats:
         self.instantiation_time = time.time()
         self.frequency = frequency
 
-        self.prom_latency: dict[str, prometheus_client.Summary] = {}
-        prometheus_client.start_http_server(prom_port)
+        # self.prom_latency: dict[str, prometheus_client.Summary] = {}
+        # prometheus_client.start_http_server(prom_port)
+        self.quantiles = [0.50, 0.90, 0.95, 0.99, 1.0]
 
         self.new_window()
 
     # reset stats while keeping cumulative counts
     def new_window(self) -> None:
         self.window_start_time: float = time.time()
-        self.window_stats: dict[str, list[float]] = {}
+        self.window_stats: dict[str, list] = {}
 
-    # add one latency measurement in seconds
-    def add_latency_measurement(self, action: str, measurement: float) -> None:
-        self.window_stats.setdefault(action, []).append(measurement)
-        self.cumulative_counts.setdefault(action, 0)
-        self.cumulative_counts[action] += 1
+    def add_tds(self, l: list):
+        for x in l:
+            self.cumulative_counts.setdefault(x[0], 0)
+            self.window_stats.setdefault(x[0], [])
+            self.window_stats[x[0]].append(TDigest(100).of_centroids(x[1]))
 
-        if action not in self.prom_latency:
-            self.prom_latency[action] = prometheus_client.Summary(
-                f"latency_{action.replace(' ', '')}",
-                f"Latency for transaction {action}",
-            )
-        self.prom_latency[action].observe(measurement)
+        # if action not in self.prom_latency:
+        #     self.prom_latency[action] = prometheus_client.Summary(
+        #         f"latency_{action.replace(' ', '')}",
+        #         f"Latency for transaction {action}",
+        #     )
+        # self.prom_latency[action].observe(measurement)
 
     # calculate the current stats this instance has collected.
     def calculate_stats(self) -> list:
-        def get_stats_row(action: str):
-            elapsed: float = time.time() - self.instantiation_time
-
-            arr = np.array(self.window_stats[action])
-
+        def get_stats_row(id: str):
+            elapsed: int = int(time.time() - self.instantiation_time)
+            td = TDigest(100).combine(self.window_stats[id])
+            self.cumulative_counts[id] += td.weight
             return [
-                action,
-                round(elapsed, 0),
-                self.cumulative_counts[action],
-                round(self.cumulative_counts[action] / elapsed, 2),
-                len(arr),
-                round(len(arr) / self.frequency, 2),
-                round(np.mean(arr) * 1000, 2),
-                round(np.percentile(arr, 50) * 1000, 2),
-                round(np.percentile(arr, 90) * 1000, 2),
-                round(np.percentile(arr, 95) * 1000, 2),
-                round(np.percentile(arr, 99) * 1000, 2),
-                round(np.max(arr) * 1000, 2),
-            ]
+                id,
+                elapsed,
+                int(self.cumulative_counts[id]),
+                self.cumulative_counts[id] / elapsed,
+                int(td.weight),
+                td.weight / self.frequency,
+                td.mean * 1000,
+            ] + [x * 1000 for x in td.inverse_cdf(self.quantiles)]
 
         return [
             get_stats_row(action) for action in sorted(list(self.window_stats.keys()))
         ]
+
+
+class WorkerStats:
+    def __init__(self):
+        self.quantiles = [0.50, 0.90, 0.95, 0.99, 1.0]
+        
+        self.new_window()
+
+    # reset stats while keeping cumulative counts
+    def new_window(self) -> None:
+        self.window_start_time: float = time.time()
+        self.window_stats: dict[str, TDigest] = {}
+
+    # add one latency measurement in seconds
+    def add_latency_measurement(self, id: str, measurement: float) -> None:
+        self.window_stats.setdefault(id, TDigest(100)).update(measurement)
+
+    def get_tdigests(self):
+        return [(id, td.get_centroids()) for id, td in self.window_stats.items()]
 
 
 def get_driver_from_uri(uri: str):

@@ -25,5 +25,4 @@ class Param:
         show_default=False,
     )
 
-
     CSVMaxRows = typer.Option(100000, help="Max count of rows per resulting CSV file.")
