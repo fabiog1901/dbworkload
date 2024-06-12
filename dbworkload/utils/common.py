@@ -94,12 +94,12 @@ class Stats:
     # calculate the current stats this instance has collected.
     def calculate_stats(self) -> list:
         def get_stats_row(id: str):
-            elapsed: int = int(time.time() - self.instantiation_time)
+            elapsed: float = time.time() - self.instantiation_time
             td = TDigest(100).combine(self.window_stats[id])
             self.cumulative_counts[id] += td.weight
             return [
                 id,
-                elapsed,
+                int(elapsed),
                 int(self.cumulative_counts[id]),
                 self.cumulative_counts[id] / elapsed,
                 int(td.weight),

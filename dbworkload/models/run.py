@@ -262,9 +262,8 @@ def worker(
 
         # wait for all Processes children threads to return before
         # letting the Process MainThread return
-        if threading.current_thread().name == "MainThread":
-            for x in threads:
-                x.join()
+        for x in threads:
+            x.join()
 
     logger.setLevel(log_level)
 
@@ -272,8 +271,8 @@ def worker(
 
     threads: list[threading.Thread] = []
 
-    if threading.current_thread().name == "MainThread":
-        
+    # execute only if the current thread is the main thread for each process
+    if thread_count is not None:  
         # capture KeyboardInterrupt and do nothing
         signal.signal(signal.SIGINT, signal.SIG_IGN)
         
@@ -283,7 +282,7 @@ def worker(
                 target=worker,
                 daemon=True,
                 args=(
-                    0,
+                    None,
                     q,
                     kill_q,
                     log_level,
@@ -413,7 +412,7 @@ def worker(
                         stat_time = time.time() + 10  # frequency
 
         except Exception as e:
-            if driver == "psycopg":
+            if driver == "postgres":
                 import psycopg
 
                 if isinstance(e, psycopg.errors.UndefinedTable):
@@ -472,7 +471,7 @@ def run_transaction(conn, op, driver: str, max_retries=3):
             # from the retry loop.
             return retry - 1
         except Exception as e:
-            if driver == "psycopg":
+            if driver == "postgres":
                 import psycopg.errors
 
                 if isinstance(e, psycopg.errors.SerializationFailure):
