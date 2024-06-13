@@ -98,7 +98,7 @@ def run(
         # wait for final stats reports to come in,
         # then print final stats and quit
         while s < concurrency:
-            msg = q.get(block=True, timeout=2.0)
+            msg = q.get(block=True, timeout=1.0)
             if isinstance(msg, list):
                 stats.add_tds(msg)
             else:
@@ -258,7 +258,7 @@ def worker(
         # send notification to MainThread
         q.put(msg)
         # send final stats
-        q.put(ws.get_tdigests(), block=False)
+        q.put(ws.get_tdigest_ndarray(), block=False)
 
         # wait for all Processes children threads to return before
         # letting the Process MainThread return
@@ -315,6 +315,7 @@ def worker(
     conn_endtime = 0
 
     ws = dbworkload.utils.common.WorkerStats()
+    
 
     if duration:
         endtime = time.time() + duration
@@ -407,7 +408,7 @@ def worker(
                     if q.full():
                         logger.error("=========== Q FULL!!!! ======================")
                     if time.time() >= stat_time:
-                        q.put(ws.get_tdigests(), block=False)
+                        q.put(ws.get_tdigest_ndarray(), block=False)
                         ws.new_window()
                         stat_time = time.time() + 10  # frequency
 
