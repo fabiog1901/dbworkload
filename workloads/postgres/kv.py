@@ -3,6 +3,7 @@ import psycopg
 import random
 import time
 import uuid
+from itertools import zip_longest
 
 COL_TYPES = ["bytes", "uuid", "int", "string", "fixed"]
 WRITE_MODES = ["insert", "upsert", "do_nothing"]
@@ -49,8 +50,8 @@ class Kv:
                     f"The selected value_type '{t}' is invalid. The possible values are {', '.join(COL_TYPES)}."
                 )
 
-        self.key_types_and_sizes = dict(zip(self.key_types, self.key_sizes))
-        self.value_types_and_sizes = dict(zip(self.value_types, self.value_sizes))
+        self.key_types_and_sizes = dict(zip_longest(self.key_types, self.key_sizes))
+        self.value_types_and_sizes = dict(zip_longest(self.value_types, self.value_sizes))
 
         # write_mode checks
         if self.write_mode not in WRITE_MODES:
