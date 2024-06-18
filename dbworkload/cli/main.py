@@ -137,6 +137,13 @@ def run(
     prom_port: int = typer.Option(
         26260, "-p", "--port", help="The port of the Prometheus server."
     ),
+    quiet: bool = typer.Option(
+        False,
+        "--quiet",
+        "-q",
+        show_default=False,
+        help="Disable intermediate stats.",
+    ),
     log_level: LogLevel = Param.LogLevel,
 ):
     logger.setLevel(log_level.upper())
@@ -227,6 +234,7 @@ def run(
         conn_duration,
         args,
         driver,
+        quiet,
         log_level.upper(),
     )
 

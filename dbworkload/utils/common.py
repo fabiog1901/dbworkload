@@ -63,7 +63,7 @@ class Stats:
     """
 
     def __init__(self, frequency: int, prom_port: int = 26260):
-        self.cumulative_counts: dict[str, int] = {}
+        self.cumulative_counts: dict[str, TDigest] = {}
         self.instantiation_time = time.time()
         self.frequency = frequency
 
@@ -80,9 +80,11 @@ class Stats:
 
     def add_tds(self, l: list):
         for x in l:
-            self.cumulative_counts.setdefault(x[0], 0)
+            self.cumulative_counts.setdefault(x[0], TDigest())
             self.window_stats.setdefault(x[0], [])
-            self.window_stats[x[0]].append(TDigest(compression=1000).of_centroids(x[1], compression=1000))
+            self.window_stats[x[0]].append(
+                TDigest(compression=1000).of_centroids(x[1], compression=1000)
+            )
 
         # if action not in self.prom_latency:
         #     self.prom_latency[action] = prometheus_client.Summary(
@@ -96,12 +98,14 @@ class Stats:
         def get_stats_row(id: str):
             elapsed: float = time.time() - self.instantiation_time
             td = TDigest(compression=1000).combine(self.window_stats[id])
-            self.cumulative_counts[id] += td.weight
+            self.cumulative_counts[id] = TDigest(compression=1000).combine(
+                self.cumulative_counts[id], td
+            )
             return [
                 id,
                 int(elapsed),
-                int(self.cumulative_counts[id]),
-                self.cumulative_counts[id] / elapsed,
+                int(self.cumulative_counts[id].weight),
+                self.cumulative_counts[id].weight / elapsed,
                 int(td.weight),
                 td.weight / self.frequency,
                 td.mean * 1000,
@@ -111,11 +115,29 @@ class Stats:
             get_stats_row(action) for action in sorted(list(self.window_stats.keys()))
         ]
 
+    def calculate_final_stats(self) -> list:
+        def get_stats_row(id: str):
+            end_time = time.time()
+            elapsed: float = end_time - self.instantiation_time
+            return [
+                id,
+                int(elapsed),
+                int(self.cumulative_counts[id].weight),
+                self.cumulative_counts[id].weight / elapsed,
+                self.cumulative_counts[id].mean * 1000,
+            ] + [
+                x * 1000 for x in self.cumulative_counts[id].inverse_cdf(self.quantiles)
+            ]
+
+        return [
+            get_stats_row(action) for action in sorted(list(self.window_stats.keys()))
+        ]
+
 
 class WorkerStats:
     def __init__(self):
         self.quantiles = [0.50, 0.90, 0.95, 0.99, 1.0]
-        
+
         self.new_window()
 
     # reset stats while keeping cumulative counts
@@ -128,7 +150,10 @@ class WorkerStats:
         self.window_stats.setdefault(id, []).append(measurement)
 
     def get_tdigest_ndarray(self):
-        return [(id, TDigest.compute(np.array(l), compression=1000).get_centroids()) for id, l in self.window_stats.items()]
+        return [
+            (id, TDigest.compute(np.array(l), compression=1000).get_centroids())
+            for id, l in self.window_stats.items()
+        ]
 
 
 def get_driver_from_uri(uri: str):

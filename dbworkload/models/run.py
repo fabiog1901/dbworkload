@@ -14,6 +14,7 @@ import threading
 import time
 import traceback
 import sys
+import datetime as dt
 
 # from cassandra.cluster import Cluster, ExecutionProfile, EXEC_PROFILE_DEFAULT, Session
 # from cassandra.policies import (
@@ -37,6 +38,19 @@ HEADERS: list = [
     "tot_ops/s",
     "period_ops",
     "period_ops/s",
+    "mean(ms)",
+    "p50(ms)",
+    "p90(ms)",
+    "p95(ms)",
+    "p99(ms)",
+    "max(ms)",
+]
+
+FINAL_HEADERS: list = [
+    "id",
+    "elapsed",
+    "tot_ops",
+    "tot_ops/s",
     "mean(ms)",
     "p50(ms)",
     "p90(ms)",
@@ -92,13 +106,19 @@ def run(
     conn_duration: int,
     args: dict,
     driver: str,
+    quiet: bool,
     log_level: str,
 ):
     def gracefully_shutdown(s):
         # wait for final stats reports to come in,
         # then print final stats and quit
         while s < concurrency:
-            msg = q.get(block=True, timeout=1.0)
+            try:
+                msg = q.get(block=True, timeout=1.0)
+            except queue.Empty:
+                logger.error("Couldn't collect final stats")
+                sys.exit(1)
+
             if isinstance(msg, list):
                 stats.add_tds(msg)
             else:
@@ -106,14 +126,31 @@ def run(
                 sys.exit(1)
             s += 1
 
-        print_stats(stats)
+        if not quiet:
+            print_stats(stats)
+
+        # end_time = dt.datetime.strftime(time.time(), "%Y-%m-%d %H:%M:%S")
+
+        logger.info("Printing summary stats for the full run")
+        print("Start_time: ", start_time)
+
+        print(
+            workload_path,
+            conn_info.params,
+            conn_info.extras,
+            concurrency,
+            duration,
+            iterations,
+            args,
+        )
+        print_stats(stats, final=True)
         sys.exit(0)
 
     logger.setLevel(log_level)
 
     global concurrency
     concurrency = conc
-    
+
     global kill_q
     global q
 
@@ -177,7 +214,6 @@ def run(
         target=ramp_up, daemon=True, args=(processes, ramp_interval)
     ).start()
 
-
     while True:
         try:
             # read from the queue for stats or completion messages
@@ -192,14 +228,12 @@ def run(
         except queue.Empty:
             pass
 
-        # once the sum of the completion messages matches 
-        # the count of threads, identify what type of 
+        # once the sum of the completion messages matches
+        # the count of threads, identify what type of
         # completion message it was
         if c >= concurrency:
             if msg == "task_done":
-                logger.info(
-                    "Requested iteration/duration limit reached. Printing final stats"
-                )
+                logger.info("Requested iteration/duration limit reached")
                 gracefully_shutdown(s)
             elif msg == "poison_pill":
                 logger.info("Printing final stats")
@@ -212,7 +246,8 @@ def run(
                 sys.exit(1)
 
         if s >= concurrency:
-            print_stats(stats)
+            if not quiet:
+                print_stats(stats)
             stats.new_window()
             s = 0
 
@@ -272,11 +307,11 @@ def worker(
     threads: list[threading.Thread] = []
 
     # execute only if the current thread is the main thread for each process
-    if thread_count is not None:  
+    if thread_count is not None:
         # capture KeyboardInterrupt and do nothing
         signal.signal(signal.SIGINT, signal.SIG_IGN)
-        
-        # only the MainThread of a child Process spawns Threads    
+
+        # only the MainThread of a child Process spawns Threads
         for i in range(thread_count):
             thread = threading.Thread(
                 target=worker,
@@ -315,7 +350,6 @@ def worker(
     conn_endtime = 0
 
     ws = dbworkload.utils.common.WorkerStats()
-    
 
     if duration:
         endtime = time.time() + duration
@@ -454,8 +488,25 @@ def log_and_sleep(e: Exception):
     time.sleep(DEFAULT_SLEEP)
 
 
-def print_stats(stats: dbworkload.utils.common.Stats):
-    print(tabulate.tabulate(stats.calculate_stats(), HEADERS, intfmt=",", floatfmt=",.2f"), "\n")
+def print_stats(stats: dbworkload.utils.common.Stats, final: bool = False):
+    if final:
+        print(
+            tabulate.tabulate(
+                stats.calculate_final_stats(),
+                FINAL_HEADERS,
+                tablefmt="simple_outline",
+                intfmt=",",
+                floatfmt=",.2f",
+            ),
+            "\n",
+        )
+    else:
+        print(
+            tabulate.tabulate(
+                stats.calculate_stats(), HEADERS, intfmt=",", floatfmt=",.2f"
+            ),
+            "\n",
+        )
 
 
 def run_transaction(conn, op, driver: str, max_retries=3):
@@ -482,9 +533,10 @@ def run_transaction(conn, op, driver: str, max_retries=3):
                     logger.debug(f"SerializationFailure:: {e}")
                     conn.rollback()
                     time.sleep((2**retry) * 0.1 * (random.random() + 0.5))
+                else:
+                    raise e
             else:
                 raise e
-
     logger.debug(f"Transaction did not succeed after {max_retries} retries")
     return retry
 
