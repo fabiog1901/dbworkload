@@ -132,7 +132,6 @@ def run(
         # end_time = dt.datetime.strftime(time.time(), "%Y-%m-%d %H:%M:%S")
 
         logger.info("Printing summary stats for the full run")
-        print("Start_time: ", start_time)
 
         print(
             workload_path,
