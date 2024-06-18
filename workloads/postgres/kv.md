@@ -43,6 +43,7 @@ Here are the avaliable **arguments** to pass at runtime:
 | write_mode    | `insert`, `upsert`, `do_nothing` for `ON CONFLICT DO NOTHING`  | insert  |
 | aost          | value to pass to the `AS OF SYSTEM TIME` clause.               |         |  
 |               | set to `fr` for _follower_read_timestamp()_                    |         |
+| stmts_per_txn | set the range of statements for each txn                       | 1-1     |
 
 ## Examples
 
@@ -225,4 +226,29 @@ Here's some rows
   EAST | 582RdAw0WV
   EAST | 5ePVKECiLI
 (5 rows)
+```
+
+### Example 5 - mixed CRUD workload with multi-statements explicit transactions
+
+Run explicit transactions with 3 to 5 statements each, with a mix of selects, updates, inserts, deletes.
+
+```bash
+dbworkload run [...] \
+  --args '{"key_types":"uuid", "value_types":"string", "read_pct": 25, "update_pct":25, "delete_pct":23, "stmts_per_txn": "3-5"}' \
+  -i 1
+```
+
+Notice we use parameter `stmts_per_txn` with value `3-5`.
+After 1 iteration, we can see that we executed a transaction with 5 statements.
+
+```bash◊
+id           elapsed    tot_ops    tot_ops/s    period_ops    period_ops/s    mean(ms)    p50(ms)    p90(ms)    p95(ms)    p99(ms)    max(ms)
+---------  ---------  ---------  -----------  ------------  --------------  ----------  ---------  ---------  ---------  ---------  ---------
+__cycle__          0          1         1.23             1            0.10      132.13     132.13     132.13     132.13     132.13     132.13
+__think__          0          5         6.13             5            0.50       11.05      10.12      12.56      12.56      12.56      12.56
+begin              0          1         1.23             1            0.10        0.60       0.60       0.60       0.60       0.60       0.60
+commit             0          1         1.23             1            0.10       40.29      40.29      40.29      40.29      40.29      40.29
+read_kv            0          1         1.23             1            0.10       23.48      23.48      23.48      23.48      23.48      23.48
+update_kv          0          1         1.23             1            0.10        5.92       5.92       5.92       5.92       5.92       5.92
+write_kv           0          3         3.68             3            0.30        2.19       1.92       2.96       2.96       2.96       2.96 
 ```

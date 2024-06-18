@@ -35,7 +35,8 @@ class Kv:
         self.key_pool_preload_size: int = int(args.get("key_pool_preload_size", 0))
         self.write_mode: str = args.get("write_mode", "insert")
         self.aost: str = args.get("aost", "")
-        self.fixed_value = args.get("fixed_value", None)
+        self.fixed_value: str = args.get("fixed_value", None)
+        self.stmts_per_txn: list = [int(x) for x in args.get("stmts_per_txn", "1-1").split("-")]
 
         # type checks
         for k in self.key_types:
@@ -127,15 +128,26 @@ class Kv:
                 )
 
     def loop(self):
-        rnd = random.random()
-        if rnd < self.read_pct:
-            return [self.read_kv, self.__think__] * self.cycle_size
-        elif rnd < self.update_pct:
-            return [self.update_kv, self.__think__] * self.cycle_size
-        elif rnd < self.delete_pct:
-            return [self.delete_kv, self.__think__] * self.cycle_size
-        return [self.write_kv, self.__think__] * self.cycle_size
-
+        def get_func():
+            rnd = random.random()
+            if rnd < self.read_pct:
+                return [self.read_kv, self.__think__] * self.cycle_size
+            elif rnd < self.update_pct:
+                return [self.update_kv, self.__think__] * self.cycle_size
+            elif rnd < self.delete_pct:
+                return [self.delete_kv, self.__think__] * self.cycle_size
+            return [self.write_kv, self.__think__] * self.cycle_size
+    
+        if self.stmts_per_txn[1] == 1:
+            return get_func()
+        else:
+            l = []
+            for _ in range(random.randint(self.stmts_per_txn[0], self.stmts_per_txn[1])):
+                l.extend(get_func())
+            
+            return [self.begin] + l + [self.commit]
+            
+            
     def __think__(self, conn: psycopg.Connection):
         time.sleep(self.think_time)
 
@@ -156,6 +168,14 @@ class Kv:
                 .decode()
             )
 
+    def begin(self, conn: psycopg.Connection):
+       with conn.cursor() as cur:
+           cur.execute("BEGIN")
+    
+    def commit(self, conn: psycopg.Connection):
+        with conn.cursor() as cur:
+            cur.execute("COMMIT")
+            
     def read_kv(self, conn: psycopg.Connection):
         with conn.cursor() as cur:
             cur.execute(
