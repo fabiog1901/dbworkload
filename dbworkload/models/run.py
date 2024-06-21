@@ -34,8 +34,8 @@ logger = logging.getLogger("dbworkload")
 
 
 HEADERS: list = [
-    "id",
     "elapsed",
+    "id",
     "tot_ops",
     "tot_ops/s",
     "period_ops",
@@ -49,8 +49,8 @@ HEADERS: list = [
 ]
 
 FINAL_HEADERS: list = [
-    "id",
     "elapsed",
+    "id",
     "tot_ops",
     "tot_ops/s",
     "mean(ms)",
@@ -183,9 +183,7 @@ def run(
     start_time = dt.datetime.utcnow()
     workload = dbworkload.utils.common.import_class_at_runtime(workload_path)
 
-    run_name = (
-        workload.__name__ + "." + start_time.strftime("%Y%m%d_%H%M%S")
-    )
+    run_name = workload.__name__ + "." + start_time.strftime("%Y%m%d_%H%M%S")
 
     # open a new csv file and just write the header columns
     if save:

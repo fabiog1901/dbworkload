@@ -101,8 +101,8 @@ class Stats:
                 self.cumulative_counts[id], td
             )
             return [
-                id,
                 int(elapsed),
+                id,
                 int(self.cumulative_counts[id].weight),
                 round(self.cumulative_counts[id].weight / elapsed, 2),
                 int(td.weight),
@@ -110,27 +110,24 @@ class Stats:
                 round(td.mean * 1000, 2),
             ] + [round(x * 1000, 2) for x in td.inverse_cdf(self.quantiles)]
 
-        return [
-            get_stats_row(id) for id in sorted(list(self.window_stats.keys()))
-        ]
+        return [get_stats_row(id) for id in sorted(list(self.window_stats.keys()))]
 
     def calculate_final_stats(self) -> list:
         def get_stats_row(id: str):
             end_time = time.time()
             elapsed: float = end_time - self.instantiation_time
             return [
-                id,
                 int(elapsed),
+                id,
                 int(self.cumulative_counts[id].weight),
                 round(self.cumulative_counts[id].weight / elapsed),
                 round(self.cumulative_counts[id].mean * 1000, 2),
             ] + [
-                round(x * 1000, 2) for x in self.cumulative_counts[id].inverse_cdf(self.quantiles)
+                round(x * 1000, 2)
+                for x in self.cumulative_counts[id].inverse_cdf(self.quantiles)
             ]
 
-        return [
-            get_stats_row(id) for id in sorted(list(self.window_stats.keys()))
-        ]
+        return [get_stats_row(id) for id in sorted(list(self.window_stats.keys()))]
 
 
 class WorkerStats:
