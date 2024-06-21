@@ -128,12 +128,6 @@ def run(
         show_default=False,
         help="Unset autocommit in the connections.",
     ),
-    frequency: int = typer.Option(
-        10,
-        "-s",
-        "--stats-frequency",
-        help="How often to display the stats in seconds. Set 0 to disable",
-    ),
     prom_port: int = typer.Option(
         26260, "-p", "--port", help="The port of the Prometheus server."
     ),
@@ -142,7 +136,14 @@ def run(
         "--quiet",
         "-q",
         show_default=False,
-        help="Disable intermediate stats.",
+        help="Disable printing intermediate stats.",
+    ),
+    save: bool = typer.Option(
+        False,
+        "--save",
+        "-s",
+        show_default=False,
+        help="Save stats to CSV files.",
     ),
     log_level: LogLevel = Param.LogLevel,
 ):
@@ -224,7 +225,6 @@ def run(
     dbworkload.models.run.run(
         concurrency,
         workload_path,
-        frequency,
         prom_port,
         iterations,
         procs,
@@ -235,6 +235,7 @@ def run(
         args,
         driver,
         quiet,
+        save,
         log_level.upper(),
     )
 

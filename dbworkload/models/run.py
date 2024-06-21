@@ -15,6 +15,7 @@ import time
 import traceback
 import sys
 import datetime as dt
+import pandas as pd
 
 # from cassandra.cluster import Cluster, ExecutionProfile, EXEC_PROFILE_DEFAULT, Session
 # from cassandra.policies import (
@@ -27,6 +28,7 @@ import datetime as dt
 
 DEFAULT_SLEEP = 3
 MAX_RETRIES = 3
+FREQUENCY = 10
 
 logger = logging.getLogger("dbworkload")
 
@@ -96,7 +98,6 @@ def ramp_up(processes: list, ramp_interval: int):
 def run(
     conc: int,
     workload_path: str,
-    frequency: int,
     prom_port: int,
     iterations: int,
     procs: int,
@@ -107,6 +108,7 @@ def run(
     args: dict,
     driver: str,
     quiet: bool,
+    save: bool,
     log_level: str,
 ):
     def gracefully_shutdown(s):
@@ -126,23 +128,49 @@ def run(
                 sys.exit(1)
             s += 1
 
+        end_time = dt.datetime.utcnow()
+        report = stats.calculate_stats()
+
+        if save:
+            pd.DataFrame(report).to_csv(
+                run_name + ".csv", mode="a", index=False, header=False
+            )
+
         if not quiet:
-            print_stats(stats)
+            logger.info("Printing final stats")
+            print_stats(report)
 
-        # end_time = dt.datetime.strftime(time.time(), "%Y-%m-%d %H:%M:%S")
+        logger.info("Printing summary stats for the full test run")
+        print_final_stats(stats.calculate_final_stats())
 
-        logger.info("Printing summary stats for the full run")
-
+        # Print test run details
         print(
-            workload_path,
-            conn_info.params,
-            conn_info.extras,
-            concurrency,
-            duration,
-            iterations,
-            args,
+            tabulate.tabulate(
+                [
+                    ["workload_path", workload_path],
+                    ["conn_params", conn_info.params],
+                    ["conn_extras", conn_info.extras],
+                    ["concurrency", concurrency],
+                    ["duration", duration],
+                    ["iterations", iterations],
+                    ["args", args],
+                ],
+                headers=["Parameter", "Value"],
+            ),
+            "\n",
         )
-        print_stats(stats, final=True)
+        print(
+            tabulate.tabulate(
+                [
+                    ["run_name", run_name],
+                    ["start_time", start_time.strftime("%Y-%m-%d %H:%M:%S")],
+                    ["end_time", end_time.strftime("%Y-%m-%d %H:%M:%S")],
+                    ["test_duration", int((end_time - start_time).total_seconds())],
+                ],
+            ),
+            "\n",
+        )
+
         sys.exit(0)
 
     logger.setLevel(log_level)
@@ -152,19 +180,21 @@ def run(
 
     global kill_q
     global q
-
+    start_time = dt.datetime.utcnow()
     workload = dbworkload.utils.common.import_class_at_runtime(workload_path)
+
+    run_name = (
+        workload.__name__ + "." + start_time.strftime("%Y%m%d_%H%M%S")
+    )
+
+    # open a new csv file and just write the header columns
+    if save:
+        pd.DataFrame([HEADERS]).to_csv(run_name + ".csv", header=False, index=False)
 
     # register Ctrl+C handler
     signal.signal(signal.SIGINT, signal_handler)
 
-    disable_stats = False
-
-    if frequency == 0:
-        disable_stats = True
-        frequency = 10
-
-    stats = dbworkload.utils.common.Stats(frequency, prom_port)
+    stats = dbworkload.utils.common.Stats(prom_port)
 
     if iterations:
         iterations = iterations // concurrency
@@ -199,12 +229,12 @@ def run(
                     iterations,
                     duration,
                     conn_duration,
-                    disable_stats,
                     conc,
                     id_base_counter,
                     id_base_counter,
                     driver,
                 ),
+                daemon=True,
             )
         )
         id_base_counter += x
@@ -235,7 +265,6 @@ def run(
                 logger.info("Requested iteration/duration limit reached")
                 gracefully_shutdown(s)
             elif msg == "poison_pill":
-                logger.info("Printing final stats")
                 gracefully_shutdown(s)
             elif isinstance(msg, Exception):
                 logger.error(f"error_type={msg.__class__.__name__}, msg={msg}")
@@ -245,8 +274,16 @@ def run(
                 sys.exit(1)
 
         if s >= concurrency:
+            report = stats.calculate_stats()
+
+            if save:
+                pd.DataFrame(report).to_csv(
+                    run_name + ".csv", header=False, mode="a", index=False
+                )
+
             if not quiet:
-                print_stats(stats)
+                print_stats(report)
+
             stats.new_window()
             s = 0
 
@@ -262,7 +299,6 @@ def worker(
     iterations: int,
     duration: int,
     conn_duration: int,
-    disable_stats: bool,
     conc: int,
     id_base_counter: int = 0,
     id: int = 0,
@@ -281,7 +317,6 @@ def worker(
         iterations (int): count of workload iteration before returning
         duration (int): seconds before returning
         conn_duration (int): seconds before restarting the database connection
-        disable_stats: (bool): flag to send or not stats back to the mainthread
         conc: (int): the total number of threads
         id_base_counter (int): the base counter to generate ID for each Process
         id (int): the ID of the thread
@@ -326,7 +361,6 @@ def worker(
                     iterations,
                     duration,
                     conn_duration,
-                    disable_stats,
                     conc,
                     None,
                     id_base_counter + i + 1,
@@ -427,23 +461,21 @@ def worker(
                             ws.add_latency_measurement("__retries__", 0)
 
                         # if retries matches max_retries, then it's a total failure and we don't record the txn time
-                        if not disable_stats and retries < MAX_RETRIES:
+                        if retries < MAX_RETRIES:
                             ws.add_latency_measurement(
                                 txn.__name__, time.time() - start
                             )
 
                     c += 1
-                    if not disable_stats:
-                        ws.add_latency_measurement(
-                            "__cycle__", time.time() - cycle_start
-                        )
+
+                    ws.add_latency_measurement("__cycle__", time.time() - cycle_start)
 
                     if q.full():
                         logger.error("=========== Q FULL!!!! ======================")
                     if time.time() >= stat_time:
                         q.put(ws.get_tdigest_ndarray(), block=False)
                         ws.new_window()
-                        stat_time = time.time() + 10  # frequency
+                        stat_time = time.time() + FREQUENCY
 
         except Exception as e:
             if driver == "postgres":
@@ -487,25 +519,29 @@ def log_and_sleep(e: Exception):
     time.sleep(DEFAULT_SLEEP)
 
 
-def print_stats(stats: dbworkload.utils.common.Stats, final: bool = False):
-    if final:
-        print(
-            tabulate.tabulate(
-                stats.calculate_final_stats(),
-                FINAL_HEADERS,
-                tablefmt="simple_outline",
-                intfmt=",",
-                floatfmt=",.2f",
-            ),
-            "\n",
-        )
-    else:
-        print(
-            tabulate.tabulate(
-                stats.calculate_stats(), HEADERS, intfmt=",", floatfmt=",.2f"
-            ),
-            "\n",
-        )
+def print_stats(report: list):
+    print(
+        tabulate.tabulate(
+            report,
+            HEADERS,
+            intfmt=",",
+            floatfmt=",.2f",
+        ),
+        "\n",
+    )
+
+
+def print_final_stats(report: list):
+    print(
+        tabulate.tabulate(
+            report,
+            FINAL_HEADERS,
+            tablefmt="simple_outline",
+            intfmt=",",
+            floatfmt=",.2f",
+        ),
+        "\n",
+    )
 
 
 def run_transaction(conn, op, driver: str, max_retries=3):

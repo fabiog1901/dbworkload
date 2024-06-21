@@ -62,10 +62,9 @@ class Stats:
     and export the stats as Prometheus endpoints
     """
 
-    def __init__(self, frequency: int, prom_port: int = 26260):
+    def __init__(self, prom_port: int = 26260):
         self.cumulative_counts: dict[str, TDigest] = {}
         self.instantiation_time = time.time()
-        self.frequency = frequency
 
         # self.prom_latency: dict[str, prometheus_client.Summary] = {}
         # prometheus_client.start_http_server(prom_port)
@@ -105,14 +104,14 @@ class Stats:
                 id,
                 int(elapsed),
                 int(self.cumulative_counts[id].weight),
-                self.cumulative_counts[id].weight / elapsed,
+                round(self.cumulative_counts[id].weight / elapsed, 2),
                 int(td.weight),
-                td.weight / self.frequency,
-                td.mean * 1000,
-            ] + [x * 1000 for x in td.inverse_cdf(self.quantiles)]
+                td.weight / 10,  # TODO fix as the window is not always 10s
+                round(td.mean * 1000, 2),
+            ] + [round(x * 1000, 2) for x in td.inverse_cdf(self.quantiles)]
 
         return [
-            get_stats_row(action) for action in sorted(list(self.window_stats.keys()))
+            get_stats_row(id) for id in sorted(list(self.window_stats.keys()))
         ]
 
     def calculate_final_stats(self) -> list:
@@ -123,14 +122,14 @@ class Stats:
                 id,
                 int(elapsed),
                 int(self.cumulative_counts[id].weight),
-                self.cumulative_counts[id].weight / elapsed,
-                self.cumulative_counts[id].mean * 1000,
+                round(self.cumulative_counts[id].weight / elapsed),
+                round(self.cumulative_counts[id].mean * 1000, 2),
             ] + [
-                x * 1000 for x in self.cumulative_counts[id].inverse_cdf(self.quantiles)
+                round(x * 1000, 2) for x in self.cumulative_counts[id].inverse_cdf(self.quantiles)
             ]
 
         return [
-            get_stats_row(action) for action in sorted(list(self.window_stats.keys()))
+            get_stats_row(id) for id in sorted(list(self.window_stats.keys()))
         ]
 
 
