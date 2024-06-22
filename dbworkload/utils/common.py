@@ -93,7 +93,7 @@ class Stats:
         # self.prom_latency[action].observe(measurement)
 
     # calculate the current stats this instance has collected.
-    def calculate_stats(self) -> list:
+    def calculate_stats(self,active_connections: int) -> list:
         def get_stats_row(id: str):
             elapsed: float = time.time() - self.instantiation_time
             td = TDigest(compression=1000).combine(self.window_stats[id])
@@ -103,6 +103,7 @@ class Stats:
             return [
                 int(elapsed),
                 id,
+                active_connections,
                 int(self.cumulative_counts[id].weight),
                 round(self.cumulative_counts[id].weight / elapsed, 2),
                 int(td.weight),
@@ -112,13 +113,14 @@ class Stats:
 
         return [get_stats_row(id) for id in sorted(list(self.window_stats.keys()))]
 
-    def calculate_final_stats(self) -> list:
+    def calculate_final_stats(self, active_connections: int) -> list:
         def get_stats_row(id: str):
             end_time = time.time()
             elapsed: float = end_time - self.instantiation_time
             return [
                 int(elapsed),
                 id,
+                active_connections,
                 int(self.cumulative_counts[id].weight),
                 round(self.cumulative_counts[id].weight / elapsed),
                 round(self.cumulative_counts[id].mean * 1000, 2),

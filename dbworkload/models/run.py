@@ -36,6 +36,7 @@ logger = logging.getLogger("dbworkload")
 HEADERS: list = [
     "elapsed",
     "id",
+    "threads",
     "tot_ops",
     "tot_ops/s",
     "period_ops",
@@ -51,6 +52,7 @@ HEADERS: list = [
 FINAL_HEADERS: list = [
     "elapsed",
     "id",
+    "threads",
     "tot_ops",
     "tot_ops/s",
     "mean(ms)",
@@ -88,11 +90,17 @@ def signal_handler(sig, frame):
     logger.debug("Sent poison pill to all threads")
 
 
-def ramp_up(processes: list, ramp_interval: int):
-    for p in processes:
+def ramp_up(
+    processes: list, interval: int, threads_per_proc: list, init_sleep: int = 0
+):
+    time.sleep(init_sleep)
+    for i, p in enumerate(processes):
         logger.debug("Starting a new Process...")
         p.start()
-        time.sleep(ramp_interval)
+        # print("threadsperproc", threads_per_proc)
+        # print("rampint", interval)
+        # print("sleeping rampup for ", interval * threads_per_proc[i])
+        time.sleep(interval * threads_per_proc[i])
 
 
 def run(
@@ -111,25 +119,25 @@ def run(
     save: bool,
     log_level: str,
 ):
-    def gracefully_shutdown(s):
+    def gracefully_shutdown():
         # wait for final stats reports to come in,
         # then print final stats and quit
-        while s < concurrency:
+        
+        while True:
             try:
-                msg = q.get(block=True, timeout=1.0)
-            except queue.Empty:
-                logger.error("Couldn't collect final stats")
-                sys.exit(1)
+                msg = q.get(block=True, timeout=3.0)
 
-            if isinstance(msg, list):
-                stats.add_tds(msg)
-            else:
-                logger.error("Timed out, quitting")
-                sys.exit(1)
-            s += 1
+                if isinstance(msg, list):
+                    stats.add_tds(msg)
+                else:
+                    logger.error("Timed out, quitting")
+                    sys.exit(1)
+
+            except queue.Empty:
+                break
 
         end_time = dt.datetime.utcnow()
-        report = stats.calculate_stats()
+        report = stats.calculate_stats(active_connections)
 
         if save:
             pd.DataFrame(report).to_csv(
@@ -141,7 +149,7 @@ def run(
             print_stats(report)
 
         logger.info("Printing summary stats for the full test run")
-        print_final_stats(stats.calculate_final_stats())
+        print_final_stats(stats.calculate_final_stats(active_connections))
 
         # Print test run details
         print(
@@ -153,6 +161,7 @@ def run(
                     ["concurrency", concurrency],
                     ["duration", duration],
                     ["iterations", iterations],
+                    ["ramp", ramp],
                     ["args", args],
                 ],
                 headers=["Parameter", "Value"],
@@ -201,10 +210,9 @@ def run(
     kill_q = mp.Queue(maxsize=concurrency)
 
     c = 0
-    s = 0
 
     threads_per_proc = dbworkload.utils.common.get_threads_per_proc(procs, conc)
-    ramp_interval = int(ramp / len(threads_per_proc))
+    ramp_interval = ramp // conc
 
     # each Process must generate an ID for each of its threads,
     # starting from the id_base_counter and incrementing by 1.
@@ -218,6 +226,7 @@ def run(
                 target=worker,
                 args=(
                     x - 1,
+                    ramp_interval,
                     q,
                     kill_q,
                     log_level,
@@ -238,9 +247,15 @@ def run(
         id_base_counter += x
 
     threading.Thread(
-        target=ramp_up, daemon=True, args=(processes, ramp_interval)
+        target=ramp_up, daemon=True, args=(processes, ramp_interval, threads_per_proc)
     ).start()
 
+    # send stats when epoch % 10 == 0
+    ts = time.time()
+    report_time = ts + FREQUENCY - int(ts) % FREQUENCY
+
+    active_connections = 0
+    
     while True:
         try:
             # read from the queue for stats or completion messages
@@ -248,7 +263,8 @@ def run(
             # a stats report is a list obj
             if isinstance(msg, list):
                 stats.add_tds(msg)
-                s += 1
+            elif msg == "init":
+                active_connections += 1
             else:
                 # if it's not a stat message, then the worker returned
                 c += 1
@@ -258,12 +274,12 @@ def run(
         # once the sum of the completion messages matches
         # the count of threads, identify what type of
         # completion message it was
-        if c >= concurrency:
+        if c > 0 and c >= active_connections:
             if msg == "task_done":
                 logger.info("Requested iteration/duration limit reached")
-                gracefully_shutdown(s)
+                gracefully_shutdown()
             elif msg == "poison_pill":
-                gracefully_shutdown(s)
+                gracefully_shutdown()
             elif isinstance(msg, Exception):
                 logger.error(f"error_type={msg.__class__.__name__}, msg={msg}")
                 sys.exit(1)
@@ -271,8 +287,8 @@ def run(
                 logger.error(f"unrecognized message: {msg}")
                 sys.exit(1)
 
-        if s >= concurrency:
-            report = stats.calculate_stats()
+        if time.time() >= report_time:
+            report = stats.calculate_stats(active_connections)
 
             if save:
                 pd.DataFrame(report).to_csv(
@@ -283,11 +299,12 @@ def run(
                 print_stats(report)
 
             stats.new_window()
-            s = 0
+            report_time += FREQUENCY
 
 
 def worker(
     thread_count: int,
+    interval: int,
     q: mp.Queue,
     kill_q: mp.Queue,
     log_level: str,
@@ -323,6 +340,7 @@ def worker(
 
     def gracefully_return(msg):
         # send notification to MainThread
+        logger.debug("sending msg and final td")
         q.put(msg)
         # send final stats
         q.put(ws.get_tdigest_ndarray(), block=False)
@@ -330,7 +348,8 @@ def worker(
         # wait for all Processes children threads to return before
         # letting the Process MainThread return
         for x in threads:
-            x.join()
+            if x.is_alive():
+                x.join()
 
     logger.setLevel(log_level)
 
@@ -345,28 +364,36 @@ def worker(
 
         # only the MainThread of a child Process spawns Threads
         for i in range(thread_count):
-            thread = threading.Thread(
-                target=worker,
-                daemon=True,
-                args=(
-                    None,
-                    q,
-                    kill_q,
-                    log_level,
-                    conn_info,
-                    workload,
-                    args,
-                    iterations,
-                    duration,
-                    conn_duration,
-                    conc,
-                    None,
-                    id_base_counter + i + 1,
-                    driver,
-                ),
+            threads.append(
+                threading.Thread(
+                    target=worker,
+                    daemon=True,
+                    args=(
+                        None,
+                        0,
+                        q,
+                        kill_q,
+                        log_level,
+                        conn_info,
+                        workload,
+                        args,
+                        iterations,
+                        duration,
+                        conn_duration,
+                        conc,
+                        None,
+                        id_base_counter + i + 1,
+                        driver,
+                    ),
+                )
             )
-            thread.start()
-            threads.append(thread)
+
+        print("THREAD: ", len(threads), interval, thread_count)
+        threading.Thread(
+            target=ramp_up,
+            daemon=True,
+            args=(threads, interval, [1] * thread_count, interval),
+        ).start()
 
     # catch exception while instantiating the workload class
     try:
@@ -386,6 +413,9 @@ def worker(
         endtime = time.time() + duration
 
     run_init = True
+    
+    # send notification that a new thread has started
+    q.put("init")
 
     while True:
         if conn_duration:
@@ -400,7 +430,6 @@ def worker(
         except queue.Empty:
             pass
 
-        stat_time = time.time() + 10
         try:
             logger.debug(f"driver: {driver}, params: {conn_info.params}")
             # with Cluster().connect('bank') as conn:
@@ -419,6 +448,10 @@ def worker(
                             driver,
                             max_retries=MAX_RETRIES,
                         )
+
+                # send stats when epoch % 10 == 8 (8, 18, 28, ...)
+                ts = time.time()
+                stat_time = ts + FREQUENCY - int(ts) % FREQUENCY - 2
 
                 while True:
                     # listen for termination messages (poison pill)
@@ -473,7 +506,7 @@ def worker(
                     if time.time() >= stat_time:
                         q.put(ws.get_tdigest_ndarray(), block=False)
                         ws.new_window()
-                        stat_time = time.time() + FREQUENCY
+                        stat_time += FREQUENCY
 
         except Exception as e:
             if driver == "postgres":
