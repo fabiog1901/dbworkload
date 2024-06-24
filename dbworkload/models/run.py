@@ -1,21 +1,21 @@
 #!/usr/bin/python
 
-import dbworkload.utils.common
 from dbworkload.cli.dep import ConnInfo
+import datetime as dt
+import dbworkload.utils.common
 import logging
 import logging.handlers
 import multiprocessing as mp
+import pandas as pd
 import queue
 import random
 import signal
+import sys
 import sys
 import tabulate
 import threading
 import time
 import traceback
-import sys
-import datetime as dt
-import pandas as pd
 
 # from cassandra.cluster import Cluster, ExecutionProfile, EXEC_PROFILE_DEFAULT, Session
 # from cassandra.policies import (
@@ -47,6 +47,22 @@ HEADERS: list = [
     "p95(ms)",
     "p99(ms)",
     "max(ms)",
+]
+
+HEADERS_CSV: list = [
+    "elapsed",
+    "id",
+    "threads",
+    "tot_ops",
+    "tot_ops_s",
+    "period_ops",
+    "period_ops_s",
+    "mean_ms",
+    "p50_ms",
+    "p90_ms",
+    "p95_ms",
+    "p99_ms",
+    "max_ms",
 ]
 
 FINAL_HEADERS: list = [
@@ -122,7 +138,10 @@ def run(
     def gracefully_shutdown():
         # wait for final stats reports to come in,
         # then print final stats and quit
-        
+
+        end_time: dt.datetime = dt.datetime.utcnow()
+        end_time2: float = time.time()
+
         while True:
             try:
                 msg = q.get(block=True, timeout=3.0)
@@ -136,8 +155,7 @@ def run(
             except queue.Empty:
                 break
 
-        end_time = dt.datetime.utcnow()
-        report = stats.calculate_stats(active_connections)
+        report = stats.calculate_stats(active_connections, end_time2)
 
         if save:
             pd.DataFrame(report).to_csv(
@@ -148,36 +166,66 @@ def run(
             logger.info("Printing final stats")
             print_stats(report)
 
-        logger.info("Printing summary stats for the full test run")
-        print_final_stats(stats.calculate_final_stats(active_connections))
+        logger.info("Printing summary for the full test run")
+
+        final_stats_report = tabulate.tabulate(
+            stats.calculate_final_stats(active_connections, end_time2),
+            FINAL_HEADERS,
+            tablefmt="simple_outline",
+            intfmt=",",
+            floatfmt=",.2f",
+        )
 
         # Print test run details
-        print(
-            tabulate.tabulate(
-                [
-                    ["workload_path", workload_path],
-                    ["conn_params", conn_info.params],
-                    ["conn_extras", conn_info.extras],
-                    ["concurrency", concurrency],
-                    ["duration", duration],
-                    ["iterations", iterations],
-                    ["ramp", ramp],
-                    ["args", args],
-                ],
-                headers=["Parameter", "Value"],
-            ),
-            "\n",
+        runtime_params = tabulate.tabulate(
+            [
+                ["workload_path", workload_path],
+                ["conn_params", conn_info.params],
+                ["conn_extras", conn_info.extras],
+                ["concurrency", concurrency],
+                ["duration", duration],
+                ["iterations", iterations],
+                ["ramp", ramp],
+                ["args", args],
+            ],
+            headers=["Parameter", "Value"],
         )
+
+        runtime_details = tabulate.tabulate(
+            [
+                ["run_name", run_name],
+                ["start_time", start_time.strftime("%Y-%m-%d %H:%M:%S")],
+                ["end_time", end_time.strftime("%Y-%m-%d %H:%M:%S")],
+                ["test_duration", int((end_time - start_time).total_seconds())],
+            ],
+        )
+
+        if save:
+            with open(run_name + ".txt", "w") as f:
+                f.writelines(
+                    [
+                        runtime_details,
+                        "\n",
+                        "\n",
+                        final_stats_report,
+                        "\n",
+                        "\n",
+                        runtime_params,
+                        "\n",
+                    ]
+                )
+
         print(
-            tabulate.tabulate(
-                [
-                    ["run_name", run_name],
-                    ["start_time", start_time.strftime("%Y-%m-%d %H:%M:%S")],
-                    ["end_time", end_time.strftime("%Y-%m-%d %H:%M:%S")],
-                    ["test_duration", int((end_time - start_time).total_seconds())],
-                ],
-            ),
             "\n",
+            runtime_details,
+            "\n",
+            "\n",
+            final_stats_report,
+            "\n",
+            "\n",
+            runtime_params,
+            "\n",
+            sep="",
         )
 
         sys.exit(0)
@@ -196,7 +244,7 @@ def run(
 
     # open a new csv file and just write the header columns
     if save:
-        pd.DataFrame([HEADERS]).to_csv(run_name + ".csv", header=False, index=False)
+        pd.DataFrame([HEADERS_CSV]).to_csv(run_name + ".csv", header=False, index=False)
 
     # register Ctrl+C handler
     signal.signal(signal.SIGINT, signal_handler)
@@ -204,7 +252,11 @@ def run(
     stats = dbworkload.utils.common.Stats(prom_port)
 
     if iterations:
-        iterations = iterations // concurrency
+        iterations_per_thread = iterations // concurrency
+
+    duration_endtime = None
+    if duration:
+        duration_endtime = time.time() + duration
 
     q = mp.Queue(maxsize=0)
     kill_q = mp.Queue(maxsize=concurrency)
@@ -233,8 +285,8 @@ def run(
                     conn_info,
                     workload,
                     args,
-                    iterations,
-                    duration,
+                    iterations_per_thread,
+                    duration_endtime,
                     conn_duration,
                     conc,
                     id_base_counter,
@@ -255,7 +307,7 @@ def run(
     report_time = ts + FREQUENCY - int(ts) % FREQUENCY
 
     active_connections = 0
-    
+
     while True:
         try:
             # read from the queue for stats or completion messages
@@ -312,7 +364,7 @@ def worker(
     workload: object,
     args: dict,
     iterations: int,
-    duration: int,
+    duration_endtime: float,
     conn_duration: int,
     conc: int,
     id_base_counter: int = 0,
@@ -330,7 +382,7 @@ def worker(
         workload (object): workload class object
         args (dict): args to init the workload class
         iterations (int): count of workload iteration before returning
-        duration (int): seconds before returning
+        duration_endtime (float): timestamp at which to stop and return
         conn_duration (int): seconds before restarting the database connection
         conc: (int): the total number of threads
         id_base_counter (int): the base counter to generate ID for each Process
@@ -340,7 +392,6 @@ def worker(
 
     def gracefully_return(msg):
         # send notification to MainThread
-        logger.debug("sending msg and final td")
         q.put(msg)
         # send final stats
         q.put(ws.get_tdigest_ndarray(), block=False)
@@ -378,7 +429,7 @@ def worker(
                         workload,
                         args,
                         iterations,
-                        duration,
+                        duration_endtime,
                         conn_duration,
                         conc,
                         None,
@@ -388,7 +439,6 @@ def worker(
                 )
             )
 
-        print("THREAD: ", len(threads), interval, thread_count)
         threading.Thread(
             target=ramp_up,
             daemon=True,
@@ -404,16 +454,13 @@ def worker(
         return
 
     c = 0
-    endtime = 0
+
     conn_endtime = 0
 
     ws = dbworkload.utils.common.WorkerStats()
 
-    if duration:
-        endtime = time.time() + duration
-
     run_init = True
-    
+
     # send notification that a new thread has started
     q.put("init")
 
@@ -464,7 +511,7 @@ def worker(
 
                     # return if the limits of either iteration count and duration have been reached
                     if (iterations and c >= iterations) or (
-                        duration and time.time() >= endtime
+                        duration_endtime and time.time() >= duration_endtime
                     ):
                         logger.debug("Task completed!")
                         return gracefully_return("task_done")
@@ -555,19 +602,6 @@ def print_stats(report: list):
         tabulate.tabulate(
             report,
             HEADERS,
-            intfmt=",",
-            floatfmt=",.2f",
-        ),
-        "\n",
-    )
-
-
-def print_final_stats(report: list):
-    print(
-        tabulate.tabulate(
-            report,
-            FINAL_HEADERS,
-            tablefmt="simple_outline",
             intfmt=",",
             floatfmt=",.2f",
         ),
