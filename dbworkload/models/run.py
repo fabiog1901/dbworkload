@@ -251,6 +251,7 @@ def run(
 
     stats = dbworkload.utils.common.Stats(prom_port)
 
+    iterations_per_thread = None
     if iterations:
         iterations_per_thread = iterations // concurrency
 
