@@ -164,3 +164,39 @@ def util_merge(
     csv_max_rows: int = Param.CSVMaxRows,
 ):
     dbworkload.models.util.util_merge(input, output, csv_max_rows)
+
+
+@app.command(
+    "plot",
+    epilog=EPILOG,
+    no_args_is_help=True,
+    help="Plot charts from the CSV statistic file.",
+)
+def util_plot(
+    input: Optional[Path] = typer.Option(
+        ...,
+        "--input",
+        "-i",
+        help="Input CSV file",
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        writable=False,
+        readable=True,
+        resolve_path=True,
+    ),
+    # output: Optional[Path] = typer.Option(
+    #     None,
+    #     "--output",
+    #     "-o",
+    #     show_default=False,
+    #     help="Output filepath. Defaults to <input>.merged.",
+    #     exists=False,
+    #     file_okay=True,
+    #     dir_okay=True,
+    #     writable=False,
+    #     readable=True,
+    #     resolve_path=True,
+    # ),
+):
+    dbworkload.models.util.util_plot(input)

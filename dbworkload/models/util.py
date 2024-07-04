@@ -2,10 +2,12 @@
 
 from io import TextIOWrapper
 import datetime as dt
+import dbworkload.utils.common
+import dbworkload.utils.simplefaker
 import logging
 import os
-import dbworkload.utils.simplefaker
-import dbworkload.utils.common
+import pandas as pd
+import plotext as plt
 import yaml
 
 logger = logging.getLogger("dbworkload")
@@ -247,3 +249,64 @@ def util_merge(input_dir: str, output_dir: str, csv_max_rows: int):
             logger.info("Completed")
 
     Merge(input_dir, output_dir, csv_max_rows).run()
+
+
+def util_plot(input: str):
+    df = pd.read_csv(
+        input,
+        header=0,
+        names=[
+            "elapsed",
+            "id",
+            "threads",
+            "tot_ops",
+            "tot_ops_s",
+            "period_ops",
+            "period_ops_s",
+            "mean_ms",
+            "p50_ms",
+            "p90_ms",
+            "p95_ms",
+            "p99_ms",
+            "max_ms",
+        ],
+    )
+
+    # define index column
+    df.set_index("elapsed", inplace=True)
+
+    # extract the list of ids
+    ids = df["id"].unique()
+
+    for id in ids:
+        p99 = df.loc[df["id"] == id, "p99_ms"]
+        p50 = df.loc[df["id"] == id, "p50_ms"]
+        threads = df.loc[df["id"] == id, "threads"]
+        qps = df.loc[df["id"] == id, "period_ops_s"]
+
+        plt.clf()
+        # divide figure horizontally into 2 subplots
+        plt.subplots(2, 1).plot_size(160, 160)
+
+        # top subplot
+        plt.subplot(1, 1)
+        plt.title(id)
+
+        plt.plot(p99.index, p99.values, label="p99_ms")
+        plt.plot(p50.index, p50.values, label="p50_ms", marker="dot")
+
+        # bottom subplot
+        plt.subplot(2, 1)
+        plt.xlabel("elapsed")
+
+        plt.plot(qps.index, qps.values, label="qps", color="red")
+        plt.plot(
+            threads.index, threads.values, label="threads", marker="dot", yside="right"
+        )
+        plt.yticks(range(max(threads.values) + 5), yside="right")
+        plt.yfrequency(10, yside="right")
+
+        plt.show()
+
+        # space it out
+        print("\n\n")

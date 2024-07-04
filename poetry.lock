@@ -486,6 +486,23 @@ pytz = ">=2020.1"
 test = ["hypothesis (>=5.5.3)", "pytest (>=6.0)", "pytest-xdist (>=1.31)"]
 
 [[package]]
+name = "plotext"
+version = "5.2.8"
+description = "plotext plots directly on terminal"
+category = "main"
+optional = false
+python-versions = ">=3.5"
+files = [
+    {file = "plotext-5.2.8-py3-none-any.whl", hash = "sha256:7364cf72e6c9bffaf96158340fd2e0058faf404edbbc1e7a2aed421c8638d475"},
+    {file = "plotext-5.2.8.tar.gz", hash = "sha256:319a287baabeb8576a711995f973a2eba631c887aa6b0f33ab016f12c50ffebe"},
+]
+
+[package.extras]
+completion = ["shtab"]
+image = ["pillow (>=8.4)"]
+video = ["ffpyplayer (>=4.3.5)", "opencv-python (>=4.5.5)", "pafy (>=0.5.5)", "pillow (>=8.4)", "youtube-dl (==2020.12.2)"]
+
+[[package]]
 name = "prometheus-client"
 version = "0.15.0"
 description = "Python client for the Prometheus monitoring system."
@@ -972,4 +989,4 @@ postgres = ["psycopg", "psycopg-binary"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "3f940b0f01ef234cf3b961f73713e0f1a1a574dbcb0c2ed1f43a0db58ec2a8ac"
+content-hash = "58b424c410af517e785ea21108aa3a452f20bf36ee42f4eb66d0f79bcbcbaa87"

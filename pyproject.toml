@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dbworkload"
-version = "0.0.8"
+version = "0.1.0"
 description = "Workload framework"
 authors = ["Fabio Ghirardello"]
 license = "GPLv3+"
@@ -33,6 +33,7 @@ pymongo = {version = "^4.7.2", optional = true}
 pyodbc = {version = "^5.1.0", optional = true}
 mariadb = {version = "^1.1.10", optional = true}
 pytdigest = "^0.1.4"
+plotext = "^5.2.8"
 
 [tool.poetry.extras]
 all =  ["psycopg", "psycopg-binary", "mysql-connector-python", "mariadb", "oracledb", "pyodbc", "pymongo", "cassandra-driver"]
