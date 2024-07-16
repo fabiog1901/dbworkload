@@ -166,6 +166,8 @@ def run(
             logger.info("Printing final stats")
             print_stats(report)
 
+        prom.publish(report)
+
         logger.info("Printing summary for the full test run")
 
         final_stats_report = tabulate.tabulate(
@@ -249,7 +251,9 @@ def run(
     # register Ctrl+C handler
     signal.signal(signal.SIGINT, signal_handler)
 
-    stats = dbworkload.utils.common.Stats(prom_port)
+    stats = dbworkload.utils.common.Stats()
+
+    prom = dbworkload.utils.common.Prom(prom_port)
 
     iterations_per_thread = None
     if iterations:
@@ -350,6 +354,8 @@ def run(
 
             if not quiet:
                 print_stats(report)
+
+            prom.publish(report)
 
             stats.new_window()
             report_time += FREQUENCY

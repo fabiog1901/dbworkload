@@ -62,10 +62,6 @@ def util_csv(
 
     csv_files = os.listdir(output_dir)
 
-    if not http_server_hostname:
-        http_server_hostname = dbworkload.utils.common.get_hostname()
-        logger.debug(f"Hostname identified as: '{http_server_hostname}'")
-
     for table_name in load.keys():
         print(
             dbworkload.utils.common.get_import_stmt(

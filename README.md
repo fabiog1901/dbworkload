@@ -230,24 +230,14 @@ dbworkload run -w bank.py -c 4 --uri 'postgres://fabio:postgres@localhost:5432/b
 `dbworkload` will output rolling statistics about throughput and latency for each transaction in your workload class
 
 ```text
-id               elapsed    tot_ops    tot_ops/s    period_ops    period_ops/s    mean(ms)    p50(ms)    p90(ms)    p95(ms)    p99(ms)    pMax(ms)
--------------  ---------  ---------  -----------  ------------  --------------  ----------  ---------  ---------  ---------  ---------  ----------
-__cycle__             10       3206       320.13          3206           320.6       11.4        0.49      23.31      23.97      25.13       54.63
-read                  10       1614       161.15          1614           161.4        0.19       0.17       0.28       0.31       0.4         1.82
-txn1_new              10       1596       159.34          1596           159.6        0.34       0.29       0.44       0.49       0.67       21.13
-txn2_verify           10       1594       159.13          1594           159.4       11.15      10.88      11.93      12.5       13.23       43.28
-txn3_finalize         10       1592       158.92          1592           159.2       11.23      10.94      12.02      12.68      13.37       39.77 
-
+  elapsed  id               threads    tot_ops    tot_ops/s    period_ops    period_ops/s    mean(ms)    p50(ms)    p90(ms)    p95(ms)    p99(ms)    max(ms)
+---------  -------------  ---------  ---------  -----------  ------------  --------------  ----------  ---------  ---------  ---------  ---------  ---------
+        8  __cycle__              4        190        23.00           190           19.00      107.20      53.90     200.14     200.71     202.06     204.84
+        8  read                   4         97        12.00            97            9.00       25.59      18.81      51.72      52.71      68.33      81.11
+        8  txn1_new               4         93        11.00            93            9.00       46.17      46.93      48.44      49.08      61.33      67.98
+        8  txn2_verify            4         93        11.00            93            9.00       76.12      83.02      84.46      84.56      95.24     102.75
+        8  txn3_finalize          4         93        11.00            93            9.00       69.99      69.03      80.65      83.21      93.16      99.95 
 [...]
-
-2024-05-17 15:28:11,589 [INFO] (MainProcess MainThread) run:194: Requested iteration/duration limit reached. Printing final stats
-id               elapsed    tot_ops    tot_ops/s    period_ops    period_ops/s    mean(ms)    p50(ms)    p90(ms)    p95(ms)    p99(ms)    pMax(ms)
--------------  ---------  ---------  -----------  ------------  --------------  ----------  ---------  ---------  ---------  ---------  ----------
-__cycle__            121      40639       336.43           251            25.1       11.55       0.44      24.1       24.9       25.99       26.38
-read                 121      20427       169.1            128            12.8        0.22       0.19       0.33       0.35       0.41        0.44
-txn1_new             121      20212       167.32           120            12          0.38       0.34       0.5        0.58       0.76        0.79
-txn2_verify          121      20212       167.32           121            12.1       11.38      11.17      12.65      12.93      13.38       13.39
-txn3_finalize        121      20212       167.32           123            12.3       11.54      11.41      12.73      13.03      13.55       13.97
 ```
 
 You can always use **pgAdmin** for PostgreSQL Server or the **DB Console** for CockroachDB to view your workload, too.
@@ -270,7 +260,7 @@ It’s helpful to understand first what `dbworkload` does:
 - In a loop, each `dbworkload` thread will:
   - execute function `loop()` which returns a list of functions.
   - execute each function in the list sequentially. Each function, typically, executes a SQL statement/transaction.
-- Execution stats are funneled back to the _MainThread_, which aggregates and prints them to _stdout_.
+- Execution stats are funneled back to the _MainThread_, which aggregates and, optionally, prints them to _stdout_ and saves them to a CSV file.
 - If the connection drops, it will recreate it. You can also program how long you want the connection to last.
 - `dbworkload` stops once a limit has been reached (iteration/duration), or you Ctrl+C.
 

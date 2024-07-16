@@ -1,18 +1,15 @@
 #!/usr/bin/python
 
-import http.server
 import importlib
 import logging
 import numpy as np
 import os
 import random
-import socket
-import socketserver
 import sys
 import time
 import urllib.parse
 import yaml
-import prometheus_client
+import prometheus_client as prom
 from pytdigest import TDigest
 
 RESERVED_WORDS = [
@@ -50,11 +47,51 @@ NOT_NULL_MAX = 40
 logger = logging.getLogger("dbworkload")
 
 
-class QuietServerHandler(http.server.SimpleHTTPRequestHandler):
-    """SimpleHTTPRequestHandler that doesn't output any log"""
+class Prom:
+    def __init__(self, prom_port: int = 26260):
+        self.prom_latency: dict[str, list[prom.Gauge]] = {}
 
-    def log_message(self, format, *args):
-        pass
+        prom.start_http_server(prom_port)
+
+        self.threads = prom.Gauge(
+            "threads", "count of connection threads to the database."
+        )
+
+    def publish(self, report: list):
+        for row in report:
+            id = row[1]
+
+            if id not in self.prom_latency:
+                self.prom_latency[id] = []
+                self.prom_latency[id].append(
+                    prom.Gauge(f"{id}__tot_ops", "total count of ops")
+                )
+                self.prom_latency[id].append(
+                    prom.Gauge(
+                        f"{id}__tot_ops_s", "derived value from tot_ops / elapsed"
+                    )
+                )
+                self.prom_latency[id].append(
+                    prom.Gauge(f"{id}__period_ops", "ops count for the recent window")
+                )
+                self.prom_latency[id].append(
+                    prom.Gauge(
+                        f"{id}__period_ops_s",
+                        "derived value from period_ops / window duration",
+                    )
+                )
+                self.prom_latency[id].append(prom.Gauge(f"{id}__mean_ms", "mean_ms"))
+                self.prom_latency[id].append(prom.Gauge(f"{id}__p50_ms", "p50_ms"))
+                self.prom_latency[id].append(prom.Gauge(f"{id}__p90_ms", "p90_ms"))
+                self.prom_latency[id].append(prom.Gauge(f"{id}__p95_ms", "p95_ms"))
+                self.prom_latency[id].append(prom.Gauge(f"{id}__p99_ms", "p99_ms"))
+                self.prom_latency[id].append(prom.Gauge(f"{id}__max_ms", "max_ms"))
+
+            for idx, v in enumerate(row[3:]):
+                self.prom_latency[id][idx].set(v)
+
+        # threads value is the same for all rows
+        self.threads.set(row[2])
 
 
 class Stats:
@@ -66,8 +103,6 @@ class Stats:
         self.cumulative_counts: dict[str, TDigest] = {}
         self.instantiation_time = time.time()
 
-        # self.prom_latency: dict[str, prometheus_client.Summary] = {}
-        # prometheus_client.start_http_server(prom_port)
         self.quantiles = [0.50, 0.90, 0.95, 0.99, 1.0]
 
         self.new_window()
@@ -84,13 +119,6 @@ class Stats:
             self.window_stats[x[0]].append(
                 TDigest(compression=1000).of_centroids(x[1], compression=1000)
             )
-
-        # if action not in self.prom_latency:
-        #     self.prom_latency[action] = prometheus_client.Summary(
-        #         f"latency_{action.replace(' ', '')}",
-        #         f"Latency for transaction {action}",
-        #     )
-        # self.prom_latency[action].observe(measurement)
 
     # calculate the current stats this instance has collected.
     def calculate_stats(self, active_connections: int, endtime: float = None) -> list:
@@ -281,34 +309,6 @@ def get_new_dburl(dburl: str, db_name: str):
     scheme, netloc, path, query_string, fragment = urllib.parse.urlsplit(dburl)
     path = "/" + db_name
     return urllib.parse.urlunsplit((scheme, netloc, path, query_string, fragment))
-
-
-def httpserver(path: str, port: int = 3000):
-    """Create simple http server
-
-    Args:
-        path (string): The directory to serve files from
-        port (int, optional): The http server listening port. Defaults to 3000.
-    """
-    os.chdir(path)
-
-    try:
-        with socketserver.TCPServer(
-            server_address=("", port), RequestHandlerClass=QuietServerHandler
-        ) as httpd:
-            httpd.serve_forever()
-    except OSError as e:
-        logger.error(e)
-        return
-
-
-def get_hostname():
-    """Get the hostname of the current host
-
-    Returns:
-        (str): the hostname
-    """
-    return socket.gethostname()
 
 
 def ddl_to_yaml(ddl: str):
