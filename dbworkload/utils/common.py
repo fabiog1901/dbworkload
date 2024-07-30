@@ -91,7 +91,8 @@ class Prom:
                 self.prom_latency[id][idx].set(v)
 
         # threads value is the same for all rows
-        self.threads.set(row[2])
+        if report:
+            self.threads.set(report[0][2])
 
 
 class Stats:
