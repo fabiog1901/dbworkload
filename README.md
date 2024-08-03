@@ -142,6 +142,10 @@ Let's run the sample **Bank** workload.
 ### Step 0 - env setup
 
 ```bash
+# using ubuntu 20.04 LTS
+sudo apt update
+sudo apt install -y python3-pip
+
 # upgrade pip - must have pip version 20.3+ 
 pip3 install --upgrade pip
 
