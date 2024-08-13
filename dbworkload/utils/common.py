@@ -360,20 +360,30 @@ def ddl_to_yaml(ddl: str):
             }
 
         elif datatype.lower() in [
-            "int",
-            "integer",
             "int2",
+            "smallint",
             "int4",
             "int8",
             "int64",
             "bigint",
-            "smallint",
+            "int",
+            "integer",
         ]:
+            if datatype.lower() in ["int2", "smallint"]:
+                int_min = -(2**15) + 1
+                int_max = 2**15 - 1
+            elif datatype.lower() == "int4":
+                int_min = -(2**31) + 1
+                int_max = 2**31 - 1
+            else:
+                int_min = -(2**63) + 1
+                int_max = 2**63 - 1
+
             return {
                 "type": "integer",
                 "args": {
-                    "min": 0,
-                    "max": 1000000,
+                    "min": int_min,
+                    "max": int_max,
                     "seed": random.random(),
                     "null_pct": (
                         0.0
@@ -708,30 +718,30 @@ def get_import_stmts(
     delimiter: str = "",
     nullif: str = "",
 ):
-    
+
     def chunks(lst, n):
         """Yield successive n-sized chunks from lst."""
         for i in range(0, len(lst), n):
-            yield lst[i:i + n]
-        
+            yield lst[i : i + n]
+
     chunk_gen = chunks(csv_files, 20)
     stmts = []
-    
+
     if delimiter == "\t":
         delimiter_option = "e'\\t', "
     else:
         delimiter_option = f"'{delimiter}', "
-        
+
     prefix = f"IMPORT INTO {table_name} CSV DATA ("
-    mid = ") WITH delimiter = " 
+    mid = ") WITH delimiter = "
     suffix = f"nullif = '{nullif}';"
-    
+
     for chunk in chunk_gen:
         csv_data = ""
-        
+
         for x in chunk:
             csv_data += f"'http://{http_server_hostname}:{http_server_port}/{x}', "
-            
+
         stmts.append(prefix + csv_data[:-2] + mid + delimiter_option + suffix)
-    
+
     return stmts

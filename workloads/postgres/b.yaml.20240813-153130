@@ -1,0 +1,28 @@
+ref_data:
+- count: 100
+  sort-by: []
+  columns:
+    my_2:
+      type: integer
+      args:
+        min: -32767
+        max: 32767
+        seed: 0.2138055877164602
+        null_pct: 0.34
+        array: 0
+    my_4:
+      type: integer
+      args:
+        min: -9223372036854775807
+        max: 9223372036854775807
+        seed: 0.0985841426459434
+        null_pct: 0.25
+        array: 0
+    my_8:
+      type: integer
+      args:
+        min: -9223372036854775807
+        max: 9223372036854775807
+        seed: 0.43454625217097254
+        null_pct: 0.4
+        array: 0
