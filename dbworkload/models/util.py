@@ -22,7 +22,6 @@ def util_csv(
     delimiter: str,
     http_server_hostname: str,
     http_server_port: str,
-    table_name: str,
 ):
     """Wrapper around SimpleFaker to create CSV datasets
     given an input YAML data gen definition file
@@ -63,16 +62,18 @@ def util_csv(
     csv_files = os.listdir(output_dir)
 
     for table_name in load.keys():
-        print(
-            dbworkload.utils.common.get_import_stmt(
-                [x for x in csv_files if x.startswith(table_name)],
-                table_name,
-                http_server_hostname,
-                http_server_port,
-                delimiter,
-                "",
-            )
-        )
+        print(f"=== IMPORT STATEMENTS FOR TABLE {table_name} ===\n")
+        
+        for s in dbworkload.utils.common.get_import_stmts(
+            [x for x in csv_files if x.startswith(table_name)],
+            table_name,
+            http_server_hostname,
+            http_server_port,
+            delimiter,
+            "",
+        ):
+            print(s, '\n')
+
         print()
 
 

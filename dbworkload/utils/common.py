@@ -700,7 +700,7 @@ def get_threads_per_proc(procs: int, threads: int):
     return l
 
 
-def get_import_stmt(
+def get_import_stmts(
     csv_files: list,
     table_name: str,
     http_server_hostname: str = "myhost",
@@ -708,23 +708,30 @@ def get_import_stmt(
     delimiter: str = "",
     nullif: str = "",
 ):
-    csv_data = ""
-    for x in csv_files:
-        csv_data += "'http://%s:%s/%s'," % (http_server_hostname, http_server_port, x)
-
+    
+    def chunks(lst, n):
+        """Yield successive n-sized chunks from lst."""
+        for i in range(0, len(lst), n):
+            yield lst[i:i + n]
+        
+    chunk_gen = chunks(csv_files, 20)
+    stmts = []
+    
     if delimiter == "\t":
-        return (
-            "IMPORT INTO %s CSV DATA (%s) WITH delimiter = e'\\t', nullif = '%s';"
-            % (
-                table_name,
-                csv_data[:-1],
-                nullif,
-            )
-        )
+        delimiter_option = "e'\\t', "
     else:
-        return "IMPORT INTO %s CSV DATA (%s) WITH delimiter = '%s', nullif = '%s';" % (
-            table_name,
-            csv_data[:-1],
-            delimiter,
-            nullif,
-        )
+        delimiter_option = f"'{delimiter}', "
+        
+    prefix = f"IMPORT INTO {table_name} CSV DATA ("
+    mid = ") WITH delimiter = " 
+    suffix = f"nullif = '{nullif}';"
+    
+    for chunk in chunk_gen:
+        csv_data = ""
+        
+        for x in chunk:
+            csv_data += f"'http://{http_server_hostname}:{http_server_port}/{x}', "
+            
+        stmts.append(prefix + csv_data[:-2] + mid + delimiter_option + suffix)
+    
+    return stmts
