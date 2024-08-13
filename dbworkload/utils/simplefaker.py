@@ -678,12 +678,19 @@ class SimpleFaker:
             count = 1
             rem = 0
 
-        if compression == "gzip":
-            suffix = ".csv.gz"
-        elif compression == "zip":
-            suffix = ".csv.zip"
+        if separator == "\t":
+            suffix = ".tsv"
         else:
             suffix = ".csv"
+        
+        if compression == "gzip":
+            suffix += ".gz"
+        elif compression == "zip":
+            suffix += ".zip"
+        elif compression == "bz2":
+            suffix += ".bz2"
+        elif compression == "xz":
+            suffix += ".xz"
 
         for x in range(count):
             try:

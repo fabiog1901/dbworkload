@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from pathlib import Path
+from enum import Enum
 from typing import Optional
 import dbworkload.models.run
 import dbworkload.models.util
@@ -8,6 +9,12 @@ import dbworkload.utils.common
 from dbworkload.cli.dep import Param, EPILOG
 import typer
 
+
+class Compression(str, Enum):
+    bz2 = "bz2"
+    gzip = "gzip"
+    xz = "xz"
+    zip = "zip"
 
 app = typer.Typer(
     epilog=EPILOG,
@@ -51,7 +58,7 @@ def util_csv(
     procs: int = Param.Procs,
     csv_max_rows: int = Param.CSVMaxRows,
     http_server_hostname: str = typer.Option(
-        None,
+        "localhost",
         "-n",
         "--hostname",
         show_default=False,
@@ -69,8 +76,11 @@ def util_csv(
         "-t",
         help="The table name used in the import statement.",
     ),
-    compression: str = typer.Option(
-        None, "-c", "--compression", help="The compression format."
+    compression: Compression = typer.Option(
+        None,
+        "-c",
+        "--compression",
+        help="The compression format.",
     ),
     delimiter: str = typer.Option(
         "\t",
@@ -89,7 +99,6 @@ def util_csv(
         delimiter=delimiter,
         http_server_hostname=http_server_hostname,
         http_server_port=http_server_port,
-        table_name=table_name,
     )
 
 
