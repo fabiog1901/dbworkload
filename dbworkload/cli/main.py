@@ -1,19 +1,19 @@
 #!/usr/bin/python
 
-from dbworkload.cli.dep import Param, EPILOG, ConnInfo
 from .. import __version__
+from dbworkload.cli.dep import Param, EPILOG, ConnInfo
 from enum import Enum
 from pathlib import Path
 from typing import Optional
-import json
-import logging
-import os
+from urllib.parse import urlparse
 import dbworkload.cli.util
 import dbworkload.models.run
 import dbworkload.models.util
 import dbworkload.utils.common
+import json
+import logging
+import os
 import platform
-import re
 import sys
 import typer
 import yaml
@@ -74,18 +74,6 @@ def run(
         "--uri",
         help="The connection URI to the database.",
     ),
-    # conn_args_file: Optional[Path] = typer.Option(
-    #     None,
-    #     "--conn-args-file",
-    #     "-i",
-    #     help="Filepath to the connection arguments file.",
-    #     exists=True,
-    #     file_okay=True,
-    #     dir_okay=False,
-    #     writable=False,
-    #     readable=True,
-    #     resolve_path=True,
-    # ),
     procs: int = Param.Procs,
     args: str = typer.Option(
         None, help="JSON string, or filepath to a JSON/YAML file, to pass to Workload."
@@ -160,9 +148,14 @@ def run(
     conn_info = ConnInfo()
 
     # check if the uri parameter is actually a URI
-    if re.search(r".*://.*/(.*)\?", uri):
-        driver = dbworkload.utils.common.get_driver_from_uri(uri)
+    parse_result = urlparse(uri)
 
+    if parse_result.scheme:
+        driver = dbworkload.utils.common.get_driver_from_scheme(parse_result.scheme)
+        if driver is None:
+            logger.error(f"Could not find a driver for URI scheme '{parse_result.scheme}'.")
+            sys.exit(1)
+            
         if get_app_name(driver):
             uri = dbworkload.utils.common.set_query_parameter(
                 url=uri,
@@ -177,7 +170,9 @@ def run(
             conn_info.params["host"] = uri
 
     else:
-        # if not, split the key-value pairs
+        # if not, the uri is a string like
+        # 'user=user1,password=password1,host=localhost,port=3306,database=bank'
+        # so we split the key-value pairs
         for pair in uri.replace(" ", "").split(","):
             k, v = pair.split("=")
             if v.isdigit():

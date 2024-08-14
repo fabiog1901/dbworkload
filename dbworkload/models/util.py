@@ -63,7 +63,7 @@ def util_csv(
 
     for table_name in load.keys():
         print(f"=== IMPORT STATEMENTS FOR TABLE {table_name} ===\n")
-        
+
         for s in dbworkload.utils.common.get_import_stmts(
             [x for x in csv_files if x.startswith(table_name)],
             table_name,
@@ -72,7 +72,7 @@ def util_csv(
             delimiter,
             "",
         ):
-            print(s, '\n')
+            print(s, "\n")
 
         print()
 

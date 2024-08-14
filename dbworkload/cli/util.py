@@ -16,6 +16,7 @@ class Compression(str, Enum):
     xz = "xz"
     zip = "zip"
 
+
 app = typer.Typer(
     epilog=EPILOG,
     no_args_is_help=True,

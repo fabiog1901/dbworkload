@@ -188,25 +188,20 @@ class WorkerStats:
         ]
 
 
-def get_driver_from_uri(uri: str):
-    scheme, _, _, _, _, _ = urllib.parse.urlparse(uri)
-
-    if scheme in ["postgres", "postgresql"]:
-        return "postgres"
-    elif scheme in ["mongo", "mongodb", "mongodb+srv"]:
-        return "mongo"
-    elif scheme in ["mysql", "mysqldb"]:
-        return "mysql"
-    elif scheme in ["maria", "mariadb"]:
-        return "maria"
-    elif scheme == "oracle":
-        return "oracle"
-    elif scheme == "cassandra":
-        return "cassandra"
-    elif scheme == "sqlserver":
-        return "sqlserver"
-    else:
-        raise ValueError(f"Invalid scheme '{scheme}' from URI: {uri}")
+def get_driver_from_scheme(scheme: str):
+    return {
+        "postgres": "postgres",
+        "postgresql": "postgres",
+        "mongo": "mongo",
+        "mongodb": "mongo",
+        "maria": "maria",
+        "mariadb": "maria",
+        "mysql": "mysql",
+        "mysqldb": "mysql",
+        "oracle": "oracle",
+        "cassandra": "cassandra",
+        "sqlserver": "sqlserver",
+    }.get(scheme, None)
 
 
 def set_query_parameter(url: str, param_name: str, param_value: str):
@@ -718,7 +713,6 @@ def get_import_stmts(
     delimiter: str = "",
     nullif: str = "",
 ):
-
     def chunks(lst, n):
         """Yield successive n-sized chunks from lst."""
         for i in range(0, len(lst), n):

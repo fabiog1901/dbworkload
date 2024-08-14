@@ -682,7 +682,7 @@ class SimpleFaker:
             suffix = ".tsv"
         else:
             suffix = ".csv"
-        
+
         if compression == "gzip":
             suffix += ".gz"
         elif compression == "zip":
