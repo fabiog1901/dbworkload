@@ -250,7 +250,7 @@ def run(
     global kill_q
     global q
     start_time = int(time.time())
-    
+
     # the offset registers at what second we want all threads
     # to send the stat report, so they all send it at the same time
     offset = start_time % FREQUENCY
@@ -692,7 +692,7 @@ def get_connection(driver: str, conn_info: ConnInfo):
     if driver == "postgres":
         import psycopg
 
-        return psycopg.connect(**conn_info.params)
+        return psycopg.connect(**conn_info.params, connect_timeout=5)
     elif driver == "mysql":
         import mysql.connector
 

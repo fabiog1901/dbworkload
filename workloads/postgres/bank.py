@@ -38,13 +38,9 @@ class Bank:
     # Once every func has been executed, run() is re-evaluated.
     # This process continues until dbworkload exits.
     def loop(self):
-        return [self.mona]
         if random.random() < self.read_pct:
             return [self.read]
         return [self.txn1_new, self.txn2_verify, self.txn3_finalize]
-
-    def mona(self, conn):
-        time.sleep(0.1)
 
     # conn is an instance of a psycopg connection object
     # conn is set by default with autocommit=True, so no need to send a commit message
