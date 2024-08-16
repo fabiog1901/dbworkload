@@ -153,9 +153,11 @@ def run(
     if parse_result.scheme:
         driver = dbworkload.utils.common.get_driver_from_scheme(parse_result.scheme)
         if driver is None:
-            logger.error(f"Could not find a driver for URI scheme '{parse_result.scheme}'.")
+            logger.error(
+                f"Could not find a driver for URI scheme '{parse_result.scheme}'."
+            )
             sys.exit(1)
-            
+
         if get_app_name(driver):
             uri = dbworkload.utils.common.set_query_parameter(
                 url=uri,

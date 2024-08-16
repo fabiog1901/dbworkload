@@ -40,7 +40,6 @@ RESERVED_WORDS = [
 ]
 
 DEFAULT_ARRAY_COUNT = 3
-SUPPORTED_DBMS = ["PostgreSQL", "CockroachDB"]
 NOT_NULL_MIN = 20
 NOT_NULL_MAX = 40
 
@@ -100,17 +99,17 @@ class Stats:
     and export the stats as Prometheus endpoints
     """
 
-    def __init__(self, prom_port: int = 26260):
+    def __init__(self, ts: int):
         self.cumulative_counts: dict[str, TDigest] = {}
-        self.instantiation_time = time.time()
+        self.instantiation_time = ts
 
         self.quantiles = [0.50, 0.90, 0.95, 0.99, 1.0]
 
-        self.new_window()
+        self.new_window(ts)
 
     # reset stats while keeping cumulative counts
-    def new_window(self) -> None:
-        self.window_start_time: float = time.time()
+    def new_window(self, start_time) -> None:
+        self.window_start_time: int = start_time
         self.window_stats: dict[str, list] = {}
 
     def add_tds(self, l: list):
@@ -122,41 +121,36 @@ class Stats:
             )
 
     # calculate the current stats this instance has collected.
-    def calculate_stats(self, active_connections: int, endtime: float = None) -> list:
+    def calculate_stats(self, active_connections: int, endtime: int) -> list:
         def get_stats_row(id: str):
-            if endtime:
-                elapsed: float = endtime - self.instantiation_time
-            else:
-                elapsed: float = time.time() - self.instantiation_time
+            elapsed = endtime - self.instantiation_time
 
             td = TDigest(compression=1000).combine(self.window_stats[id])
             self.cumulative_counts[id] = TDigest(compression=1000).combine(
                 self.cumulative_counts[id], td
             )
             return [
-                int(elapsed),
+                elapsed,
                 id,
                 active_connections,
                 int(self.cumulative_counts[id].weight),
-                self.cumulative_counts[id].weight // elapsed,
+                int(self.cumulative_counts[id].weight // elapsed),
                 int(td.weight),
-                td.weight // 10,  # TODO fix as the window is not always 10s
+                int(td.weight // (endtime - self.window_start_time)),
                 round(td.mean * 1000, 2),
             ] + [round(x * 1000, 2) for x in td.inverse_cdf(self.quantiles)]
 
         return [get_stats_row(id) for id in sorted(list(self.window_stats.keys()))]
 
-    def calculate_final_stats(
-        self, active_connections: int, endtime: float = None
-    ) -> list:
+    def calculate_final_stats(self, active_connections: int, endtime: int) -> list:
         def get_stats_row(id: str):
-            elapsed: float = endtime - self.instantiation_time
+            elapsed = endtime - self.instantiation_time
             return [
-                int(elapsed),
+                elapsed,
                 id,
                 active_connections,
                 int(self.cumulative_counts[id].weight),
-                self.cumulative_counts[id].weight // elapsed,
+                int(self.cumulative_counts[id].weight // elapsed),
                 round(self.cumulative_counts[id].mean * 1000, 2),
             ] + [
                 round(x * 1000, 2)

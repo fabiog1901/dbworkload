@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 from dbworkload.cli.dep import ConnInfo
-import datetime as dt
 import dbworkload.utils.common
 import logging
 import logging.handlers
@@ -109,6 +108,7 @@ def signal_handler(sig, frame):
 def ramp_up(
     processes: list, interval: int, threads_per_proc: list, init_sleep: int = 0
 ):
+    """Start each process in the list sequentially respecting the interval between each process"""
     time.sleep(init_sleep)
     for i, p in enumerate(processes):
         logger.debug("Starting a new Process...")
@@ -136,18 +136,23 @@ def run(
     log_level: str,
 ):
     def gracefully_shutdown():
-        # wait for final stats reports to come in,
-        # then print final stats and quit
+        """
+        wait for final stat reports to come in,
+        then print final stats and quit
+        """
 
-        end_time: dt.datetime = dt.datetime.utcnow()
-        end_time2: float = time.time()
+        end_time = int(time.time())
+        _s = stats_received
 
         while True:
             try:
-                msg = q.get(block=True, timeout=3.0)
+                msg = q.get(block=True, timeout=2.0)
 
                 if isinstance(msg, list):
+                    _s += 1
                     stats.add_tds(msg)
+                    if _s >= active_connections:
+                        break
                 else:
                     logger.error("Timed out, quitting")
                     sys.exit(1)
@@ -155,7 +160,8 @@ def run(
             except queue.Empty:
                 break
 
-        report = stats.calculate_stats(active_connections, end_time2)
+        # now that we have all stat reports, calculate the stats one last time.
+        report = stats.calculate_stats(active_connections, end_time)
 
         if save:
             pd.DataFrame(report).to_csv(
@@ -170,8 +176,9 @@ def run(
 
         logger.info("Printing summary for the full test run")
 
+        # the final stat report summarizes the entire test run
         final_stats_report = tabulate.tabulate(
-            stats.calculate_final_stats(active_connections, end_time2),
+            stats.calculate_final_stats(active_connections, end_time),
             FINAL_HEADERS,
             tablefmt="simple_outline",
             intfmt=",",
@@ -196,9 +203,12 @@ def run(
         runtime_details = tabulate.tabulate(
             [
                 ["run_name", run_name],
-                ["start_time", start_time.strftime("%Y-%m-%d %H:%M:%S")],
-                ["end_time", end_time.strftime("%Y-%m-%d %H:%M:%S")],
-                ["test_duration", int((end_time - start_time).total_seconds())],
+                [
+                    "start_time",
+                    time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(start_time)),
+                ],
+                ["end_time", time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(end_time))],
+                ["test_duration", int(end_time - start_time)],
             ],
         )
 
@@ -239,10 +249,20 @@ def run(
 
     global kill_q
     global q
-    start_time = dt.datetime.utcnow()
+    start_time = int(time.time())
+    
+    # the offset registers at what second we want all threads
+    # to send the stat report, so they all send it at the same time
+    offset = start_time % FREQUENCY
     workload = dbworkload.utils.common.import_class_at_runtime(workload_path)
 
-    run_name = workload.__name__ + "." + start_time.strftime("%Y%m%d_%H%M%S")
+    run_name = (
+        workload.__name__
+        + "."
+        + time.strftime("%Y%m%d_%H%M%S", time.gmtime(start_time))
+    )
+
+    logger.info(f"Starting workload {run_name}")
 
     # open a new csv file and just write the header columns
     if save:
@@ -251,7 +271,7 @@ def run(
     # register Ctrl+C handler
     signal.signal(signal.SIGINT, signal_handler)
 
-    stats = dbworkload.utils.common.Stats()
+    stats = dbworkload.utils.common.Stats(start_time)
 
     prom = dbworkload.utils.common.Prom(prom_port)
 
@@ -266,8 +286,7 @@ def run(
     q = mp.Queue(maxsize=0)
     kill_q = mp.Queue(maxsize=concurrency)
 
-    c = 0
-
+    # calculate the ramp up schedule, if any
     threads_per_proc = dbworkload.utils.common.get_threads_per_proc(procs, conc)
     ramp_interval = ramp // conc
 
@@ -294,6 +313,7 @@ def run(
                     duration_endtime,
                     conn_duration,
                     conc,
+                    offset,
                     id_base_counter,
                     id_base_counter,
                     driver,
@@ -303,15 +323,20 @@ def run(
         )
         id_base_counter += x
 
+    # starting the actual processes is done by the ramp_up method,
+    # executed asynchronously, in its own thread
     threading.Thread(
         target=ramp_up, daemon=True, args=(processes, ramp_interval, threads_per_proc)
     ).start()
 
-    # send stats when epoch % 10 == 0
-    ts = time.time()
-    report_time = ts + FREQUENCY - int(ts) % FREQUENCY
+    # report time happens 2 seconds after the stats are received.
+    # we add this buffer to make sure we get all the stats reports
+    # from each thread before we aggregate and display
+    report_time = start_time + FREQUENCY + 2
 
+    returned_threads = 0
     active_connections = 0
+    stats_received = 0
 
     while True:
         try:
@@ -319,19 +344,22 @@ def run(
             msg = q.get(block=False)
             # a stats report is a list obj
             if isinstance(msg, list):
+                stats_received += 1
                 stats.add_tds(msg)
             elif msg == "init":
                 active_connections += 1
             else:
-                # if it's not a stat message, then the worker returned
-                c += 1
+                # the worker returned
+                # the mmsg is either a 'task_done' or 'poison_pill',
+                # depending on the reason why the thread returned
+                returned_threads += 1
         except queue.Empty:
             pass
 
         # once the sum of the completion messages matches
         # the count of threads, identify what type of
         # completion message it was
-        if c > 0 and c >= active_connections:
+        if returned_threads > 0 and returned_threads >= active_connections:
             if msg == "task_done":
                 logger.info("Requested iteration/duration limit reached")
                 gracefully_shutdown()
@@ -345,7 +373,15 @@ def run(
                 sys.exit(1)
 
         if time.time() >= report_time:
-            report = stats.calculate_stats(active_connections)
+            if stats_received != active_connections:
+                logger.warning("didn't receive all stats reports yet")
+
+            # remove the 2 seconds added
+            endtime = int(time.time()) - 2
+
+            report = stats.calculate_stats(active_connections, endtime)
+            stats.new_window(endtime)
+            stats_received = 0
 
             if save:
                 pd.DataFrame(report).to_csv(
@@ -357,7 +393,6 @@ def run(
 
             prom.publish(report)
 
-            stats.new_window()
             report_time += FREQUENCY
 
 
@@ -374,6 +409,7 @@ def worker(
     duration_endtime: float,
     conn_duration: int,
     conc: int,
+    offset: int,
     id_base_counter: int = 0,
     id: int = 0,
     driver: str = None,
@@ -439,6 +475,7 @@ def worker(
                         duration_endtime,
                         conn_duration,
                         conc,
+                        offset,
                         None,
                         id_base_counter + i + 1,
                         driver,
@@ -446,6 +483,7 @@ def worker(
                 )
             )
 
+        # starting each Thread is done by the ramp_up in its own thread
         threading.Thread(
             target=ramp_up,
             daemon=True,
@@ -480,7 +518,8 @@ def worker(
         try:
             kill_q.get(block=False)
             logger.debug("Poison pill received")
-            return gracefully_return("poison_pill")
+            gracefully_return("poison_pill")
+            return
         except queue.Empty:
             pass
 
@@ -503,9 +542,9 @@ def worker(
                             max_retries=MAX_RETRIES,
                         )
 
-                # send stats when epoch % 10 == 8 (8, 18, 28, ...)
-                ts = time.time()
-                stat_time = ts + FREQUENCY - int(ts) % FREQUENCY - 2
+                # send stats
+                ts = int(time.time())
+                stat_time = ts + FREQUENCY - ts % FREQUENCY + offset
 
                 while True:
                     # listen for termination messages (poison pill)
@@ -521,7 +560,8 @@ def worker(
                         duration_endtime and time.time() >= duration_endtime
                     ):
                         logger.debug("Task completed!")
-                        return gracefully_return("task_done")
+                        gracefully_return("task_done")
+                        return
 
                     # break from the inner loop if limit for connection duration has been reached
                     # this will cause for the outer loop to reset the timer and restart with a new conn
