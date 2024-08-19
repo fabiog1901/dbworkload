@@ -580,7 +580,7 @@ def ddl_to_yaml(ddl: str):
         p1 = create_table_stmt.find("(")
 
         # find CREATE TABLE closing parenthesis
-        within_brackets = 1
+        within_brackets = 0
         for i, c in enumerate(create_table_stmt[p1:]):
             if c == "(":
                 within_brackets += 1
@@ -591,7 +591,7 @@ def ddl_to_yaml(ddl: str):
 
         # extract column definitions (within parentheses part)
         # eg: id uuid primary key, s string(30)
-        col_def_raw = create_table_stmt[p1 + 1 : p1 + i].strip()
+        col_def_str = create_table_stmt[p1 + 1 : p1 + i].strip()
 
         # find table name (before parenthesis part)
         for i in create_table_stmt[:p1].split():
@@ -599,9 +599,13 @@ def ddl_to_yaml(ddl: str):
                 table_name = i.replace(".", "__")
                 break
 
+        # process the content within parenthesis in the
+        # CREATE TABLE stmt char by char to distinguish
+        # the comma for separating columns vs the comma to separate
+        # decimal precision
         within_brackets = 0
         col_def = ""
-        for i in col_def_raw:
+        for i in col_def_str:
             if i == "(":
                 within_brackets += 1
                 col_def += " "
@@ -619,15 +623,13 @@ def ddl_to_yaml(ddl: str):
 
         ll = []
         for x in col_def:
-            # remove commented lines
-            if not x.startswith("--"):
-                # break it down to tokens
-                col_name_and_type = x.strip().split(" ")
-                col_name_and_type = [x for x in col_name_and_type if x]
-                # remove those lines that are not column definition,
-                # like CONSTRAINT, INDEX, FAMILY, etc..
-                if col_name_and_type[0].lower() not in RESERVED_WORDS:
-                    ll.append(col_name_and_type)
+            # break it down to tokens
+            col_name_and_type = x.strip().split(" ")
+            col_name_and_type = [x for x in col_name_and_type if x]
+            # remove those lines that are not column definition,
+            # like CONSTRAINT, INDEX, FAMILY, etc..
+            if col_name_and_type[0].lower() not in RESERVED_WORDS:
+                ll.append(col_name_and_type)
 
         table_list = []
         table_list.append({"count": count})
@@ -648,20 +650,46 @@ def ddl_to_yaml(ddl: str):
         Returns:
             list: the list of CREATE TABLE stmts
         """
+        # remove all the multiline comments
+        # delimited by /* and */
+        while True:
+            i = ddl.find("/*")
+            j = ddl.find("*/")
 
-        # separate input into a 'create table' stmts list
-        stmts = " ".join(x.lower() for x in ddl.split())
+            if i < 0:
+                break
+            ddl = ddl[:i] + ddl[j + 2 :]
 
-        # strip whitespace and remove empty items
-        stmts = [x.strip() for x in stmts.split(";") if x != ""]
+        # given the whole ddl string,
+        # line by line, remove empty lines and
+        # all the comment lines
+        # and return a list of lines, stripped of any whitespace
+        stmts = []
 
-        # keep only string that start with 'create' and
+        for s in ddl.split("\n"):
+            s = s.strip()
+
+            i = s.find("--")
+            if i >= 0:
+                s = s[:i]
+
+            if s:
+                stmts.append(s)
+
+        # rejoin the lines into a new, clean ddl string
+        clean_ddl = " ".join(stmts)
+
+        # split the clean string by semicolon to get a list
+        # of SQL statements
+        stmts = [s.strip() for s in clean_ddl.split(";")]
+
+        # keep only strings that start with 'create' and
         # have word 'table' between beginning and the first open parenthesis
-        create_table_stmts = []
-        for stmt in stmts:
-            if stmt.startswith("create") and "table" in stmt[: stmt.find("(")].lower():
-                create_table_stmts.append(stmt)
-        return create_table_stmts
+        return [
+            s
+            for s in stmts
+            if s.lower().startswith("create") and "table" in s[: s.find("(")].lower()
+        ]
 
     stmts = get_create_table_stmts(ddl)
 
