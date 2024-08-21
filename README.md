@@ -2,13 +2,28 @@
 
 ## Overview
 
-The goal of `dbworkload` is to ease the creation of workload scripts by providing a utility with the most common functionality already implemented.
+The goal of `dbworkload` is to ease the creation and execution of bespoke database workload scripts.
 
-`dbworkload` is run in conjunction with a user supplied Python `class`. This class defines the workload transactions and flow.
+The user is responsible for coding the workload logic as a Python `class`,
+while `dbworkload` takes care of providing ancillary features, such as configuring the
+workload concurrency, duration and/or iteration, and more.
 
-The user has complete control of what statements the transactions actually execute, and what transactions are executed in which order.
+The user, by coding the class, has complete control of the workload flow:
+what transactions are executed in which order, and what statements are included in each transaction,
+plus what data to insert and how to generate it and manipulate it.
 
-`dbworkload` can seed a database with random generated data, whose definition is supplied in a YAML file and can be extracted from a DDL SQL file.
+### Database seeding
+
+`dbworkload` can help with seeding a database by creating CSV files with random generated data,
+whose definition is supplied in a YAML file and can be extracted from a DDL SQL file.
+
+### Software requirements
+
+`dbworkload` requires at least Python 3.8 and the `pip` utility, installed and upgraded.
+
+`dbworkload` dependencies are installed automatically by the `pip` tool.
+
+It has run successfully on Ubuntu 20.04+, MacOSX on both Intel and Apple silicone.
 
 ## Supported DBMS drivers
 
