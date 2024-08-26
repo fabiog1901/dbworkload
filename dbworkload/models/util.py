@@ -253,6 +253,7 @@ def util_plot(input: str):
         input,
         header=0,
         names=[
+            "ts",
             "elapsed",
             "id",
             "threads",
@@ -266,6 +267,7 @@ def util_plot(input: str):
             "p95_ms",
             "p99_ms",
             "max_ms",
+            "centroids"
         ],
     )
 
