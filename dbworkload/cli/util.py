@@ -71,12 +71,6 @@ def util_csv(
         "--port",
         help="The port of the http server that servers the CSV files.",
     ),
-    table_name: str = typer.Option(
-        "table_name",
-        "--table-name",
-        "-t",
-        help="The table name used in the import statement.",
-    ),
     compression: Compression = typer.Option(
         None,
         "-c",
