@@ -112,6 +112,9 @@ class Stats:
         self.window_start_time: int = start_time
         self.window_stats: dict[str, list] = {}
 
+        # hold the ndarray of the combined tdigest
+        self.window_stats_centroids: dict[str, np.ndarray] = {}
+
     def add_tds(self, l: list):
         for x in l:
             self.cumulative_counts.setdefault(x[0], TDigest())
@@ -122,10 +125,15 @@ class Stats:
 
     # calculate the current stats this instance has collected.
     def calculate_stats(self, active_connections: int, endtime: int) -> list:
+        self.endtime = endtime
+        elapsed = endtime - self.instantiation_time
+
         def get_stats_row(id: str):
-            elapsed = endtime - self.instantiation_time
 
             td = TDigest(compression=1000).combine(self.window_stats[id])
+
+            self.window_stats_centroids[id] = td.get_centroids()
+
             self.cumulative_counts[id] = TDigest(compression=1000).combine(
                 self.cumulative_counts[id], td
             )
@@ -158,6 +166,12 @@ class Stats:
             ]
 
         return [get_stats_row(id) for id in sorted(list(self.window_stats.keys()))]
+
+    def get_centroids(self):
+        return iter([
+            self.window_stats_centroids[x]
+            for x in sorted(list(self.window_stats_centroids.keys()))
+        ])
 
 
 class WorkerStats:

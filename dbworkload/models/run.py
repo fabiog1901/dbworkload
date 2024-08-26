@@ -5,7 +5,7 @@ import dbworkload.utils.common
 import logging
 import logging.handlers
 import multiprocessing as mp
-import pandas as pd
+import numpy as np
 import queue
 import random
 import signal
@@ -49,6 +49,7 @@ HEADERS: list = [
 ]
 
 HEADERS_CSV: list = [
+    "ts",
     "elapsed",
     "id",
     "threads",
@@ -62,6 +63,7 @@ HEADERS_CSV: list = [
     "p95_ms",
     "p99_ms",
     "max_ms",
+    "centroids"
 ]
 
 FINAL_HEADERS: list = [
@@ -162,11 +164,16 @@ def run(
 
         # now that we have all stat reports, calculate the stats one last time.
         report = stats.calculate_stats(active_connections, end_time)
-
+        centroids = stats.get_centroids() 
+        
         if save:
-            pd.DataFrame(report).to_csv(
-                run_name + ".csv", mode="a", index=False, header=False
-            )
+            with open(run_name + ".csv", "a") as f:
+                for row in report:
+                    f.write(str(stats.endtime) + ",")
+                    for col in row:
+                        f.write(str(col) + ",")
+                    np.savetxt(f, next(centroids), newline=";")
+                    f.write("\n")
 
         if not quiet:
             logger.info("Printing final stats")
@@ -266,8 +273,9 @@ def run(
 
     # open a new csv file and just write the header columns
     if save:
-        pd.DataFrame([HEADERS_CSV]).to_csv(run_name + ".csv", header=False, index=False)
-
+        with open(run_name + ".csv", "w") as f:
+            f.write(",".join(HEADERS_CSV) + "\n")
+            
     # register Ctrl+C handler
     signal.signal(signal.SIGINT, signal_handler)
 
@@ -380,13 +388,20 @@ def run(
             endtime = int(time.time()) - 2
 
             report = stats.calculate_stats(active_connections, endtime)
+
+            centroids = stats.get_centroids() 
+
             stats.new_window(endtime)
             stats_received = 0
 
             if save:
-                pd.DataFrame(report).to_csv(
-                    run_name + ".csv", header=False, mode="a", index=False
-                )
+                with open(run_name + ".csv", "a") as f:
+                    for row in report:
+                        f.write(str(stats.endtime) + ",")
+                        for col in row:
+                            f.write(str(col) + ",")
+                        np.savetxt(f, next(centroids), newline=";")
+                        f.write("\n")
 
             if not quiet:
                 print_stats(report)
