@@ -129,7 +129,6 @@ class Stats:
         elapsed = endtime - self.instantiation_time
 
         def get_stats_row(id: str):
-
             td = TDigest(compression=1000).combine(self.window_stats[id])
 
             self.window_stats_centroids[id] = td.get_centroids()
@@ -168,10 +167,12 @@ class Stats:
         return [get_stats_row(id) for id in sorted(list(self.window_stats.keys()))]
 
     def get_centroids(self):
-        return iter([
-            self.window_stats_centroids[x]
-            for x in sorted(list(self.window_stats_centroids.keys()))
-        ])
+        return iter(
+            [
+                self.window_stats_centroids[x]
+                for x in sorted(list(self.window_stats_centroids.keys()))
+            ]
+        )
 
 
 class WorkerStats:

@@ -63,7 +63,7 @@ HEADERS_CSV: list = [
     "p95_ms",
     "p99_ms",
     "max_ms",
-    "centroids"
+    "centroids",
 ]
 
 FINAL_HEADERS: list = [
@@ -164,8 +164,8 @@ def run(
 
         # now that we have all stat reports, calculate the stats one last time.
         report = stats.calculate_stats(active_connections, end_time)
-        centroids = stats.get_centroids() 
-        
+        centroids = stats.get_centroids()
+
         if save:
             with open(run_name + ".csv", "a") as f:
                 for row in report:
@@ -275,7 +275,7 @@ def run(
     if save:
         with open(run_name + ".csv", "w") as f:
             f.write(",".join(HEADERS_CSV) + "\n")
-            
+
     # register Ctrl+C handler
     signal.signal(signal.SIGINT, signal_handler)
 
@@ -389,7 +389,7 @@ def run(
 
             report = stats.calculate_stats(active_connections, endtime)
 
-            centroids = stats.get_centroids() 
+            centroids = stats.get_centroids()
 
             stats.new_window(endtime)
             stats_received = 0

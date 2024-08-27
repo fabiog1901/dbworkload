@@ -204,3 +204,26 @@ def util_plot(
     # ),
 ):
     dbworkload.models.util.util_plot(input)
+
+
+@app.command(
+    "merge_csvs",
+    epilog=EPILOG,
+    no_args_is_help=True,
+    help="Merge multiple CSVs and its centroids.",
+)
+def util_merge_csvs(
+    input_dir: Optional[Path] = typer.Option(
+        ...,
+        "--input_dir",
+        "-i",
+        help="Input CSV directory",
+        exists=True,
+        file_okay=False,
+        dir_okay=True,
+        writable=False,
+        readable=True,
+        resolve_path=True,
+    ),
+):
+    dbworkload.models.util.util_merge_csvs(input_dir)

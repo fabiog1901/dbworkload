@@ -9,8 +9,12 @@ import os
 import pandas as pd
 import plotext as plt
 import yaml
+from pytdigest import TDigest
+import numpy as np
+import sys
 
 logger = logging.getLogger("dbworkload")
+logger.setLevel(logging.INFO)
 
 
 def util_csv(
@@ -267,7 +271,7 @@ def util_plot(input: str):
             "p95_ms",
             "p99_ms",
             "max_ms",
-            "centroids"
+            "centroids",
         ],
     )
 
@@ -309,3 +313,128 @@ def util_plot(input: str):
 
         # space it out
         print("\n\n")
+
+
+def util_merge_csvs(input_dir: str):
+    logger.warning(
+        "This feature is experimental. Validate results and file any bug/issue."
+    )
+
+    # collect only regular, CSV files.
+    files = os.listdir(input_dir)
+    CSVs = [
+        os.path.join(input_dir, f)
+        for f in files
+        if os.path.isfile(os.path.join(input_dir, f)) and f.endswith(".csv")
+    ]
+
+    if not CSVs:
+        logger.error(f"No valid CSVs in directory '{input_dir}'")
+        sys.exit(1)
+
+    # use one of the CSVs filename to create the output filename
+    out = os.path.basename(CSVs[0])[:-4] + ".merged.csv"
+
+    # read all CSVs into a single df, sorted by `ts``
+    df = pd.concat((pd.read_csv(f) for f in CSVs), ignore_index=True).sort_values("ts")
+
+    min_ts = df["ts"].min()
+
+    # convert the current `centroids` string to a 2-dims np.array
+    df["centroids"] = df["centroids"].apply(str.split, args=(";",)).apply(np.genfromtxt)
+
+    def get_elapsed_bucket(x):
+        """
+        for a given timestamp x, return the
+        relative elapsed time in steps of 10s.
+        Eg: min_ts=1000 and
+
+        x=1023:
+        1023-1000=23 --> 40
+
+        x=1010:
+
+        1010-1000=10 --> 20
+        """
+        x -= min_ts
+        return (x if x % 10 == 0 else x + 10 - x % 10) + 10
+
+    # rebase all ts values into ranges (buckets) of 10s
+    df["elapsed"] = df["ts"].apply(get_elapsed_bucket)
+
+    def combine_centroids(x):
+        """
+        combine centroids of multiple TDigests together,
+        and return the new aggregated centroids.
+        Note: compression=1000
+        """
+        return (
+            TDigest(compression=1000)
+            .combine([TDigest.of_centroids(y, compression=1000) for y in x])
+            .get_centroids()
+        )
+
+    # for each elapsed range bucket, merge the data for all `id` together
+    # by aggregating the count of `threads` and by aggregating the `centroids`
+    df = df.groupby(["elapsed", "id"]).agg(
+        {"ts": min, "threads": sum, "centroids": combine_centroids}
+    )
+
+    # the weight of the TDigest represents the count of ops
+    df["period_ops"] = df["centroids"].map(
+        lambda x: TDigest(compression=1000).of_centroids(x, compression=1000).weight
+    )
+
+    df["period_ops_s"] = df["period_ops"].apply(lambda x: x // 10)
+
+    df["tot_ops"] = df["period_ops"].groupby(["id"]).cumsum()
+
+    # convert `elabpsed` and `id` to regular df columns
+    df = df.reset_index()
+
+    df["tot_ops_s"] = df["tot_ops"] // df["elapsed"]
+
+    # calculate mean and quantiles and convert from seconds to millis
+    df["mean_ms"] = df["centroids"].map(
+        lambda x: TDigest(compression=1000).of_centroids(x, compression=1000).mean
+        * 1000
+    )
+    df[["p50_ms", "p90_ms", "p95_ms", "p99_ms", "max_ms"]] = [
+        x * 1000
+        for x in df["centroids"].map(
+            lambda x: TDigest(compression=1000)
+            .of_centroids(x, compression=1000)
+            .inverse_cdf([0.50, 0.90, 0.95, 0.99, 1.00])
+        )
+    ]
+
+    # round all values to 2 decimals
+    df[["mean_ms", "p50_ms", "p90_ms", "p95_ms", "p99_ms", "max_ms"]] = df[
+        ["mean_ms", "p50_ms", "p90_ms", "p95_ms", "p99_ms", "max_ms"]
+    ].apply(round, args=(2,))
+
+    # rearrange cols and eliminate centroids while keeping the column
+    df = df[
+        [
+            "ts",
+            "elapsed",
+            "id",
+            "threads",
+            "tot_ops",
+            "tot_ops_s",
+            "period_ops",
+            "period_ops_s",
+            "mean_ms",
+            "p50_ms",
+            "p90_ms",
+            "p95_ms",
+            "p99_ms",
+            "max_ms",
+        ]
+    ]
+
+    df["centroids"] = None
+
+    # finally, save the df to file
+    df.to_csv(out, index=False)
+    logger.info(f"Saved merged CSV file to '{out}'")
