@@ -283,32 +283,44 @@ def util_plot(input: str):
 
     for id in ids:
         p99 = df.loc[df["id"] == id, "p99_ms"]
-        p50 = df.loc[df["id"] == id, "p50_ms"]
+        mean_ms = df.loc[df["id"] == id, "mean_ms"]
         threads = df.loc[df["id"] == id, "threads"]
         qps = df.loc[df["id"] == id, "period_ops_s"]
 
         plt.clf()
+        plt.theme("pro")
         # divide figure horizontally into 2 subplots
-        plt.subplots(2, 1).plot_size(160, 160)
+        plt.subplots(3, 1).plot_size(160, 160)
 
         # top subplot
         plt.subplot(1, 1)
         plt.title(id)
 
-        plt.plot(p99.index, p99.values, label="p99_ms")
-        plt.plot(p50.index, p50.values, label="p50_ms", marker="dot")
+        plt.plot(p99.index, p99.values, label="p99_ms", color="cyan+", marker="braille")
+        plt.plot(
+            mean_ms.index,
+            mean_ms.values,
+            label="mean_ms",
+            color="orange+",
+            marker="braille",
+        )
+
+        # middle subplot
+        plt.subplot(2, 1)
+
+        plt.plot(qps.index, qps.values, label="qps", color="magenta", marker="braille")
 
         # bottom subplot
-        plt.subplot(2, 1)
-        plt.xlabel("elapsed")
+        plt.subplot(3, 1)
 
-        plt.plot(qps.index, qps.values, label="qps", color="red")
         plt.plot(
-            threads.index, threads.values, label="threads", marker="dot", yside="right"
+            threads.index,
+            threads.values,
+            label="threads",
+            color="green+",
+            marker="braille",
         )
-        plt.yticks(range(max(threads.values) + 5), yside="right")
-        plt.yfrequency(10, yside="right")
-
+        plt.xlabel("elapsed")
         plt.show()
 
         # space it out
