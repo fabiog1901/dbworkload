@@ -126,7 +126,13 @@ class Stats:
     # calculate the current stats this instance has collected.
     def calculate_stats(self, active_connections: int, endtime: int) -> list:
         self.endtime = endtime
-        elapsed = endtime - self.instantiation_time
+
+        # cover the case where elapsed is zero and runs into ZeroDivisionError
+        elapsed = (
+            endtime - self.instantiation_time
+            if endtime - self.instantiation_time
+            else 1
+        )
 
         def get_stats_row(id: str):
             td = TDigest(compression=1000).combine(self.window_stats[id])
