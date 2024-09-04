@@ -174,7 +174,7 @@ def util_merge(
     "plot",
     epilog=EPILOG,
     no_args_is_help=True,
-    help="Plot charts from the CSV statistic file.",
+    help="Plot charts from the dbworkload statistics CSV file.",
 )
 def util_plot(
     input: Optional[Path] = typer.Option(
@@ -189,28 +189,38 @@ def util_plot(
         readable=True,
         resolve_path=True,
     ),
-    # output: Optional[Path] = typer.Option(
-    #     None,
-    #     "--output",
-    #     "-o",
-    #     show_default=False,
-    #     help="Output filepath. Defaults to <input>.merged.",
-    #     exists=False,
-    #     file_okay=True,
-    #     dir_okay=True,
-    #     writable=False,
-    #     readable=True,
-    #     resolve_path=True,
-    # ),
 ):
     dbworkload.models.util.util_plot(input)
+
+
+@app.command(
+    "html",
+    epilog=EPILOG,
+    no_args_is_help=True,
+    help="Save charts to HTML from the dbworkload statistics CSV file.",
+)
+def util_html(
+    input: Optional[Path] = typer.Option(
+        ...,
+        "--input",
+        "-i",
+        help="Input CSV file",
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        writable=False,
+        readable=True,
+        resolve_path=True,
+    ),
+):
+    dbworkload.models.util.util_html(input)
 
 
 @app.command(
     "merge_csvs",
     epilog=EPILOG,
     no_args_is_help=True,
-    help="Merge multiple CSVs and its centroids.",
+    help="Merge multiple dbworkload statistic CSV files.",
 )
 def util_merge_csvs(
     input_dir: Optional[Path] = typer.Option(

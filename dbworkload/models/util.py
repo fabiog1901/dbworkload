@@ -1,17 +1,23 @@
 #!/usr/bin/python
 
 from io import TextIOWrapper
+from plotly.subplots import make_subplots
+from pytdigest import TDigest
 import datetime as dt
 import dbworkload.utils.common
 import dbworkload.utils.simplefaker
+import itertools
 import logging
+import numpy as np
 import os
 import pandas as pd
+import pandas as pd
 import plotext as plt
-import yaml
-from pytdigest import TDigest
-import numpy as np
+import plotly.graph_objects as go
+import plotly.io as pio
+from pathlib import PosixPath
 import sys
+import yaml
 
 logger = logging.getLogger("dbworkload")
 logger.setLevel(logging.INFO)
@@ -325,6 +331,108 @@ def util_plot(input: str):
 
         # space it out
         print("\n\n")
+
+
+def util_html(input: PosixPath):
+    TEMPLATE_NAME = "plotly_dark"
+    COLORS = itertools.cycle(pio.templates[TEMPLATE_NAME].layout.colorway)
+
+    def get_color():
+        return next(COLORS)
+
+    out = os.path.join(input.parent, input.stem + ".html")
+
+    df = pd.read_csv(
+        input,
+        header=0,
+        names=[
+            "ts",
+            "elapsed",
+            "id",
+            "threads",
+            "tot_ops",
+            "tot_ops_s",
+            "period_ops",
+            "period_ops_s",
+            "mean_ms",
+            "p50_ms",
+            "p90_ms",
+            "p95_ms",
+            "p99_ms",
+            "max_ms",
+            "centroids",
+        ],
+    )
+
+    # Create subplots and mention plot grid size
+    fig = make_subplots(
+        rows=3,
+        cols=1,
+        shared_xaxes=True,
+        vertical_spacing=0.03,
+        subplot_titles=("Response Time (ms)", "ops/s", "concurrency"),
+        row_width=[0.15, 0.3, 0.7],
+    )
+
+    fig.update_layout(
+        template=TEMPLATE_NAME,
+        title=f"Test Run: {input.stem}",
+        hovermode="x unified",
+        hoversubplots="axis",  # not working yet
+        xaxis_rangeslider_visible=False,
+        xaxis3_title_text="elapsed",
+    )
+
+    for id in df["id"].unique():
+        df1 = df[df["id"] == id]
+
+        line_color = get_color()
+
+        fig.add_trace(
+            go.Scatter(
+                name=f"{id}_p99",
+                x=df1["elapsed"],
+                y=df1["p99_ms"],
+                line=dict(color=line_color, width=1.7),
+            ),
+            row=1,
+            col=1,
+        )
+
+        fig.add_trace(
+            go.Scatter(
+                name=f"{id}_mean",
+                x=df1["elapsed"],
+                y=df1["mean_ms"],
+                line=dict(color=line_color, width=0.5, dash="dot"),
+            ),
+            row=1,
+            col=1,
+        )
+
+        fig.add_trace(
+            go.Scatter(
+                name=f"{id}_ops/s",
+                x=df1["elapsed"],
+                y=df1["period_ops_s"],
+                line=dict(color=line_color, width=1),
+            ),
+            row=2,
+            col=1,
+        )
+
+    fig.add_trace(
+        go.Bar(
+            name="threads",
+            x=df1["elapsed"],
+            y=df1["threads"],
+        ),
+        row=3,
+        col=1,
+    )
+
+    fig.write_html(out)
+    logger.info(f"Saved merged CSV file to '{out}'")
 
 
 def util_merge_csvs(input_dir: str):
