@@ -258,7 +258,7 @@ def util_merge(input_dir: str, output_dir: str, csv_max_rows: int):
     Merge(input_dir, output_dir, csv_max_rows).run()
 
 
-def util_plot(input: str):
+def util_plot(input: PosixPath):
     df = pd.read_csv(
         input,
         header=0,
@@ -284,53 +284,34 @@ def util_plot(input: str):
     # define index column
     df.set_index("elapsed", inplace=True)
 
-    # extract the list of ids
-    ids = df["id"].unique()
+    plt.clf()
+    plt.theme("pro")
+    plt.subplots(3, 1)
+    plt.subplot(1, 1).title(f"Test Run: {input.stem}")
 
-    for id in ids:
-        p99 = df.loc[df["id"] == id, "p99_ms"]
-        mean_ms = df.loc[df["id"] == id, "mean_ms"]
-        threads = df.loc[df["id"] == id, "threads"]
-        qps = df.loc[df["id"] == id, "period_ops_s"]
+    for id in df["id"].unique():
+        df1 = df[df["id"] == id]
 
-        plt.clf()
-        plt.theme("pro")
-        # divide figure horizontally into 2 subplots
-        plt.subplots(3, 1).plot_size(160, 160)
-
-        # top subplot
-        plt.subplot(1, 1)
-        plt.title(id)
-
-        plt.plot(p99.index, p99.values, label="p99_ms", color="cyan+", marker="braille")
+        # p99
+        plt.subplot(1, 1).plotsize(None, plt.th() // 1.7)
         plt.plot(
-            mean_ms.index,
-            mean_ms.values,
-            label="mean_ms",
-            color="orange+",
-            marker="braille",
+            df1["p99_ms"].index, df1["p99_ms"], label=f"{id}_p99", marker="braille"
         )
 
-        # middle subplot
+        # ops/s
         plt.subplot(2, 1)
-
-        plt.plot(qps.index, qps.values, label="qps", color="magenta", marker="braille")
-
-        # bottom subplot
-        plt.subplot(3, 1)
-
         plt.plot(
-            threads.index,
-            threads.values,
-            label="threads",
-            color="green+",
+            df1["period_ops_s"].index,
+            df1["period_ops_s"],
+            label=f"{id}_ops/s",
             marker="braille",
         )
-        plt.xlabel("elapsed")
-        plt.show()
 
-        # space it out
-        print("\n\n")
+    plt.subplot(3, 1)
+    plt.xlabel("elapsed")
+    plt.bar(df1["threads"].index, df1["threads"], label="threads", marker="braille")
+
+    plt.show()
 
 
 def util_html(input: PosixPath):
