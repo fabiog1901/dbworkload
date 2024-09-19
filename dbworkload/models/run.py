@@ -108,16 +108,13 @@ def signal_handler(sig, frame):
 
 
 def ramp_up(
-    processes: list, interval: int, threads_per_proc: list, init_sleep: int = 0
+    processes: list, interval: float, threads_per_proc: list, init_sleep: int = 0
 ):
     """Start each process in the list sequentially respecting the interval between each process"""
     time.sleep(init_sleep)
     for i, p in enumerate(processes):
         logger.debug("Starting a new Process...")
         p.start()
-        # print("threadsperproc", threads_per_proc)
-        # print("rampint", interval)
-        # print("sleeping rampup for ", interval * threads_per_proc[i])
         time.sleep(interval * threads_per_proc[i])
 
 
@@ -296,7 +293,7 @@ def run(
 
     # calculate the ramp up schedule, if any
     threads_per_proc = dbworkload.utils.common.get_threads_per_proc(procs, conc)
-    ramp_interval = ramp // conc
+    ramp_interval = ramp / conc
 
     # each Process must generate an ID for each of its threads,
     # starting from the id_base_counter and incrementing by 1.
