@@ -50,7 +50,11 @@ class Prom:
     def __init__(self, prom_port: int = 26260):
         self.prom_latency: dict[str, list[prom.Gauge]] = {}
 
-        prom.start_http_server(prom_port)
+        # don't stop just because prom server can't start
+        try:
+            prom.start_http_server(prom_port)
+        except OSError as e:
+            logger.warning(f"Cannot start prometheus server: {e}")
 
         self.threads = prom.Gauge(
             "threads", "count of connection threads to the database."
