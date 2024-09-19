@@ -364,7 +364,7 @@ def util_html(input: PosixPath):
         xaxis3_title_text="elapsed",
     )
 
-    for id in df["id"].unique():
+    for id in sorted(df["id"].unique()):
         df1 = df[df["id"] == id]
 
         line_color = get_color()
@@ -402,12 +402,16 @@ def util_html(input: PosixPath):
             col=1,
         )
 
+        # only __cycle__ is guaranteed to be present throughout the entire test run
+        if id == "__cycle__":
+            thread_bar = go.Bar(
+                name="threads",
+                x=df1["elapsed"],
+                y=df1["threads"],
+            )
+
     fig.add_trace(
-        go.Bar(
-            name="threads",
-            x=df1["elapsed"],
-            y=df1["threads"],
-        ),
+        thread_bar,
         row=3,
         col=1,
     )
