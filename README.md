@@ -182,6 +182,7 @@ wget https://raw.githubusercontent.com/fabiog1901/dbworkload/main/workloads/post
 ### Step 1 - init the workload
 
 Make sure your **CockroachDB** cluster or **PostgreSQL** server is up and running.
+Please note: this guide assumes the database server and dbworkload are both runnining locally and can communicate with each other via `localhost`.
 
 Connect to the SQL prompt and execute the DDL statements in the `bank.sql` file.
 In CockroachDB, you can simply run
@@ -273,6 +274,7 @@ dbworkload --help
 It’s helpful to understand first what `dbworkload` does:
 
 - At runtime, `dbworkload` first imports the class you pass, `bank.py`.
+
 - It spawns _n_ threads for concurrent execution (see next section on Concurrency).
 - By default, it sets the connection to `autocommit` mode.
 - Each thread creates a database connection - no need for a connection pool.
