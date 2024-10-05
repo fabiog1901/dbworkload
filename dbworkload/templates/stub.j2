@@ -39,7 +39,7 @@ class {{ model.name }}:
 
     # the loop() function returns a list of functions
     # that dbworkload will execute, sequentially.
-    # Once every func has been executed, run() is re-evaluated.
+    # Once every func has been executed, loop() is re-evaluated.
     # This process continues until dbworkload exits.
     def loop(self):
         return [
@@ -73,8 +73,9 @@ class {{ model.name }}:
                 {%- endfilter %}
                 """,
                 (
-                    {% for _ in range(model.bind_params[x]) %}# add bind parameter, 
-                    {% endfor %} 
+                {%- for _ in range(model.bind_params[x]) %}
+                    # add bind parameter, 
+                {%- endfor %} 
                 ), 
             ){% if model.txn_type[x] %}.fetchall(){% endif %}
     {% endfor %}
@@ -100,5 +101,9 @@ dt.datetime.fromtimestamp(random.randint(1655032268, 1759232268))
 
 # random UUID
 uuid4()
+
+# random bytes
+size = 12
+random.getrandbits(8 * size).to_bytes(size, "big")
 
 '''

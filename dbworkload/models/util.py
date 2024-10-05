@@ -548,14 +548,11 @@ def util_merge_csvs(input_dir: str):
 
 
 def util_gen_stub(input_file: PosixPath):
-
-    from jinja2 import Environment, PackageLoader
-    #env = Environment(loader=PackageLoader('dbworkload', "dbworkload/models"))
     env = Environment(loader=FileSystemLoader("./dbworkload/templates"))
     template = env.get_template("stub.j2")
-    
+
     out = os.path.join(input_file.parent, input_file.stem + ".py")
-    
+
     with open(input_file, "r") as f:
         lines = f.read()
 
@@ -597,7 +594,9 @@ def util_gen_stub(input_file: PosixPath):
 
     model["name"] = input_file.name.split(".")[0].capitalize()
 
-    model["txns"] = [sqlparse.format(x, reindent=True, keyword_case='upper') for x in stmts]
+    model["txns"] = [
+        sqlparse.format(x, reindent=True, keyword_case="upper") for x in stmts
+    ]
 
     phs = []
     txn_type = []
