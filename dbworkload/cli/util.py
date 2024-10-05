@@ -237,3 +237,26 @@ def util_merge_csvs(
     ),
 ):
     dbworkload.models.util.util_merge_csvs(input_dir)
+
+
+@app.command(
+    "gen_stub",
+    epilog=EPILOG,
+    no_args_is_help=True,
+    help="Generate a dbworkload class stub.",
+)
+def util_gen_stub(
+    input_file: Optional[Path] = typer.Option(
+        ...,
+        "--input",
+        "-i",
+        help="Input SQL file",
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        writable=False,
+        readable=True,
+        resolve_path=True,
+    ),
+):
+    dbworkload.models.util.util_gen_stub(input_file)

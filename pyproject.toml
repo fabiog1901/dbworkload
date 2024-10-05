@@ -35,6 +35,8 @@ mariadb = {version = "^1.1.10", optional = true}
 pytdigest = "^0.1.4"
 plotext = "^5.2.8"
 plotly = "^5.24.0"
+jinja2 = "^3.1.4"
+sqlparse = "^0.5.1"
 
 [tool.poetry.extras]
 all =  ["psycopg", "psycopg-binary", "mysql-connector-python", "mariadb", "oracledb", "pyodbc", "pymongo", "cassandra-driver"]

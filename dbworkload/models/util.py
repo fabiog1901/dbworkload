@@ -1,6 +1,8 @@
 #!/usr/bin/python
 
 from io import TextIOWrapper
+from jinja2 import Environment, FileSystemLoader
+from pathlib import PosixPath
 from plotly.subplots import make_subplots
 from pytdigest import TDigest
 import datetime as dt
@@ -15,7 +17,7 @@ import pandas as pd
 import plotext as plt
 import plotly.graph_objects as go
 import plotly.io as pio
-from pathlib import PosixPath
+import sqlparse
 import sys
 import yaml
 
@@ -543,3 +545,73 @@ def util_merge_csvs(input_dir: str):
     # finally, save the df to file
     df.to_csv(out, index=False)
     logger.info(f"Saved merged CSV file to '{out}'")
+
+
+def util_gen_stub(input_file: PosixPath):
+
+    from jinja2 import Environment, PackageLoader
+    #env = Environment(loader=PackageLoader('dbworkload', "dbworkload/models"))
+    env = Environment(loader=FileSystemLoader("./dbworkload/templates"))
+    template = env.get_template("stub.j2")
+    
+    out = os.path.join(input_file.parent, input_file.stem + ".py")
+    
+    with open(input_file, "r") as f:
+        lines = f.read()
+
+    # remove all the multiline comments
+    # delimited by /* and */
+    while True:
+        i = lines.find("/*")
+        j = lines.find("*/")
+
+        if i < 0:
+            break
+        lines = lines[:i] + lines[j + 2 :]
+
+    # given the whole ddl string,
+    # line by line, remove empty lines and
+    # all the comment lines
+    # and return a list of lines, stripped of any whitespace
+    stmts = []
+
+    for s in lines.split("\n"):
+        s = s.strip()
+
+        i = s.find("--")
+        if i >= 0:
+            s = s[:i]
+
+        if s:
+            stmts.append(s)
+
+    # rejoin the lines into a new, clean ddl string
+    clean_ddl = " ".join(stmts)
+
+    # split the clean string by semicolon to get a list
+    # of SQL statements
+    stmts = [s.strip() for s in clean_ddl.split(";") if len(s) > 0]
+
+    model = {}
+    model["txn_count"] = len(stmts)
+
+    model["name"] = input_file.name.split(".")[0].capitalize()
+
+    model["txns"] = [sqlparse.format(x, reindent=True, keyword_case='upper') for x in stmts]
+
+    phs = []
+    txn_type = []
+
+    for x in stmts:
+        phs.append(x.count("%s"))
+        txn_type.append(
+            x.lower().startswith("select") or x.lower().find("returning") > 0
+        )
+
+    model["bind_params"] = phs
+    model["txn_type"] = txn_type
+
+    with open(out, "w") as f:
+        f.write(template.render(model=model))
+
+    logger.info(f"Saved stub '{out}'")
