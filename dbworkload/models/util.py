@@ -1,10 +1,11 @@
 #!/usr/bin/python
 
 from io import TextIOWrapper
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, PackageLoader
 from pathlib import PosixPath
 from plotly.subplots import make_subplots
 from pytdigest import TDigest
+import dbworkload
 import datetime as dt
 import dbworkload.utils.common
 import dbworkload.utils.simplefaker
@@ -548,7 +549,7 @@ def util_merge_csvs(input_dir: str):
 
 
 def util_gen_stub(input_file: PosixPath):
-    env = Environment(loader=FileSystemLoader("./dbworkload/templates"))
+    env = Environment(loader=PackageLoader("dbworkload"))
     template = env.get_template("stub.j2")
 
     out = os.path.join(input_file.parent, input_file.stem + ".py")
