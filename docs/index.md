@@ -1,11 +1,6 @@
 ---
 layout: default
 ---
-<style>
-body {
-      font-family: Verdana, Arial sans-serif;
-}
-</style>
 
 # dbworkload - DBMS workload utility
 
