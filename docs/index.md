@@ -1,6 +1,12 @@
 ---
 layout: default
 ---
+<style>
+  body {
+  ...
+  font: 18px/1.4 $helvetica;
+}
+</style>
 
 # dbworkload - DBMS workload utility
 
