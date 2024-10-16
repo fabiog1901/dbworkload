@@ -2,9 +2,8 @@
 layout: default
 ---
 <style>
-  body {
-  ...
-  font: 18px/1.4 $helvetica;
+body {
+      font-family: "Times New Roman", Times, serif;
 }
 </style>
 
