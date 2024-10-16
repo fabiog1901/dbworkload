@@ -1,7 +1,3 @@
----
-layout: default
----
-
 # dbworkload - DBMS workload utility
 
 ## Overview
