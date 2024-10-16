@@ -3,7 +3,7 @@ layout: default
 ---
 <style>
 body {
-      font-family: "Times New Roman", Times, serif;
+      font-family: Verdana, Arial sans-serif;
 }
 </style>
 
