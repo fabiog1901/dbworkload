@@ -1,6 +1,8 @@
-# Supported DBMS drivers
+# Drivers
 
-## 1. psycopg (PostgreSQL, CockroachDB)
+## postgres
+
+For technologies such as PostgreSQL, CockroachDB
 
 Driver documentation: [Psycopg 3](https://www.psycopg.org/psycopg3/docs/).
 
@@ -14,7 +16,9 @@ dbworkload run -w workloads/postgres/bank.py \
   -l debug --args '{"read_pct":50}' -i 1 -c 1
 ```
 
-## 2. mysql-connector-python (MySQL, TiDB, Singlestore)
+## mysql
+
+For technologies such as MySQL, TiDB, Singlestore
 
 Driver documentation: [MySQL Connector/Python Developer Guide](https://dev.mysql.com/doc/connector-python/en/).
 
@@ -28,7 +32,7 @@ dbworkload run -w workloads/mysql/bank.py \
    --driver mysql --args '{"read_pct":50}' -i 10
 ```
 
-## 3. mariadb (MariaDB)
+## mariadb
 
 Driver documentation: [MariaDB Connector/Python](https://mariadb.com/docs/server/connect/programming-languages/python/).
 
@@ -42,7 +46,7 @@ dbworkload run -w workloads/mariadb/bank.py \
   --driver maria --args '{"read_pct":50}' -i 10
 ```
 
-## 4. oracledb (Oracle)
+## oracle
 
 Driver documentation: [python-oracledb’s documentation](https://python-oracledb.readthedocs.io/en/latest/index.html).
 
@@ -56,7 +60,7 @@ dbworkload run -w workloads/oracle/bank.py \
   --driver oracle --args='{"read_pct":50}' -i 10
 ```
 
-## 5. pyodbc (MS SQLServer)
+## sqlserver
 
 Under construction...
 
@@ -72,7 +76,7 @@ dbworkload run -w workloads/sqlserver/bank.py \
    --driver sqlserver --args='{"read_pct":50}' -i 10
 ```
 
-## 6. pymongo (MongoDB)
+## mongo
 
 Driver documentation: [MongoDB PyMongo Documentation](https://www.mongodb.com/docs/languages/python/pymongo-driver/current/).
 
@@ -86,7 +90,9 @@ dbworkload run -w workloads/mongo/bank.py \
   --args='{"read_pct":50}' -i 10
 ```
 
-## 7. scylla-driver (Cassandra, ScyllaDB)
+## scylla-driver
+
+For technologies such as Cassandra, ScyllaDB
 
 Under construction...
 

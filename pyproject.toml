@@ -5,7 +5,7 @@ description = "Workload framework"
 authors = ["Fabio Ghirardello"]
 license = "GPLv3+"
 readme = "README.md"
-homepage = "https://github.com/fabiog1901/dbworkload"
+homepage = "https://fabiog1901.github.io/dbworkload/"
 repository = "https://github.com/fabiog1901/dbworkload"
 classifiers = [
     "Programming Language :: Python :: 3",

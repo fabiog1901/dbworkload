@@ -4,6 +4,7 @@ from .. import __version__
 from dbworkload.cli.dep import Param, EPILOG, ConnInfo
 from enum import Enum
 from pathlib import Path
+from typer.main import get_command
 from typing import Optional
 from urllib.parse import urlparse
 import dbworkload.cli.util
@@ -295,3 +296,7 @@ def version_option(
     ),
 ) -> None:
     pass
+
+
+# needed by mkdocs-click to generate docs
+click_app = get_command(app)

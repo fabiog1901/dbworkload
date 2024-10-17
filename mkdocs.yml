@@ -1,5 +1,13 @@
 site_name: dbworkload
 site_description: Simulator utility for DBMS workloads.
+repo_name: fabiog1901/dbworkload
+repo_url: https://github.com/fabiog1901/dbworkload
+
+plugins:
+  - search
+
+markdown_extensions:
+  - mkdocs-click
 
 theme:
   name: material
@@ -49,19 +57,26 @@ theme:
     - search.suggest
     - toc.follow
 
-repo_name: fabiog1901/dbworkload
-repo_url: https://github.com/fabiog1901/dbworkload
-
-
 
 nav:
   - Home: 
     - index.md
-    - software-requirements.md
+    - installation.md
+    - drivers.md
     - Getting Started:
-      - getting_started/getting-started.md
+      - getting_started/index.md
       - getting_started/0.md
       - getting_started/1.md
       - getting_started/2.md
-    - Supported Drivers: drivers.md
-  - About: about.md
+    - how_it_works.md
+    - Utility Functions:
+        - util/index.md
+        - util/csv.md
+        - util/gen_stub.md
+        - util/html.md
+        - util/merge_csvs.md
+        - util/merge.md
+        - util/plot.md
+        - util/yaml.md
+  - cli.md
+  - about.md
