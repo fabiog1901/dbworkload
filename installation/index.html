@@ -11,10 +11,10 @@
       
       
       
-        <link rel="prev" href="../installation/">
+        <link rel="prev" href="..">
       
       
-        <link rel="next" href="../getting_started/">
+        <link rel="next" href="../drivers/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>Drivers - dbworkload</title>
+        <title>Installation - dbworkload</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#drivers" class="md-skip">
+        <a href="#installation" class="md-skip">
           Skip to content
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Drivers
+              Installation
             
           </span>
         </div>
@@ -403,27 +403,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../installation/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Installation
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -440,7 +419,7 @@
           
   
   <span class="md-ellipsis">
-    Drivers
+    Installation
   </span>
   
 
@@ -451,7 +430,7 @@
         
   
   <span class="md-ellipsis">
-    Drivers
+    Installation
   </span>
   
 
@@ -473,63 +452,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#postgres" class="md-nav__link">
+  <a href="#software-requirements" class="md-nav__link">
     <span class="md-ellipsis">
-      postgres
+      Software Requirements
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#mysql" class="md-nav__link">
+  <a href="#dbworkload-installation" class="md-nav__link">
     <span class="md-ellipsis">
-      mysql
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#mariadb" class="md-nav__link">
-    <span class="md-ellipsis">
-      mariadb
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#oracle" class="md-nav__link">
-    <span class="md-ellipsis">
-      oracle
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#sqlserver" class="md-nav__link">
-    <span class="md-ellipsis">
-      sqlserver
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#mongo" class="md-nav__link">
-    <span class="md-ellipsis">
-      mongo
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#scylla-driver" class="md-nav__link">
-    <span class="md-ellipsis">
-      scylla-driver
+      dbworkload installation
     </span>
   </a>
   
@@ -539,6 +473,27 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../drivers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Drivers
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -993,63 +948,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#postgres" class="md-nav__link">
+  <a href="#software-requirements" class="md-nav__link">
     <span class="md-ellipsis">
-      postgres
+      Software Requirements
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#mysql" class="md-nav__link">
+  <a href="#dbworkload-installation" class="md-nav__link">
     <span class="md-ellipsis">
-      mysql
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#mariadb" class="md-nav__link">
-    <span class="md-ellipsis">
-      mariadb
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#oracle" class="md-nav__link">
-    <span class="md-ellipsis">
-      oracle
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#sqlserver" class="md-nav__link">
-    <span class="md-ellipsis">
-      sqlserver
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#mongo" class="md-nav__link">
-    <span class="md-ellipsis">
-      mongo
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#scylla-driver" class="md-nav__link">
-    <span class="md-ellipsis">
-      scylla-driver
+      dbworkload installation
     </span>
   </a>
   
@@ -1073,81 +983,21 @@
   
 
 
-<h1 id="drivers">Drivers</h1>
-<h2 id="postgres">postgres</h2>
-<p>For technologies such as PostgreSQL, CockroachDB</p>
-<p>Driver documentation: <a href="https://www.psycopg.org/psycopg3/docs/">Psycopg 3</a>.</p>
-<pre><code class="language-bash"># installation
-pip install dbworkload[postgres]
-
-# sample use
-dbworkload run -w workloads/postgres/bank.py \
-  --uri 'postgres://cockroach:cockroach@localhost:26257/bank?sslmode=require' \
-  -l debug --args '{&quot;read_pct&quot;:50}' -i 1 -c 1
+<h1 id="installation">Installation</h1>
+<h2 id="software-requirements">Software Requirements</h2>
+<p><code>dbworkload</code> requires at least Python 3.8 and the <code>pip</code> utility, installed and upgraded.</p>
+<p><code>dbworkload</code> dependencies are installed automatically by the <code>pip</code> tool.</p>
+<p>It has run successfully on Ubuntu 20.04+, MacOSX on both Intel and Apple silicone.</p>
+<h2 id="dbworkload-installation">dbworkload installation</h2>
+<p><code>dbworkload</code> comes already pre-packaged, <a href="https://pypi.org/project/dbworkload/">available from PyPI</a>.</p>
+<p>Generally, you want to specify which of the <a href="../drivers/">supported drivers</a> you want to install.</p>
+<p>In below example, we install with the <strong>Psycopg3</strong> driver, so we run</p>
+<pre><code class="language-bash">pip3 install dbworkload[postgres]
 </code></pre>
-<h2 id="mysql">mysql</h2>
-<p>For technologies such as MySQL, TiDB, Singlestore</p>
-<p>Driver documentation: <a href="https://dev.mysql.com/doc/connector-python/en/">MySQL Connector/Python Developer Guide</a>.</p>
-<pre><code class="language-bash"># installation
-pip3 install dbworkload[mysql]
-
-# sample use
-dbworkload run -w workloads/mysql/bank.py \
-  --uri 'user=root,password=London123,host=localhost,port=3306,database=bank,client_flags=SSL' \
-   --driver mysql --args '{&quot;read_pct&quot;:50}' -i 10
-</code></pre>
-<h2 id="mariadb">mariadb</h2>
-<p>Driver documentation: <a href="https://mariadb.com/docs/server/connect/programming-languages/python/">MariaDB Connector/Python</a>.</p>
-<pre><code class="language-bash"># installation
-pip3 install dbworkload[mariadb]
-
-# sample use
-dbworkload run -w workloads/mariadb/bank.py \
-  --uri 'user=user1,password=password1,host=localhost,port=3306,database=bank' \
-  --driver maria --args '{&quot;read_pct&quot;:50}' -i 10
-</code></pre>
-<h2 id="oracle">oracle</h2>
-<p>Driver documentation: <a href="https://python-oracledb.readthedocs.io/en/latest/index.html">python-oracledb’s documentation</a>.</p>
-<pre><code class="language-bash"># installation
-pip3 install dbworkload[oracle]
-
-# sample use
-dbworkload run -w workloads/oracle/bank.py \
-  --uri &quot;user=admin,password=password1,dsn=&quot;myhost.host2.us-east-1.rds.amazonaws.com:1521/OMS&quot; \
-  --driver oracle --args='{&quot;read_pct&quot;:50}' -i 10
-</code></pre>
-<h2 id="sqlserver">sqlserver</h2>
-<p>Under construction...</p>
-<p>Driver documentation: <a href="https://learn.microsoft.com/en-us/sql/connect/python/python-driver-for-sql-server?view=sql-server-ver16">Python SQL driver</a>.</p>
-<pre><code class="language-bash"># installation
-pip3 install dbworkload[sqlserver]
-
-# sample use
-dbworkload run -w workloads/sqlserver/bank.py \
-  --uri &quot;&quot; \
-   --driver sqlserver --args='{&quot;read_pct&quot;:50}' -i 10
-</code></pre>
-<h2 id="mongo">mongo</h2>
-<p>Driver documentation: <a href="https://www.mongodb.com/docs/languages/python/pymongo-driver/current/">MongoDB PyMongo Documentation</a>.</p>
-<pre><code class="language-bash"># installation
-pip3 install dbworkload[mongo]
-
-# sample use
-dbworkload run -w workloads/mongo/bank.py \
-  --uri &quot;mongodb://127.0.0.1:27017/?directConnection=true&amp;serverSelectionTimeoutMS=2000&quot; \
-  --args='{&quot;read_pct&quot;:50}' -i 10
-</code></pre>
-<h2 id="scylla-driver">scylla-driver</h2>
-<p>For technologies such as Cassandra, ScyllaDB</p>
-<p>Under construction...</p>
-<p>Driver documentation: <a href="https://python-driver.docs.scylladb.com/stable/">Python Driver for Scylla and Apache Cassandra</a>.</p>
-<pre><code class="language-bash"># installation
-pip3 install dbworkload[cassandra]
-
-# sample use
-dbworkload run -w workloads/cassandra/bank.py \
-  --uri &quot;&quot; \
-   --driver cassandra --args='{&quot;read_pct&quot;:50}' -i 10
+<p>Confirm installation is successful by running</p>
+<pre><code class="language-bash">$ dbworkload --version
+dbworkload : 0.5.1
+Python     : 3.11.3
 </code></pre>
 
 
@@ -1186,7 +1036,7 @@ dbworkload run -w workloads/cassandra/bank.py \
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../installation/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Installation">
+          <a href=".." class="md-footer__link md-footer__link--prev" aria-label="Previous: dbworkload - DBMS workload utility">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1196,20 +1046,20 @@ dbworkload run -w workloads/cassandra/bank.py \
                 Previous
               </span>
               <div class="md-ellipsis">
-                Installation
+                dbworkload - DBMS workload utility
               </div>
             </div>
           </a>
         
         
           
-          <a href="../getting_started/" class="md-footer__link md-footer__link--next" aria-label="Next: Getting Started">
+          <a href="../drivers/" class="md-footer__link md-footer__link--next" aria-label="Next: Drivers">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Getting Started
+                Drivers
               </div>
             </div>
             <div class="md-footer__button md-icon">
