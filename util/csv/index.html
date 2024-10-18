@@ -460,6 +460,8 @@
       
         
       
+        
+      
     
     
       
@@ -512,7 +514,7 @@
         
   
   <span class="md-ellipsis">
-    Env Setup
+    Setup
   </span>
   
 
@@ -533,7 +535,7 @@
         
   
   <span class="md-ellipsis">
-    Init the workload
+    Schema and SQL statements
   </span>
   
 
@@ -551,6 +553,27 @@
   
     <li class="md-nav__item">
       <a href="../../getting_started/2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Seed the database tables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting_started/3/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -679,6 +702,17 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    csv
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -688,6 +722,43 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#generating-csv-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Generating CSV files
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      See also
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -895,6 +966,32 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#generating-csv-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Generating CSV files
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      See also
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -912,17 +1009,24 @@
 
 
 <h1 id="csv">csv</h1>
-<ul>
-<li>You can seed a database quickly by letting <code>dbworkload</code> generate pseudo-random data and import it.</li>
-<li><code>dbworkload</code> takes the DDL as an input and creates an intermediate YAML file, with the definition of what data you want to create (a string, a number, a date, a bool..) based on the column data type.</li>
-<li>You then refine the YAML file to suit your needs, for example, the size of the string, a range for a date, the precision for a decimal, a choice among a discrete list of values..</li>
-<li>You can also specify what is the percentage of NULL for any column, or how many elements in an ARRAY type.</li>
-<li>You then specify the total row count, how many rows per file, and in what order, if any, to sort by.</li>
-<li>Then <code>dbworkload</code> will generate the data into CSV or TSV files, compress them if so requested.</li>
-<li>You can then optionally merge-sort the files using command <code>merge</code>.</li>
-</ul>
-<p>Write up blog: <a href="https://dev.to/cockroachlabs/generate-multiple-large-sorted-csv-files-with-pseudo-random-data-1jo4">Generate multiple large sorted csv files with pseudo-random data</a></p>
+<h2 id="generating-csv-files">Generating CSV files</h2>
+<p>You can seed a database quickly by letting <code>dbworkload</code> generate pseudo-random data and import it.</p>
+<p><code>dbworkload</code> takes the DDL as an input and <a href="../yaml/">creates an intermediate YAML file</a>, with the definition of what data you want to create (a string, a number, a date, a bool..) based on the column data type.</p>
+<p>You then refine the YAML file to suit your needs, for example, the size of the string, a range for a date, the precision for a decimal, a choice among a discrete list of values..</p>
+<p>You can also specify what is the percentage of NULL for any column, or how many elements in an ARRAY type.
+You then specify the total row count, how many rows per file, and in what order, if any, to sort by.</p>
+<p>Then <code>dbworkload</code> will generate the data into CSV or TSV files, compress them if so requested.</p>
+<p>You can then optionally <a href="../merge_csvs/">merge-sort the files</a>.</p>
 <p>Consult file <code>workloads/postgres/bank.yaml</code> for a list of all available generators and options.</p>
+<h2 id="see-also">See also</h2>
+<ul>
+<li>
+<p><a href="../yaml/">Generating intermediate data definition YAML file</a></p>
+</li>
+<li>
+<p><a href="https://dev.to/cockroachlabs/generate-multiple-large-sorted-csv-files-with-pseudo-random-data-1jo4" target="_blank">Blog: Generate multiple large sorted CSV files with pseudo-random data</a></p>
+</li>
+</ul>
 
 
 

@@ -518,6 +518,8 @@
       
         
       
+        
+      
     
     
       
@@ -570,7 +572,7 @@
         
   
   <span class="md-ellipsis">
-    Env Setup
+    Setup
   </span>
   
 
@@ -591,7 +593,7 @@
         
   
   <span class="md-ellipsis">
-    Init the workload
+    Schema and SQL statements
   </span>
   
 
@@ -609,6 +611,27 @@
   
     <li class="md-nav__item">
       <a href="../getting_started/2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Seed the database tables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting_started/3/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -992,13 +1015,13 @@
 <p><code>dbworkload</code> comes already pre-packaged, <a href="https://pypi.org/project/dbworkload/">available from PyPI</a>.</p>
 <p>Generally, you want to specify which of the <a href="../drivers/">supported drivers</a> you want to install.</p>
 <p>In below example, we install with the <strong>Psycopg3</strong> driver, so we run</p>
-<pre><code class="language-bash">pip3 install dbworkload[postgres]
-</code></pre>
+<div class="highlight"><pre><span></span><code>pip3<span class="w"> </span>install<span class="w"> </span>dbworkload<span class="o">[</span>postgres<span class="o">]</span>
+</code></pre></div>
 <p>Confirm installation is successful by running</p>
-<pre><code class="language-bash">$ dbworkload --version
-dbworkload : 0.5.1
-Python     : 3.11.3
-</code></pre>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>dbworkload<span class="w"> </span>--version
+dbworkload<span class="w"> </span>:<span class="w"> </span><span class="m">0</span>.5.1
+Python<span class="w">     </span>:<span class="w"> </span><span class="m">3</span>.11.3
+</code></pre></div>
 
 
 

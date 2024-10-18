@@ -22,7 +22,7 @@
     
     
       
-        <title>Env Setup - dbworkload</title>
+        <title>Setup - dbworkload</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#env-setup" class="md-skip">
+        <a href="#setup" class="md-skip">
           Skip to content
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Env Setup
+              Setup
             
           </span>
         </div>
@@ -462,6 +462,8 @@
       
         
       
+        
+      
     
     
       
@@ -523,7 +525,7 @@
         
   
   <span class="md-ellipsis">
-    Env Setup
+    Setup
   </span>
   
 
@@ -545,7 +547,7 @@
         
   
   <span class="md-ellipsis">
-    Init the workload
+    Schema and SQL statements
   </span>
   
 
@@ -563,6 +565,27 @@
   
     <li class="md-nav__item">
       <a href="../2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Seed the database tables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../3/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -911,28 +934,52 @@
   
 
 
-<h1 id="env-setup">Env Setup</h1>
-<pre><code class="language-bash"># using ubuntu 20.04 LTS
-sudo apt update
-sudo apt install -y python3-pip
+<h1 id="setup">Setup</h1>
+<p>For this tutorial, we assume you have a CockroachDB or PostgreSQL Server running locally and accessible at <code>localhost</code>.</p>
+<p>Make sure <code>dbworkload</code> is installed on your machine, see how at <a href="../../installation/">Installation</a>.</p>
+<p>Create a directory <code>workloads</code> to store all our files.</p>
+<div class="highlight"><pre><span></span><code>mkdir<span class="w"> </span>workloads
+<span class="nb">cd</span><span class="w"> </span>workloads
+</code></pre></div>
+<p>For reference, here are the URI used to connect to my local instances</p>
+<p>For Postgres</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>psql<span class="w"> </span><span class="s1">&#39;postgres://fabio:postgres@localhost:5432/postgres?sslmode=disable&#39;</span>
+Timing<span class="w"> </span>is<span class="w"> </span>on.
+psql<span class="w"> </span><span class="o">(</span><span class="m">16</span>.2<span class="o">)</span>
+Type<span class="w"> </span><span class="s2">&quot;help&quot;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>help.
 
-# upgrade pip - must have pip version 20.3+ 
-pip3 install --upgrade pip
+<span class="nv">postgres</span><span class="o">=</span><span class="c1"># select version();</span>
+<span class="w">                                                              </span>version<span class="w">                                                               </span>
+------------------------------------------------------------------------------------------------------------------------------------
+<span class="w"> </span>PostgreSQL<span class="w"> </span><span class="m">16</span>.2<span class="w"> </span><span class="o">(</span>Postgres.app<span class="o">)</span><span class="w"> </span>on<span class="w"> </span>aarch64-apple-darwin21.6.0,<span class="w"> </span>compiled<span class="w"> </span>by<span class="w"> </span>Apple<span class="w"> </span>clang<span class="w"> </span>version<span class="w"> </span><span class="m">14</span>.0.0<span class="w"> </span><span class="o">(</span>clang-1400.0.29.102<span class="o">)</span>,<span class="w"> </span><span class="m">64</span>-bit
+<span class="o">(</span><span class="m">1</span><span class="w"> </span>row<span class="o">)</span>
 
-pip3 install dbworkload[postgres]
+Time:<span class="w"> </span><span class="m">1</span>.926<span class="w"> </span>ms
+<span class="nv">postgres</span><span class="o">=</span><span class="c1"># </span>
+</code></pre></div>
+<p>For CockroachDB</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>cockroach<span class="w"> </span>sql<span class="w"> </span>--url<span class="w"> </span><span class="s1">&#39;postgres://cockroach:cockroach@localhost:26257/defaultdb?sslmode=require&#39;</span>
+<span class="c1">#</span>
+<span class="c1"># Welcome to the CockroachDB SQL shell.</span>
+<span class="c1"># All statements must be terminated by a semicolon.</span>
+<span class="c1"># To exit, type: \q.</span>
+<span class="c1">#</span>
+<span class="c1"># Server version: CockroachDB CCL v24.2.3 (x86_64-apple-darwin19, built 2024/09/23 22:30:57, go1.22.5 X:nocoverageredesign) (same version as client)</span>
+<span class="c1"># Cluster ID: e360faa9-2ba3-4e92-bd51-fc7e88cf24a8</span>
+<span class="c1"># Organization: Workshop</span>
+<span class="c1">#</span>
+<span class="c1"># Enter \? for a brief introduction.</span>
+<span class="c1">#</span>
+cockroach@localhost:26257/defaultdb&gt;<span class="w"> </span><span class="k">select</span><span class="w"> </span>version<span class="o">()</span><span class="p">;</span>
+<span class="w">                                                   </span>version
+-------------------------------------------------------------------------------------------------------------
+<span class="w">  </span>CockroachDB<span class="w"> </span>CCL<span class="w"> </span>v24.2.3<span class="w"> </span><span class="o">(</span>x86_64-apple-darwin19,<span class="w"> </span>built<span class="w"> </span><span class="m">2024</span>/09/23<span class="w"> </span><span class="m">22</span>:30:57,<span class="w"> </span>go1.22.5<span class="w"> </span>X:nocoverageredesign<span class="o">)</span>
+<span class="o">(</span><span class="m">1</span><span class="w"> </span>row<span class="o">)</span>
 
-mkdir workloads
-cd workloads
+Time:<span class="w"> </span>1ms<span class="w"> </span>total<span class="w"> </span><span class="o">(</span>execution<span class="w"> </span>1ms<span class="w"> </span>/<span class="w"> </span>network<span class="w"> </span>0ms<span class="o">)</span>
 
-# the workload class
-wget https://raw.githubusercontent.com/fabiog1901/dbworkload/main/workloads/postgres/bank.py
-
-# the DDL file
-wget https://raw.githubusercontent.com/fabiog1901/dbworkload/main/workloads/postgres/bank.sql
-
-# the data generation definition file
-wget https://raw.githubusercontent.com/fabiog1901/dbworkload/main/workloads/postgres/bank.yaml
-</code></pre>
+cockroach@localhost:26257/defaultdb&gt;
+</code></pre></div>
 
 
 
@@ -987,13 +1034,13 @@ wget https://raw.githubusercontent.com/fabiog1901/dbworkload/main/workloads/post
         
         
           
-          <a href="../1/" class="md-footer__link md-footer__link--next" aria-label="Next: Init the workload">
+          <a href="../1/" class="md-footer__link md-footer__link--next" aria-label="Next: Schema and SQL statements">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Init the workload
+                Schema and SQL statements
               </div>
             </div>
             <div class="md-footer__button md-icon">

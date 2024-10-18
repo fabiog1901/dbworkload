@@ -455,6 +455,8 @@
       
         
       
+        
+      
     
     
       
@@ -507,7 +509,7 @@
         
   
   <span class="md-ellipsis">
-    Env Setup
+    Setup
   </span>
   
 
@@ -528,7 +530,7 @@
         
   
   <span class="md-ellipsis">
-    Init the workload
+    Schema and SQL statements
   </span>
   
 
@@ -546,6 +548,27 @@
   
     <li class="md-nav__item">
       <a href="../getting_started/2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Seed the database tables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting_started/3/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -905,26 +928,26 @@
 
 
 <h1 id="cli">CLI</h1>
-<p>This page provides documentation for the command line commands and their options.</p>
+<p>This page provides documentation for the command line arguments and options.</p>
 <h1 id="dbworkload">dbworkload</h1>
 <p>dbworkload v0.5.1: DBMS workload utility.</p>
 <p><strong>Usage:</strong></p>
-<pre><code class="language-text">dbworkload [OPTIONS] COMMAND [ARGS]...
-</code></pre>
+<div class="highlight"><pre><span></span><code>dbworkload [OPTIONS] COMMAND [ARGS]...
+</code></pre></div>
 <p><strong>Options:</strong></p>
-<pre><code class="language-text">  -v, --version         Print the version and exit
+<div class="highlight"><pre><span></span><code>  -v, --version         Print the version and exit
   --install-completion  Install completion for the current shell.
   --show-completion     Show completion for the current shell, to copy it or
                         customize the installation.
   --help                Show this message and exit.
-</code></pre>
+</code></pre></div>
 <h2 id="run">run</h2>
 <p>Run the workload.</p>
 <p><strong>Usage:</strong></p>
-<pre><code class="language-text">dbworkload run [OPTIONS]
-</code></pre>
+<div class="highlight"><pre><span></span><code>dbworkload run [OPTIONS]
+</code></pre></div>
 <p><strong>Options:</strong></p>
-<pre><code class="language-text">  -w, --workload FILE             Filepath to the workload module.
+<div class="highlight"><pre><span></span><code>  -w, --workload FILE             Filepath to the workload module.
   --driver [postgres|mysql|maria|oracle|sqlserver|mongo|cassandra]
                                   DBMS driver.
   --uri TEXT                      The connection URI to the database.
@@ -951,22 +974,22 @@
   -l, --log-level [debug|info|warning|error]
                                   Set the logging level.  [default: info]
   --help                          Show this message and exit.
-</code></pre>
+</code></pre></div>
 <h2 id="util">util</h2>
 <p>Various utils.</p>
 <p><strong>Usage:</strong></p>
-<pre><code class="language-text">dbworkload util [OPTIONS] COMMAND [ARGS]...
-</code></pre>
+<div class="highlight"><pre><span></span><code>dbworkload util [OPTIONS] COMMAND [ARGS]...
+</code></pre></div>
 <p><strong>Options:</strong></p>
-<pre><code class="language-text">  --help  Show this message and exit.
-</code></pre>
+<div class="highlight"><pre><span></span><code>  --help  Show this message and exit.
+</code></pre></div>
 <h3 id="csv">csv</h3>
 <p>Generate CSV files from a YAML data generation file.</p>
 <p><strong>Usage:</strong></p>
-<pre><code class="language-text">dbworkload util csv [OPTIONS]
-</code></pre>
+<div class="highlight"><pre><span></span><code>dbworkload util csv [OPTIONS]
+</code></pre></div>
 <p><strong>Options:</strong></p>
-<pre><code class="language-text">  -i, --input FILE                Filepath to the YAML data generation file.
+<div class="highlight"><pre><span></span><code>  -i, --input FILE                Filepath to the YAML data generation file.
                                   [required]
   -o, --output DIRECTORY          Output directory for the CSV files. Defaults
                                   to &lt;input-basename&gt;.
@@ -983,65 +1006,65 @@
   -d, --delimiter TEXT            The delimeter char to use for the CSV files.
                                   Defaults to &quot;tab&quot;.
   --help                          Show this message and exit.
-</code></pre>
+</code></pre></div>
 <h3 id="gen_stub">gen_stub</h3>
 <p>Generate a dbworkload class stub.</p>
 <p><strong>Usage:</strong></p>
-<pre><code class="language-text">dbworkload util gen_stub [OPTIONS]
-</code></pre>
+<div class="highlight"><pre><span></span><code>dbworkload util gen_stub [OPTIONS]
+</code></pre></div>
 <p><strong>Options:</strong></p>
-<pre><code class="language-text">  -i, --input FILE  Input SQL file  [required]
+<div class="highlight"><pre><span></span><code>  -i, --input FILE  Input SQL file  [required]
   --help            Show this message and exit.
-</code></pre>
+</code></pre></div>
 <h3 id="html">html</h3>
 <p>Save charts to HTML from the dbworkload statistics CSV file.</p>
 <p><strong>Usage:</strong></p>
-<pre><code class="language-text">dbworkload util html [OPTIONS]
-</code></pre>
+<div class="highlight"><pre><span></span><code>dbworkload util html [OPTIONS]
+</code></pre></div>
 <p><strong>Options:</strong></p>
-<pre><code class="language-text">  -i, --input FILE  Input CSV file  [required]
+<div class="highlight"><pre><span></span><code>  -i, --input FILE  Input CSV file  [required]
   --help            Show this message and exit.
-</code></pre>
+</code></pre></div>
 <h3 id="merge">merge</h3>
 <p>Merge multiple sorted CSV files into 1+ files.</p>
 <p><strong>Usage:</strong></p>
-<pre><code class="language-text">dbworkload util merge [OPTIONS]
-</code></pre>
+<div class="highlight"><pre><span></span><code>dbworkload util merge [OPTIONS]
+</code></pre></div>
 <p><strong>Options:</strong></p>
-<pre><code class="language-text">  -i, --input DIRECTORY   Directory of files to be merged  [required]
+<div class="highlight"><pre><span></span><code>  -i, --input DIRECTORY   Directory of files to be merged  [required]
   -o, --output PATH       Output filepath. Defaults to &lt;input&gt;.merged.
   --csv-max-rows INTEGER  Max count of rows per resulting CSV file.  [default:
                           100000]
   --help                  Show this message and exit.
-</code></pre>
+</code></pre></div>
 <h3 id="merge_csvs">merge_csvs</h3>
 <p>Merge multiple dbworkload statistic CSV files.</p>
 <p><strong>Usage:</strong></p>
-<pre><code class="language-text">dbworkload util merge_csvs [OPTIONS]
-</code></pre>
+<div class="highlight"><pre><span></span><code>dbworkload util merge_csvs [OPTIONS]
+</code></pre></div>
 <p><strong>Options:</strong></p>
-<pre><code class="language-text">  -i, --input_dir DIRECTORY  Input CSV directory  [required]
+<div class="highlight"><pre><span></span><code>  -i, --input_dir DIRECTORY  Input CSV directory  [required]
   --help                     Show this message and exit.
-</code></pre>
+</code></pre></div>
 <h3 id="plot">plot</h3>
 <p>Plot charts from the dbworkload statistics CSV file.</p>
 <p><strong>Usage:</strong></p>
-<pre><code class="language-text">dbworkload util plot [OPTIONS]
-</code></pre>
+<div class="highlight"><pre><span></span><code>dbworkload util plot [OPTIONS]
+</code></pre></div>
 <p><strong>Options:</strong></p>
-<pre><code class="language-text">  -i, --input FILE  Input CSV file  [required]
+<div class="highlight"><pre><span></span><code>  -i, --input FILE  Input CSV file  [required]
   --help            Show this message and exit.
-</code></pre>
+</code></pre></div>
 <h3 id="yaml">yaml</h3>
 <p>Generate YAML data generation file from a DDL SQL file.</p>
 <p><strong>Usage:</strong></p>
-<pre><code class="language-text">dbworkload util yaml [OPTIONS]
-</code></pre>
+<div class="highlight"><pre><span></span><code>dbworkload util yaml [OPTIONS]
+</code></pre></div>
 <p><strong>Options:</strong></p>
-<pre><code class="language-text">  -i, --input FILE   Filepath to the DDL SQL file.  [required]
+<div class="highlight"><pre><span></span><code>  -i, --input FILE   Filepath to the DDL SQL file.  [required]
   -o, --output PATH  Output filepath. Defaults to &lt;input-basename&gt;.yaml.
   --help             Show this message and exit.
-</code></pre>
+</code></pre></div>
 
 
 

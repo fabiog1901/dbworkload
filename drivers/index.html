@@ -563,6 +563,8 @@
       
         
       
+        
+      
     
     
       
@@ -615,7 +617,7 @@
         
   
   <span class="md-ellipsis">
-    Env Setup
+    Setup
   </span>
   
 
@@ -636,7 +638,7 @@
         
   
   <span class="md-ellipsis">
-    Init the workload
+    Schema and SQL statements
   </span>
   
 
@@ -654,6 +656,27 @@
   
     <li class="md-nav__item">
       <a href="../getting_started/2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Seed the database tables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting_started/3/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1077,78 +1100,78 @@
 <h2 id="postgres">postgres</h2>
 <p>For technologies such as PostgreSQL, CockroachDB</p>
 <p>Driver documentation: <a href="https://www.psycopg.org/psycopg3/docs/">Psycopg 3</a>.</p>
-<pre><code class="language-bash"># installation
-pip install dbworkload[postgres]
+<div class="highlight"><pre><span></span><code><span class="c1"># installation</span>
+pip<span class="w"> </span>install<span class="w"> </span>dbworkload<span class="o">[</span>postgres<span class="o">]</span>
 
-# sample use
-dbworkload run -w workloads/postgres/bank.py \
-  --uri 'postgres://cockroach:cockroach@localhost:26257/bank?sslmode=require' \
-  -l debug --args '{&quot;read_pct&quot;:50}' -i 1 -c 1
-</code></pre>
+<span class="c1"># sample use</span>
+dbworkload<span class="w"> </span>run<span class="w"> </span>-w<span class="w"> </span>workloads/postgres/bank.py<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--uri<span class="w"> </span><span class="s1">&#39;postgres://cockroach:cockroach@localhost:26257/bank?sslmode=require&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-l<span class="w"> </span>debug<span class="w"> </span>--args<span class="w"> </span><span class="s1">&#39;{&quot;read_pct&quot;:50}&#39;</span><span class="w"> </span>-i<span class="w"> </span><span class="m">1</span><span class="w"> </span>-c<span class="w"> </span><span class="m">1</span>
+</code></pre></div>
 <h2 id="mysql">mysql</h2>
 <p>For technologies such as MySQL, TiDB, Singlestore</p>
 <p>Driver documentation: <a href="https://dev.mysql.com/doc/connector-python/en/">MySQL Connector/Python Developer Guide</a>.</p>
-<pre><code class="language-bash"># installation
-pip3 install dbworkload[mysql]
+<div class="highlight"><pre><span></span><code><span class="c1"># installation</span>
+pip3<span class="w"> </span>install<span class="w"> </span>dbworkload<span class="o">[</span>mysql<span class="o">]</span>
 
-# sample use
-dbworkload run -w workloads/mysql/bank.py \
-  --uri 'user=root,password=London123,host=localhost,port=3306,database=bank,client_flags=SSL' \
-   --driver mysql --args '{&quot;read_pct&quot;:50}' -i 10
-</code></pre>
+<span class="c1"># sample use</span>
+dbworkload<span class="w"> </span>run<span class="w"> </span>-w<span class="w"> </span>workloads/mysql/bank.py<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--uri<span class="w"> </span><span class="s1">&#39;user=root,password=London123,host=localhost,port=3306,database=bank,client_flags=SSL&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">   </span>--driver<span class="w"> </span>mysql<span class="w"> </span>--args<span class="w"> </span><span class="s1">&#39;{&quot;read_pct&quot;:50}&#39;</span><span class="w"> </span>-i<span class="w"> </span><span class="m">10</span>
+</code></pre></div>
 <h2 id="mariadb">mariadb</h2>
 <p>Driver documentation: <a href="https://mariadb.com/docs/server/connect/programming-languages/python/">MariaDB Connector/Python</a>.</p>
-<pre><code class="language-bash"># installation
-pip3 install dbworkload[mariadb]
+<div class="highlight"><pre><span></span><code><span class="c1"># installation</span>
+pip3<span class="w"> </span>install<span class="w"> </span>dbworkload<span class="o">[</span>mariadb<span class="o">]</span>
 
-# sample use
-dbworkload run -w workloads/mariadb/bank.py \
-  --uri 'user=user1,password=password1,host=localhost,port=3306,database=bank' \
-  --driver maria --args '{&quot;read_pct&quot;:50}' -i 10
-</code></pre>
+<span class="c1"># sample use</span>
+dbworkload<span class="w"> </span>run<span class="w"> </span>-w<span class="w"> </span>workloads/mariadb/bank.py<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--uri<span class="w"> </span><span class="s1">&#39;user=user1,password=password1,host=localhost,port=3306,database=bank&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--driver<span class="w"> </span>maria<span class="w"> </span>--args<span class="w"> </span><span class="s1">&#39;{&quot;read_pct&quot;:50}&#39;</span><span class="w"> </span>-i<span class="w"> </span><span class="m">10</span>
+</code></pre></div>
 <h2 id="oracle">oracle</h2>
 <p>Driver documentation: <a href="https://python-oracledb.readthedocs.io/en/latest/index.html">python-oracledb’s documentation</a>.</p>
-<pre><code class="language-bash"># installation
-pip3 install dbworkload[oracle]
+<div class="highlight"><pre><span></span><code><span class="c1"># installation</span>
+pip3<span class="w"> </span>install<span class="w"> </span>dbworkload<span class="o">[</span>oracle<span class="o">]</span>
 
-# sample use
-dbworkload run -w workloads/oracle/bank.py \
-  --uri &quot;user=admin,password=password1,dsn=&quot;myhost.host2.us-east-1.rds.amazonaws.com:1521/OMS&quot; \
-  --driver oracle --args='{&quot;read_pct&quot;:50}' -i 10
-</code></pre>
+<span class="c1"># sample use</span>
+dbworkload<span class="w"> </span>run<span class="w"> </span>-w<span class="w"> </span>workloads/oracle/bank.py<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--uri<span class="w"> </span><span class="s2">&quot;user=admin,password=password1,dsn=&quot;</span>myhost.host2.us-east-1.rds.amazonaws.com:1521/OMS<span class="s2">&quot; \</span>
+<span class="s2">  --driver oracle --args=&#39;{&quot;</span>read_pct<span class="s2">&quot;:50}&#39; -i 10</span>
+</code></pre></div>
 <h2 id="sqlserver">sqlserver</h2>
 <p>Under construction...</p>
 <p>Driver documentation: <a href="https://learn.microsoft.com/en-us/sql/connect/python/python-driver-for-sql-server?view=sql-server-ver16">Python SQL driver</a>.</p>
-<pre><code class="language-bash"># installation
-pip3 install dbworkload[sqlserver]
+<div class="highlight"><pre><span></span><code><span class="c1"># installation</span>
+pip3<span class="w"> </span>install<span class="w"> </span>dbworkload<span class="o">[</span>sqlserver<span class="o">]</span>
 
-# sample use
-dbworkload run -w workloads/sqlserver/bank.py \
-  --uri &quot;&quot; \
-   --driver sqlserver --args='{&quot;read_pct&quot;:50}' -i 10
-</code></pre>
+<span class="c1"># sample use</span>
+dbworkload<span class="w"> </span>run<span class="w"> </span>-w<span class="w"> </span>workloads/sqlserver/bank.py<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--uri<span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">   </span>--driver<span class="w"> </span>sqlserver<span class="w"> </span>--args<span class="o">=</span><span class="s1">&#39;{&quot;read_pct&quot;:50}&#39;</span><span class="w"> </span>-i<span class="w"> </span><span class="m">10</span>
+</code></pre></div>
 <h2 id="mongo">mongo</h2>
 <p>Driver documentation: <a href="https://www.mongodb.com/docs/languages/python/pymongo-driver/current/">MongoDB PyMongo Documentation</a>.</p>
-<pre><code class="language-bash"># installation
-pip3 install dbworkload[mongo]
+<div class="highlight"><pre><span></span><code><span class="c1"># installation</span>
+pip3<span class="w"> </span>install<span class="w"> </span>dbworkload<span class="o">[</span>mongo<span class="o">]</span>
 
-# sample use
-dbworkload run -w workloads/mongo/bank.py \
-  --uri &quot;mongodb://127.0.0.1:27017/?directConnection=true&amp;serverSelectionTimeoutMS=2000&quot; \
-  --args='{&quot;read_pct&quot;:50}' -i 10
-</code></pre>
+<span class="c1"># sample use</span>
+dbworkload<span class="w"> </span>run<span class="w"> </span>-w<span class="w"> </span>workloads/mongo/bank.py<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--uri<span class="w"> </span><span class="s2">&quot;mongodb://127.0.0.1:27017/?directConnection=true&amp;serverSelectionTimeoutMS=2000&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--args<span class="o">=</span><span class="s1">&#39;{&quot;read_pct&quot;:50}&#39;</span><span class="w"> </span>-i<span class="w"> </span><span class="m">10</span>
+</code></pre></div>
 <h2 id="scylla-driver">scylla-driver</h2>
 <p>For technologies such as Cassandra, ScyllaDB</p>
 <p>Under construction...</p>
 <p>Driver documentation: <a href="https://python-driver.docs.scylladb.com/stable/">Python Driver for Scylla and Apache Cassandra</a>.</p>
-<pre><code class="language-bash"># installation
-pip3 install dbworkload[cassandra]
+<div class="highlight"><pre><span></span><code><span class="c1"># installation</span>
+pip3<span class="w"> </span>install<span class="w"> </span>dbworkload<span class="o">[</span>cassandra<span class="o">]</span>
 
-# sample use
-dbworkload run -w workloads/cassandra/bank.py \
-  --uri &quot;&quot; \
-   --driver cassandra --args='{&quot;read_pct&quot;:50}' -i 10
-</code></pre>
+<span class="c1"># sample use</span>
+dbworkload<span class="w"> </span>run<span class="w"> </span>-w<span class="w"> </span>workloads/cassandra/bank.py<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--uri<span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">   </span>--driver<span class="w"> </span>cassandra<span class="w"> </span>--args<span class="o">=</span><span class="s1">&#39;{&quot;read_pct&quot;:50}&#39;</span><span class="w"> </span>-i<span class="w"> </span><span class="m">10</span>
+</code></pre></div>
 
 
 

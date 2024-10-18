@@ -458,6 +458,8 @@
       
         
       
+        
+      
     
     
       
@@ -510,7 +512,7 @@
         
   
   <span class="md-ellipsis">
-    Env Setup
+    Setup
   </span>
   
 
@@ -531,7 +533,7 @@
         
   
   <span class="md-ellipsis">
-    Init the workload
+    Schema and SQL statements
   </span>
   
 
@@ -549,6 +551,27 @@
   
     <li class="md-nav__item">
       <a href="getting_started/2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Seed the database tables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="getting_started/3/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -894,48 +917,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Overview">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#database-seeding" class="md-nav__link">
-    <span class="md-ellipsis">
-      Database seeding
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#how-it-works" class="md-nav__link">
-    <span class="md-ellipsis">
-      How it works
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#concurrency-processes-and-threads" class="md-nav__link">
-    <span class="md-ellipsis">
-      Concurrency - processes and threads
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#generating-csv-files" class="md-nav__link">
-    <span class="md-ellipsis">
-      Generating CSV files
-    </span>
-  </a>
-  
 </li>
       
     </ul>
@@ -965,62 +946,6 @@ workload concurrency, duration and/or iteration, and more.</p>
 <p>The user, by coding the class, has complete control of the workload flow:
 what transactions are executed in which order, and what statements are included in each transaction,
 plus what data to insert and how to generate it and manipulate it.</p>
-<h3 id="database-seeding">Database seeding</h3>
-<p><code>dbworkload</code> can help with seeding a database by creating CSV files with random generated data,
-whose definition is supplied in a YAML file and can be extracted from a DDL SQL file.</p>
-<h2 id="how-it-works">How it works</h2>
-<p>It’s helpful to understand first what <code>dbworkload</code> does:</p>
-<ul>
-<li>
-<p>At runtime, <code>dbworkload</code> first imports the class you pass, <code>bank.py</code>.</p>
-</li>
-<li>
-<p>It spawns <em>n</em> threads for concurrent execution (see next section on Concurrency).</p>
-</li>
-<li>By default, it sets the connection to <code>autocommit</code> mode.</li>
-<li>Each thread creates a database connection - no need for a connection pool.</li>
-<li>In a loop, each <code>dbworkload</code> thread will:</li>
-<li>execute function <code>loop()</code> which returns a list of functions.</li>
-<li>execute each function in the list sequentially. Each function, typically, executes a SQL statement/transaction.</li>
-<li>Execution stats are funneled back to the <em>MainThread</em>, which aggregates and, optionally, prints them to <em>stdout</em> and saves them to a CSV file.</li>
-<li>If the connection drops, it will recreate it. You can also program how long you want the connection to last.</li>
-<li><code>dbworkload</code> stops once a limit has been reached (iteration/duration), or you Ctrl+C.</li>
-</ul>
-<h2 id="concurrency-processes-and-threads">Concurrency - processes and threads</h2>
-<p><code>dbworkload</code> uses both the <code>multiprocessing</code> and <code>threading</code> library to achieve high concurrency, that is, opening multiple connections to the DBMS.</p>
-<p>There are 2 parameters that can be used to configure how many processes you want to create, and for each process, how many threads:</p>
-<ul>
-<li><code>--procs/-x</code>, to configure the count of processes (defaults to the CPU count)</li>
-<li><code>--concurrency/-c</code>, to configure the total number of connections (also referred to as <em>executing threads</em>)</li>
-</ul>
-<p><code>dbworkload</code> will spread the load across the processes, so that each process has an even amount of threads.</p>
-<p>Example: if we set <code>--procs 4</code> and <code>--concurrency 10</code>, dbworkload will create as follows:</p>
-<ul>
-<li>Process-1: MainThread + 1 extra thread. Total = 2</li>
-<li>Process-2: MainThread + 1 extra thread. Total = 2</li>
-<li>Process-3: MainThread + 2 extra threads. Total = 3</li>
-<li>Process-4: MainThread + 2 extra threads. Total = 3</li>
-</ul>
-<p>Total executing threads/connections = 10</p>
-<p>This allows you to fine tune the count of Python processes and threads to fit your system.</p>
-<p>Furthermore, each <em>executing thread</em> receives a unique ID (an integer).
-The ID is passed to the workload class with function <code>setup()</code>, along with the total count of threads, i.e. the value passed to <code>-c/--concurrency</code>.
-You can leverage the ID and the thread count in various ways, for example, to have each thread process a subset of a dataset.</p>
-<h2 id="generating-csv-files">Generating CSV files</h2>
-<ul>
-<li>You can seed a database quickly by letting <code>dbworkload</code> generate pseudo-random data and import it.</li>
-<li><code>dbworkload</code> takes the DDL as an input and creates an intermediate YAML file, with the definition of what data you want to create (a string, a number, a date, a bool..) based on the column data type.</li>
-<li>You then refine the YAML file to suit your needs, for example, the size of the string, a range for a date, the precision for a decimal, a choice among a discrete list of values..</li>
-<li>You can also specify what is the percentage of NULL for any column, or how many elements in an ARRAY type.</li>
-<li>You then specify the total row count, how many rows per file, and in what order, if any, to sort by.</li>
-<li>Then <code>dbworkload</code> will generate the data into CSV or TSV files, compress them if so requested.</li>
-<li>You can then optionally merge-sort the files using command <code>merge</code>.</li>
-</ul>
-<p>Write up blog: <a href="https://dev.to/cockroachlabs/generate-multiple-large-sorted-csv-files-with-pseudo-random-data-1jo4">Generate multiple large sorted csv files with pseudo-random data</a></p>
-<p>Find out more on the <code>yaml</code>, <code>csv</code> and <code>merge</code> commands by running</p>
-<pre><code class="language-bash">dbworkload util --help
-</code></pre>
-<p>Consult file <code>workloads/postgres/bank.yaml</code> for a list of all available generators and options.</p>
 
 
 

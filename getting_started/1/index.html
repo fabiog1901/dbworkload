@@ -22,7 +22,7 @@
     
     
       
-        <title>Init the workload - dbworkload</title>
+        <title>Schema and SQL statements - dbworkload</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#init-the-workload" class="md-skip">
+        <a href="#schema-and-sql-statements" class="md-skip">
           Skip to content
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Init the workload
+              Schema and SQL statements
             
           </span>
         </div>
@@ -462,6 +462,8 @@
       
         
       
+        
+      
     
     
       
@@ -514,7 +516,7 @@
         
   
   <span class="md-ellipsis">
-    Env Setup
+    Setup
   </span>
   
 
@@ -540,15 +542,63 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Schema and SQL statements
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
-    Init the workload
+    Schema and SQL statements
   </span>
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#ddl" class="md-nav__link">
+    <span class="md-ellipsis">
+      DDL
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#statements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Statements
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -563,6 +613,27 @@
   
     <li class="md-nav__item">
       <a href="../2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Seed the database tables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../3/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -895,6 +966,32 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#ddl" class="md-nav__link">
+    <span class="md-ellipsis">
+      DDL
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#statements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Statements
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -911,41 +1008,63 @@
   
 
 
-<h1 id="init-the-workload">Init the workload</h1>
-<p>Make sure your <strong>CockroachDB</strong> cluster or <strong>PostgreSQL</strong> server is up and running.
-Please note: this guide assumes the database server and dbworkload are both runnining locally and can communicate with each other via <code>localhost</code>.</p>
-<p>Connect to the SQL prompt and execute the DDL statements in the <code>bank.sql</code> file.
-In CockroachDB, you can simply run</p>
-<pre><code class="language-sql">sql&gt; \i bank.sql
-</code></pre>
-<p>Next, generate some CSV data to seed the database:</p>
-<pre><code class="language-bash">dbworkload util csv -i bank.yaml -x 1
-</code></pre>
-<p>The CSV files will be located inside a <code>bank</code> directory.</p>
-<pre><code class="language-bash">$ ls -lh bank
-total 1032
--rw-r--r--  1 fabio  staff   513K Apr  9 13:01 ref_data.0_0_0.csv
+<h1 id="schema-and-sql-statements">Schema and SQL statements</h1>
+<p>Our starting point is the schema and the SQL statements we want to eventually emulate.</p>
+<h2 id="ddl">DDL</h2>
+<p>For this tutorial, the DDL is very simple, just 2 tables.</p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- file: bank.sql</span>
 
-$ head -n2 bank/ref_data.0_0_0.csv 
-0       simplefaker     b66ab5dc-1fcc-4ac8-8ad0-70bbbb463f00    alpha   16381   {124216.6,416559.9,355271.42,443666.45,689859.03,461510.94,31766.46,727918.45,361202.5,561364.1}        12421672576.9632        2022-10-18 04:57:37.613512      2022-10-18     13:36:48 1001010011      \xe38a2e10b400a8e77eda  {ID-cUJeNcMZ,ID-mWxhyiqN,ID-0FnlVOO5}   0       &quot;{&quot;&quot;k&quot;&quot;:&quot;&quot;cUJNcMZ&quot;&quot;}&quot;
-1       simplefaker     f2ebb78a-5af3-4755-8c22-2ad06aa3b26c    bravo   39080           35527177861.6551        2022-12-25 09:12:04.771673      2022-12-25      13:05:42        0110111101      \x5a2efedf253aa3fbeea8  {ID-gQkRkMxIkSjihWcWTcr,ID-o7iDzl9AMJoFfduo6Hz,ID-5BS3MlZgOjxFZRBgBmf}  0       &quot;{&quot;&quot;k&quot;&quot;:&quot;&quot;5Di0UHLWMEuR7&quot;&quot;}&quot;
-</code></pre>
-<p>Now you can import the CSV file.
-In CockroachDB, my favorite method is to use a webserver to serve the CSV file.
-Open a new terminal then start a simple python server</p>
-<pre><code class="language-bash">cd workloads
-cd bank
-python3 -m http.server 3000
-</code></pre>
-<p>If you open your browser at <a href="http://localhost:3000">http://localhost:3000</a> you should see file <code>ref_data.0_0_0.csv</code> being served.</p>
-<p>At the SQL prompt, import the file</p>
-<pre><code class="language-sql">sql&gt; IMPORT INTO ref_data CSV DATA ('http://localhost:3000/ref_data.0_0_0.csv') WITH delimiter = e'\t'; 
-</code></pre>
-<p>In PostgreSQL Server, at the SQL prompt, just use <code>COPY</code></p>
-<pre><code class="language-sql">bank=# COPY ref_data FROM '/Users/fabio/workloads/bank/ref_data.0_0_0.csv' WITH CSV DELIMITER AS e'\t';
-COPY 100
-Time: 2.713 ms
-</code></pre>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">ref_data</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="n">UUID</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">    </span><span class="n">balance</span><span class="w"> </span><span class="nb">BIGINT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">created_time</span><span class="w"> </span><span class="n">TIMESTAMPTZ</span><span class="p">,</span>
+<span class="w">    </span><span class="n">acc_details</span><span class="w"> </span><span class="nb">VARCHAR</span>
+<span class="p">);</span>
+
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">transactions</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">lane</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">,</span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="n">UUID</span><span class="p">,</span>
+<span class="w">    </span><span class="n">event</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ts</span><span class="w"> </span><span class="n">TIMESTAMPTZ</span><span class="p">,</span>
+<span class="w">    </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">lane</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">event</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>PostgreSQL and CockroachDB share the same SQL syntax as CockroachDB has adopted the postgres wire API protocol.
+This means the above <code>CREATE TABLE</code> statements work for both technologies 🚀</p>
+</div>
+<p>Save the DDL to a file <code>bank.sql</code>.</p>
+<h2 id="statements">Statements</h2>
+<p>This below is the list of statements that constitute our workload.
+Bind parameters, denoted with <code>%s</code>, will vary, and we are expected to simulate them.</p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- file: bank_stmts.sql</span>
+
+<span class="c1">-- read operation, executed 50% of the time</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">transactions</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">lane</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">;</span>
+
+<span class="c1">-- below 3 statements/transactions constitute a complete order execution</span>
+<span class="c1">-- new_order</span>
+<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">transactions</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="o">%</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">);</span>
+
+<span class="c1">-- verify order</span>
+<span class="k">BEGIN</span><span class="p">;</span>
+<span class="w">    </span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">ref_data</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">my_sequence</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">;</span>
+<span class="w">    </span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">transactions</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="o">%</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">);</span>
+<span class="k">COMMIT</span><span class="p">;</span>
+
+<span class="c1">-- execute order</span>
+<span class="k">BEGIN</span><span class="p">;</span>
+<span class="w">    </span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">ref_data</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">my_sequence</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">;</span>
+<span class="w">    </span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">transactions</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="o">%</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">);</span>
+<span class="k">COMMIT</span><span class="p">;</span>
+</code></pre></div>
+<p>Save this to file <code>bank_stmts.sql</code></p>
+<div class="admonition info">
+<p class="admonition-title">A quick note</p>
+<p>For this exercise, we will not spend too much time caring about what the statements do.
+The statements in this example will not make much sense, so just focus on <code>dbworkload</code> 🙂</p>
+</div>
 
 
 
@@ -983,7 +1102,7 @@ Time: 2.713 ms
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../0/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Env Setup">
+          <a href="../0/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Setup">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -993,20 +1112,20 @@ Time: 2.713 ms
                 Previous
               </span>
               <div class="md-ellipsis">
-                Env Setup
+                Setup
               </div>
             </div>
           </a>
         
         
           
-          <a href="../2/" class="md-footer__link md-footer__link--next" aria-label="Next: Run the workload">
+          <a href="../2/" class="md-footer__link md-footer__link--next" aria-label="Next: Seed the database tables">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Run the workload
+                Seed the database tables
               </div>
             </div>
             <div class="md-footer__button md-icon">

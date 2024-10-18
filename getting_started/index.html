@@ -462,6 +462,8 @@
       
         
       
+        
+      
     
     
       
@@ -514,7 +516,7 @@
         
   
   <span class="md-ellipsis">
-    Env Setup
+    Setup
   </span>
   
 
@@ -535,7 +537,7 @@
         
   
   <span class="md-ellipsis">
-    Init the workload
+    Schema and SQL statements
   </span>
   
 
@@ -553,6 +555,27 @@
   
     <li class="md-nav__item">
       <a href="2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Seed the database tables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="3/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -902,25 +925,19 @@
 
 
 <h1 id="getting-started">Getting Started</h1>
-<p>Example using PostgreSQL Server and CockroachDB.</p>
-<p>Class <code>Bank</code> in file <code>workloads/postgres/bank.py</code> is an example of one such user-created workload.
-The class defines 3 simple transactions that have to be executed by <code>dbworkload</code>.
-Have a look at the <code>bank.py</code>, <code>bank.yaml</code> and <code>bank.sql</code> in the <code>workload/postgres/</code> folder in this project.</p>
-<p>Head to file <code>workload/postgres/bank.sql</code> to see what the database schema look like. We have 2 tables:</p>
-<ul>
-<li>the <code>transactions</code> table, where we record the bank payment transactions.</li>
-<li>the <code>ref_data</code> table.</li>
-</ul>
-<p>Take a close look at this last table: each column represent a different type, which brings us to the next file.</p>
-<p>File <code>bank.yaml</code> is the data generation definition file.
-For each column of table <code>ref_data</code>, we deterministically generate random data.
-This file is meant as a guide to show what type of data can be generated, and what args are required.</p>
-<p>File <code>bank.py</code> defines the workload.
-The workload is defined as a class object.
-The class defines 2 methods: <code>loop()</code> and the constructor, <code>__init__()</code>.
-All other methods are part of the application logic of the workload.
-Read the comments along the code for more information.</p>
-<p>Let's run the sample <strong>Bank</strong> workload.</p>
+<p>The best way to understand how <code>dbworkload</code> works is by running through a good example.</p>
+<p>We will be using PostgreSQL Server and CockroachDB, but the same logic can be applied to any of the other
+supported technologies.</p>
+<p>In this tutorial, we will go through the following tasks:</p>
+<ol>
+<li>As a prerequisite, we setup our working environment.</li>
+<li>We start with the DDL of a few tables and the SQL statements that are routinely executed against these tables.</li>
+<li>We generate some random datasets for seeding the database tables.</li>
+<li>We then create the tables in our database, and import the generated dataset.</li>
+<li>From the SQL statements, we create the <code>dbworload</code> class file, that is, our workload file.</li>
+<li>We run the workload, saving stats to a CSV file.</li>
+<li>We collect the information and plot a chart to display the results of the test run.</li>
+</ol>
 
 
 
@@ -975,13 +992,13 @@ Read the comments along the code for more information.</p>
         
         
           
-          <a href="0/" class="md-footer__link md-footer__link--next" aria-label="Next: Env Setup">
+          <a href="0/" class="md-footer__link md-footer__link--next" aria-label="Next: Setup">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Env Setup
+                Setup
               </div>
             </div>
             <div class="md-footer__button md-icon">

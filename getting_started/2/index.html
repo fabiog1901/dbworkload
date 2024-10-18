@@ -14,7 +14,7 @@
         <link rel="prev" href="../1/">
       
       
-        <link rel="next" href="../../how_it_works/">
+        <link rel="next" href="../3/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>Run the workload - dbworkload</title>
+        <title>Seed the database tables - dbworkload</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#run-the-workload" class="md-skip">
+        <a href="#seed-the-database-tables" class="md-skip">
           Skip to content
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Run the workload
+              Seed the database tables
             
           </span>
         </div>
@@ -462,6 +462,8 @@
       
         
       
+        
+      
     
     
       
@@ -514,7 +516,7 @@
         
   
   <span class="md-ellipsis">
-    Env Setup
+    Setup
   </span>
   
 
@@ -535,7 +537,7 @@
         
   
   <span class="md-ellipsis">
-    Init the workload
+    Schema and SQL statements
   </span>
   
 
@@ -561,7 +563,134 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Seed the database tables
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Seed the database tables
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#create-the-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create the tables
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Create the tables">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#postgresql" class="md-nav__link">
+    <span class="md-ellipsis">
+      PostgreSQL
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cockroachdb" class="md-nav__link">
+    <span class="md-ellipsis">
+      CockroachDB
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#generate-datasets" class="md-nav__link">
+    <span class="md-ellipsis">
+      Generate datasets
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#importing-datasets" class="md-nav__link">
+    <span class="md-ellipsis">
+      Importing datasets
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Importing datasets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#postgresql_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      PostgreSQL
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cockroachdb_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      CockroachDB
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../3/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -570,7 +699,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -895,6 +1023,89 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#create-the-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create the tables
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Create the tables">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#postgresql" class="md-nav__link">
+    <span class="md-ellipsis">
+      PostgreSQL
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cockroachdb" class="md-nav__link">
+    <span class="md-ellipsis">
+      CockroachDB
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#generate-datasets" class="md-nav__link">
+    <span class="md-ellipsis">
+      Generate datasets
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#importing-datasets" class="md-nav__link">
+    <span class="md-ellipsis">
+      Importing datasets
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Importing datasets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#postgresql_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      PostgreSQL
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cockroachdb_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      CockroachDB
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -911,29 +1122,115 @@
   
 
 
-<h1 id="run-the-workload">Run the workload</h1>
-<p>Run the workload using 4 connections for 120 seconds or 100k cycles, whichever comes first.</p>
-<pre><code class="language-bash"># CockroachDB
-dbworkload run -w bank.py -c 4 --uri 'postgres://root@localhost:26257/bank?sslmode=disable' -d 120 -i 100000
+<h1 id="seed-the-database-tables">Seed the database tables</h1>
+<h2 id="create-the-tables">Create the tables</h2>
+<p>Create the tables in a database called <code>bank</code>.</p>
+<h3 id="postgresql">PostgreSQL</h3>
+<div class="highlight"><pre><span></span><code><span class="n">postgres</span><span class="o">=#</span><span class="w"> </span><span class="k">CREATE</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="n">bank</span><span class="p">;</span>
+</code></pre></div>
+<p>Now, you need to disconnect and reconnect to <code>bank</code></p>
+<div class="highlight"><pre><span></span><code>psql<span class="w"> </span><span class="s1">&#39;postgres://fabio:postgres@localhost:5432/bank?sslmode=disable&#39;</span>
+</code></pre></div>
+<p>Once on the SQL prompt, import the file, or copy-paste, as you prefer.</p>
+<div class="highlight"><pre><span></span><code><span class="n">bank</span><span class="o">=#</span><span class="w"> </span><span class="err">\</span><span class="n">i</span><span class="w"> </span><span class="n">bank</span><span class="p">.</span><span class="k">sql</span>
 
-# PostgreSQL
-dbworkload run -w bank.py -c 4 --uri 'postgres://fabio:postgres@localhost:5432/bank?sslmode=disable' -d 120 -i 100000
-</code></pre>
-<p><code>dbworkload</code> will output rolling statistics about throughput and latency for each transaction in your workload class</p>
-<pre><code class="language-text">  elapsed  id               threads    tot_ops    tot_ops/s    period_ops    period_ops/s    mean(ms)    p50(ms)    p90(ms)    p95(ms)    p99(ms)    max(ms)
----------  -------------  ---------  ---------  -----------  ------------  --------------  ----------  ---------  ---------  ---------  ---------  ---------
-        8  __cycle__              4        190        23.00           190           19.00      107.20      53.90     200.14     200.71     202.06     204.84
-        8  read                   4         97        12.00            97            9.00       25.59      18.81      51.72      52.71      68.33      81.11
-        8  txn1_new               4         93        11.00            93            9.00       46.17      46.93      48.44      49.08      61.33      67.98
-        8  txn2_verify            4         93        11.00            93            9.00       76.12      83.02      84.46      84.56      95.24     102.75
-        8  txn3_finalize          4         93        11.00            93            9.00       69.99      69.03      80.65      83.21      93.16      99.95 
-[...]
-</code></pre>
-<p>You can always use <strong>pgAdmin</strong> for PostgreSQL Server or the <strong>DB Console</strong> for CockroachDB to view your workload, too.</p>
-<p>There are many built-in options.
-Check them out with</p>
-<pre><code class="language-bash">dbworkload --help
-</code></pre>
+<span class="n">bank</span><span class="o">=#</span><span class="w"> </span><span class="err">\</span><span class="n">d</span>
+<span class="c1">--            List of relations</span>
+<span class="c1">--  Schema |     Name     | Type  | Owner </span>
+<span class="c1">-- --------+--------------+-------+-------</span>
+<span class="c1">--  public | ref_data     | table | fabio</span>
+<span class="c1">--  public | transactions | table | fabio</span>
+<span class="c1">-- (2 rows)</span>
+</code></pre></div>
+<h3 id="cockroachdb">CockroachDB</h3>
+<div class="highlight"><pre><span></span><code><span class="n">defaultdb</span><span class="o">&gt;</span><span class="w"> </span><span class="k">CREATE</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="n">bank</span><span class="p">;</span>
+
+<span class="n">defaultdb</span><span class="o">&gt;</span><span class="w"> </span><span class="n">USE</span><span class="w"> </span><span class="n">bank</span><span class="p">;</span>
+
+<span class="n">bank</span><span class="o">&gt;</span><span class="w"> </span><span class="err">\</span><span class="n">i</span><span class="w"> </span><span class="n">bank</span><span class="p">.</span><span class="k">sql</span>
+
+<span class="n">bank</span><span class="o">&gt;</span><span class="w"> </span><span class="k">SHOW</span><span class="w"> </span><span class="n">TABLES</span><span class="p">;</span>
+<span class="c1">--   schema_name |  table_name  | type  |   owner   | estimated_row_count | locality</span>
+<span class="c1">-- --------------+--------------+-------+-----------+---------------------+-----------</span>
+<span class="c1">--   public      | ref_data     | table | cockroach |                   0 | NULL</span>
+<span class="c1">--   public      | transactions | table | cockroach |                   0 | NULL</span>
+<span class="c1">-- (2 rows)</span>
+</code></pre></div>
+<h2 id="generate-datasets">Generate datasets</h2>
+<p>Next, generate some CSV data to seed the database.
+<code>dbworkload</code> has 2 built-in utility functions that can assist with this task:</p>
+<ul>
+<li><code>dbworkload util yaml</code>, which converts a DDL file into a <em>data generation definition</em> file, structured in YAML.</li>
+<li><code>dbworkload util csv</code>, which takes the YAML file as input and outputs CSV files.</li>
+</ul>
+<p>Read the docs for util commands <a href="../../util/yaml/"><code>yaml</code></a> and <a href="../../util/csv/"><code>csv</code></a> for more information.</p>
+<p>Let's use the <code>yaml</code> utility with our <code>bank.sql</code> file.</p>
+<div class="highlight"><pre><span></span><code>dbworkload<span class="w"> </span>util<span class="w"> </span>yaml<span class="w"> </span>-i<span class="w"> </span>bank.sql
+</code></pre></div>
+<p>For this exercise, we will use below simplified YAML file.
+Replace the content of <code>bank.yaml</code> with below YAML</p>
+<div class="highlight"><pre><span></span><code><span class="nt">ref_data</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">  </span><span class="nt">sort-by</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">id</span>
+<span class="w">  </span><span class="nt">columns</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">id</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">UUIDv4</span>
+<span class="w">      </span><span class="nt">args</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">null_pct</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span>
+<span class="w">    </span><span class="nt">balance</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">integer</span>
+<span class="w">      </span><span class="nt">args</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="w">    </span><span class="nt">created_time</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">timestamp</span>
+<span class="w">      </span><span class="nt">args</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">start</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-01-01&#39;</span>
+<span class="w">        </span><span class="nt">end</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2024-01-01&#39;</span>
+<span class="w">        </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;%Y-%m-%d</span><span class="nv"> </span><span class="s">%H:%M:%S.%f&#39;</span>
+<span class="w">    </span><span class="nt">acc_details</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">      </span><span class="nt">args</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+</code></pre></div>
+<p>Now let's create a CSV file</p>
+<div class="highlight"><pre><span></span><code>dbworkload<span class="w"> </span>util<span class="w"> </span>csv<span class="w"> </span>-i<span class="w"> </span>bank.yaml<span class="w"> </span>-x<span class="w"> </span><span class="m">1</span>
+</code></pre></div>
+<p>The CSV files will be located inside a <code>bank</code> directory.</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>ls<span class="w"> </span>-lh1<span class="w"> </span>bank
+ref_data.0_0_0.tsv
+
+$<span class="w"> </span>wc<span class="w"> </span>-l<span class="w"> </span>bank/*
+<span class="w">    </span><span class="m">1000</span><span class="w"> </span>bank/ref_data.0_0_0.tsv
+</code></pre></div>
+<p>Inspect the <code>ref_data</code> file</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>head<span class="w"> </span>-n5<span class="w"> </span>bank/ref_data.0_0_0.tsv<span class="w"> </span>
+005086e5-8ba8-41bc-86a2-0fb56f420b0d<span class="w">    </span><span class="m">7</span><span class="w">       </span><span class="m">2021</span>-06-26<span class="w"> </span><span class="m">07</span>:03:29.349997<span class="w">      </span>Q78qp
+006d89d1-84c2-44b9-a9c1-00a9f56f8f77<span class="w">    </span><span class="m">10</span><span class="w">      </span><span class="m">2020</span>-03-22<span class="w"> </span><span class="m">15</span>:18:51.648441
+0071a892-d493-4495-9fcb-2498ddb4b63a<span class="w">    </span><span class="m">6</span><span class="w">       </span><span class="m">2021</span>-08-06<span class="w"> </span><span class="m">06</span>:23:26.648977<span class="w">      </span>QVFZ
+00e738b3-60c4-406d-bba6-03195ddf63f2<span class="w">    </span><span class="m">1</span><span class="w">       </span><span class="m">2023</span>-11-06<span class="w"> </span><span class="m">15</span>:19:23.731773<span class="w">      </span>90Ouo
+0150a1a1-27e0-41b8-9bdb-d761d8ec0ce0<span class="w">    </span><span class="m">4</span><span class="w">       </span><span class="m">2021</span>-10-11<span class="w"> </span><span class="m">20</span>:20:30.646713<span class="w">      </span>Jl7NHiKhk
+</code></pre></div>
+<h2 id="importing-datasets">Importing datasets</h2>
+<p>Now we are ready to import the CSV file.</p>
+<h3 id="postgresql_1">PostgreSQL</h3>
+<p>For PostgreSQL Server, at the SQL prompt, just use <code>COPY</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">bank</span><span class="o">=#</span><span class="w"> </span><span class="k">COPY</span><span class="w"> </span><span class="n">ref_data</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="s1">&#39;/path/to/workloads/bank/ref_data.0_0_0.csv&#39;</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="n">CSV</span><span class="w"> </span><span class="k">DELIMITER</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">e</span><span class="s1">&#39;\t&#39;</span><span class="p">;</span>
+<span class="c1">-- COPY 1000</span>
+<span class="c1">-- Time: 8.713 ms</span>
+</code></pre></div>
+<h3 id="cockroachdb_1">CockroachDB</h3>
+<p>For CockroachDB, my favorite method is to use a webserver for serving the CSV files.</p>
+<p>Open a new terminal then start a simple python server</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>workloads/bank
+python3<span class="w"> </span>-m<span class="w"> </span>http.server<span class="w"> </span><span class="m">3000</span>
+</code></pre></div>
+<p>If you open your browser at <a href="http://localhost:3000">http://localhost:3000</a>, you should see file <code>ref_data.0_0_0.tsv</code> being served.</p>
+<p>At the SQL prompt, import the file</p>
+<div class="highlight"><pre><span></span><code><span class="n">bank</span><span class="o">&gt;</span><span class="w"> </span><span class="n">IMPORT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">ref_data</span><span class="w"> </span><span class="n">CSV</span><span class="w"> </span><span class="k">DATA</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;http://localhost:3000/ref_data.0_0_0.tsv&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="k">delimiter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">e</span><span class="s1">&#39;\t&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">nullif</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">;</span>
+<span class="c1">--         job_id        |  status   | fraction_completed | rows | index_entries | bytes</span>
+<span class="c1">-- ----------------------+-----------+--------------------+------+---------------+--------</span>
+<span class="c1">--   1013244699046608897 | succeeded |                  1 | 1000 |             0 | 57629</span>
+<span class="c1">-- (1 row)</span>
+</code></pre></div>
 
 
 
@@ -971,7 +1268,7 @@ Check them out with</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../1/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Init the workload">
+          <a href="../1/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Schema and SQL statements">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -981,20 +1278,20 @@ Check them out with</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Init the workload
+                Schema and SQL statements
               </div>
             </div>
           </a>
         
         
           
-          <a href="../../how_it_works/" class="md-footer__link md-footer__link--next" aria-label="Next: How it works">
+          <a href="../3/" class="md-footer__link md-footer__link--next" aria-label="Next: Run the workload">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                How it works
+                Run the workload
               </div>
             </div>
             <div class="md-footer__button md-icon">

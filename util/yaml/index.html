@@ -460,6 +460,8 @@
       
         
       
+        
+      
     
     
       
@@ -512,7 +514,7 @@
         
   
   <span class="md-ellipsis">
-    Env Setup
+    Setup
   </span>
   
 
@@ -533,7 +535,7 @@
         
   
   <span class="md-ellipsis">
-    Init the workload
+    Schema and SQL statements
   </span>
   
 
@@ -551,6 +553,27 @@
   
     <li class="md-nav__item">
       <a href="../../getting_started/2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Seed the database tables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting_started/3/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -805,6 +828,17 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    yaml
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -814,6 +848,34 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#generate-yaml-data-generation-file-from-a-ddl-sql-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Generate YAML data generation file from a DDL SQL file
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -895,6 +957,23 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#generate-yaml-data-generation-file-from-a-ddl-sql-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Generate YAML data generation file from a DDL SQL file
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -912,6 +991,24 @@
 
 
 <h1 id="yaml">yaml</h1>
+<h2 id="generate-yaml-data-generation-file-from-a-ddl-sql-file">Generate YAML data generation file from a DDL SQL file</h2>
+<p>CREATE TABLE ref_data (
+    my_sequence BIGINT PRIMARY KEY,
+    my_constant VARCHAR,
+    my_uuid UUID,
+    my_choice VARCHAR,
+    my_integer BIGINT,
+    my_float FLOAT ARRAY,
+    my_decimal DECIMAL(15, 4),
+    my_timestamp TIMESTAMPTZ,
+    my_date DATE,
+    my_time TIME,
+    my_bit BIT(10),
+    my_bytes BYTEA,
+    my_string VARCHAR[],
+    my_bool BOOL,
+    my_json JSONB
+);</p>
 
 
 
