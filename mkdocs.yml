@@ -8,6 +8,9 @@ plugins:
 
 markdown_extensions:
   - mkdocs-click
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
 
 theme:
   name: material
@@ -68,6 +71,7 @@ nav:
       - getting_started/0.md
       - getting_started/1.md
       - getting_started/2.md
+      - getting_started/3.md
     - how_it_works.md
     - Utility Functions:
         - util/index.md

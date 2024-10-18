@@ -1,6 +1,6 @@
 # CLI
 
-This page provides documentation for the command line commands and their options.
+This page provides documentation for the command line arguments and options.
 
 ::: mkdocs-click
     :module: dbworkload.cli.main
