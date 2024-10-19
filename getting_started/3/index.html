@@ -22,7 +22,7 @@
     
     
       
-        <title>Run the workload - dbworkload</title>
+        <title>Create the workload class - dbworkload</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#run-the-workload" class="md-skip">
+        <a href="#create-the-workload-class" class="md-skip">
           Skip to content
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Run the workload
+              Create the workload class
             
           </span>
         </div>
@@ -584,15 +584,132 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Create the workload class
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
-    Run the workload
+    Create the workload class
   </span>
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#create-the-stub-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create the stub file
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#review-the-workload-class-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Review the workload class file
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Review the workload class file">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#imports" class="md-nav__link">
+    <span class="md-ellipsis">
+      imports
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-definition-and-init" class="md-nav__link">
+    <span class="md-ellipsis">
+      class definition and init
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      setup()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      loop()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#utility-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Utility functions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workload-transactions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Workload transactions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#final-helpful-tips" class="md-nav__link">
+    <span class="md-ellipsis">
+      final helpful tips
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -918,6 +1035,101 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#create-the-stub-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create the stub file
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#review-the-workload-class-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Review the workload class file
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Review the workload class file">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#imports" class="md-nav__link">
+    <span class="md-ellipsis">
+      imports
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-definition-and-init" class="md-nav__link">
+    <span class="md-ellipsis">
+      class definition and init
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      setup()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      loop()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#utility-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Utility functions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workload-transactions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Workload transactions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#final-helpful-tips" class="md-nav__link">
+    <span class="md-ellipsis">
+      final helpful tips
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -934,29 +1146,384 @@
   
 
 
-<h1 id="run-the-workload">Run the workload</h1>
-<p>Run the workload using 4 connections for 120 seconds or 100k cycles, whichever comes first.</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># CockroachDB</span>
-dbworkload<span class="w"> </span>run<span class="w"> </span>-w<span class="w"> </span>bank.py<span class="w"> </span>-c<span class="w"> </span><span class="m">4</span><span class="w"> </span>--uri<span class="w"> </span><span class="s1">&#39;postgres://root@localhost:26257/bank?sslmode=disable&#39;</span><span class="w"> </span>-d<span class="w"> </span><span class="m">120</span><span class="w"> </span>-i<span class="w"> </span><span class="m">100000</span>
+<h1 id="create-the-workload-class">Create the workload class</h1>
+<p>We now need to create the Python class file that describes our workload.</p>
+<p>This is going to be a regular <code>.py</code> file which needs to be created from scratch.</p>
+<p>Fortunately, we can use built-in function <code>dbworkload util gen_stub</code> to generate a skeleton
+which we can use as a base to get started.</p>
+<p>Read the helpful doc page for the <a href="../../util/gen_stub/">gen_stub</a> command.</p>
+<h2 id="create-the-stub-file">Create the stub file</h2>
+<p>Execute the following command</p>
+<div class="highlight"><pre><span></span><code>dbworkload<span class="w"> </span>util<span class="w"> </span>gen_stub<span class="w"> </span>-i<span class="w"> </span>bank.sql
+</code></pre></div>
+<p>A new file, <code>bank.py</code>, will be created in your directory.</p>
+<h2 id="review-the-workload-class-file">Review the workload class file</h2>
+<p>The file is pretty long to be pasted here all in one shot,
+so we will go through it in sections</p>
+<h3 id="imports">imports</h3>
+<p>The first few lines define the imports</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<span class="kn">import</span> <span class="nn">psycopg</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">uuid4</span>
+</code></pre></div></td></tr></table></div>
+<p>These are the most common libraries used when using a workload class.
+More can be added as needed.</p>
+<h3 id="class-definition-and-init">class definition and init</h3>
+<p>Here is the definition of class <code>Bank</code>.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Bank</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="c1"># args is a dict of string passed with the --args flag</span>
 
-<span class="c1"># PostgreSQL</span>
-dbworkload<span class="w"> </span>run<span class="w"> </span>-w<span class="w"> </span>bank.py<span class="w"> </span>-c<span class="w"> </span><span class="m">4</span><span class="w"> </span>--uri<span class="w"> </span><span class="s1">&#39;postgres://fabio:postgres@localhost:5432/bank?sslmode=disable&#39;</span><span class="w"> </span>-d<span class="w"> </span><span class="m">120</span><span class="w"> </span>-i<span class="w"> </span><span class="m">100000</span>
-</code></pre></div>
-<p><code>dbworkload</code> will output rolling statistics about throughput and latency for each transaction in your workload class</p>
-<div class="highlight"><pre><span></span><code>  elapsed  id               threads    tot_ops    tot_ops/s    period_ops    period_ops/s    mean(ms)    p50(ms)    p90(ms)    p95(ms)    p99(ms)    max(ms)
----------  -------------  ---------  ---------  -----------  ------------  --------------  ----------  ---------  ---------  ---------  ---------  ---------
-        8  __cycle__              4        190        23.00           190           19.00      107.20      53.90     200.14     200.71     202.06     204.84
-        8  read                   4         97        12.00            97            9.00       25.59      18.81      51.72      52.71      68.33      81.11
-        8  txn1_new               4         93        11.00            93            9.00       46.17      46.93      48.44      49.08      61.33      67.98
-        8  txn2_verify            4         93        11.00            93            9.00       76.12      83.02      84.46      84.56      95.24     102.75
-        8  txn3_finalize          4         93        11.00            93            9.00       69.99      69.03      80.65      83.21      93.16      99.95 
-[...]
-</code></pre></div>
-<p>You can always use <strong>pgAdmin</strong> for PostgreSQL Server or the <strong>DB Console</strong> for CockroachDB to view your workload, too.</p>
-<p>There are many built-in options.
-Check them out with</p>
-<div class="highlight"><pre><span></span><code>dbworkload<span class="w"> </span>--help
-</code></pre></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">think_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;think_time&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span>
+
+        <span class="c1"># you can arbitrarely add any variables you want</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">my_var</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="c1"># translation table for efficiently generating a string</span>
+        <span class="c1"># -------------------------------------------------------</span>
+        <span class="c1"># make translation table from 0..255 to A..Z, 0..9, a..z</span>
+        <span class="c1"># the length must be 256</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tbl</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">maketrans</span><span class="p">(</span>
+            <span class="nb">bytearray</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">256</span><span class="p">)),</span>
+            <span class="nb">bytearray</span><span class="p">(</span>
+                <span class="p">[</span><span class="nb">ord</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span> <span class="o">%</span> <span class="mi">26</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">113</span><span class="p">)]</span>
+                <span class="o">+</span> <span class="p">[</span><span class="nb">ord</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;0&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span> <span class="o">%</span> <span class="mi">10</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">)]</span>
+                <span class="o">+</span> <span class="p">[</span><span class="nb">ord</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;A&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span> <span class="o">%</span> <span class="mi">26</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">113</span><span class="p">)]</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<p>The <code>init</code> adds some convenient examples on how to pass runtime arguments and set class variables.
+<code>self.tbl</code> is used to generate random string - we will review that in the next sections.</p>
+<h3 id="setup">setup()</h3>
+<p>Next up is <code>setup()</code>.
+<code>dbworkload</code> invokes this function when it first starts up.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span></pre></div></td><td class="code"><div><pre><span></span><code>    <span class="c1"># the setup() function is executed only once</span>
+    <span class="c1"># when a new executing thread is started.</span>
+    <span class="c1"># Also, the function is a vector to receive the excuting threads&#39;s unique id and the total thread count</span>
+    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">Connection</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">total_thread_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;My thread ID is </span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2">. The total count of threads is </span><span class="si">{</span><span class="n">total_thread_count</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;select version()&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="loop">loop()</h3>
+<p>Function <code>loop()</code> is what is repeatedly executed by <code>dbworkload</code>.
+In the return list you define the function/transactions you want to execute.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span></pre></div></td><td class="code"><div><pre><span></span><code>    <span class="c1"># the loop() function returns a list of functions</span>
+    <span class="c1"># that dbworkload will execute, sequentially.</span>
+    <span class="c1"># Once every func has been executed, loop() is re-evaluated.</span>
+    <span class="c1"># This process continues until dbworkload exits.</span>
+    <span class="k">def</span> <span class="nf">loop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txn_0</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txn_1</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txn_2</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txn_3</span><span class="p">,</span>
+        <span class="p">]</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="utility-functions">Utility functions</h3>
+<p>Here the stub includes some commonly used functions, such as <code>random_str</code> to generate just that.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span></pre></div></td><td class="code"><div><pre><span></span><code>    <span class="c1">#####################</span>
+    <span class="c1"># Utility Functions #</span>
+    <span class="c1">#####################</span>
+    <span class="k">def</span> <span class="nf">__think__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">Connection</span><span class="p">):</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">think_time</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">random_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">12</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">random</span><span class="o">.</span><span class="n">getrandbits</span><span class="p">(</span><span class="mi">8</span> <span class="o">*</span> <span class="n">size</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="s2">&quot;big&quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tbl</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+        <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="workload-transactions">Workload transactions</h3>
+<p>Next are the stub of the functions generated from the SQL statements that where included in the input <code>bank.sql</code> file.</p>
+<p>This is the <strong>read</strong> operation</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span></pre></div></td><td class="code"><div><pre><span></span><code>    <span class="k">def</span> <span class="nf">txn_0</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">Connection</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
+            <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                SELECT *</span>
+<span class="sd">                FROM orders</span>
+<span class="sd">                WHERE acc_no = %s</span>
+<span class="sd">                  AND id = %s</span>
+<span class="sd">                &quot;&quot;&quot;</span><span class="p">,</span>
+                <span class="p">(</span>
+                    <span class="c1"># add bind parameter,</span>
+                    <span class="c1"># add bind parameter, </span>
+                <span class="p">),</span> 
+            <span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+<p>And below are the transactions related to the <strong>order</strong></p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span></pre></div></td><td class="code"><div><pre><span></span><code>    <span class="k">def</span> <span class="nf">txn_1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">Connection</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
+            <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                INSERT INTO orders (acc_no, status, amount)</span>
+<span class="sd">                VALUES (%s, &quot;Pending&quot;, %s) RETURNING id</span>
+<span class="sd">                &quot;&quot;&quot;</span><span class="p">,</span>
+                <span class="p">(</span>
+                    <span class="c1"># add bind parameter,</span>
+                    <span class="c1"># add bind parameter, </span>
+                <span class="p">),</span> 
+            <span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">txn_2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">Connection</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
+            <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                SELECT *</span>
+<span class="sd">                FROM ref_data</span>
+<span class="sd">                WHERE acc_no = %s</span>
+<span class="sd">                &quot;&quot;&quot;</span><span class="p">,</span>
+                <span class="p">(</span>
+                    <span class="c1"># add bind parameter, </span>
+                <span class="p">),</span> 
+            <span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">txn_3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">Connection</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
+            <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                UPDATE orders</span>
+<span class="sd">                SET status = &quot;Complete&quot;</span>
+<span class="sd">                WHERE (acc_no,</span>
+<span class="sd">                       id) = (%s,</span>
+<span class="sd">                              %s)</span>
+<span class="sd">                &quot;&quot;&quot;</span><span class="p">,</span>
+                <span class="p">(</span>
+                    <span class="c1"># add bind parameter,</span>
+                    <span class="c1"># add bind parameter, </span>
+                <span class="p">),</span> 
+            <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="final-helpful-tips">final helpful tips</h3>
+<p>Finally, the stub finishes with some tips on how to generate random data</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd"># Quick random generators reminder</span>
+
+<span class="sd"># random string of 25 chars</span>
+<span class="sd">self.random_str(25),</span>
+
+<span class="sd"># random int between 0 and 100k</span>
+<span class="sd">random.randint(0, 100000),</span>
+
+<span class="sd"># random float with 2 decimals </span>
+<span class="sd">round(random.random()*1000000, 2)</span>
+
+<span class="sd"># now()</span>
+<span class="sd">dt.datetime.utcnow()</span>
+
+<span class="sd"># random timestamptz between certain dates,</span>
+<span class="sd"># expressed as unix ts</span>
+<span class="sd">dt.datetime.fromtimestamp(random.randint(1655032268, 1759232268))</span>
+
+<span class="sd"># random UUID</span>
+<span class="sd">uuid4()</span>
+
+<span class="sd"># random bytes</span>
+<span class="sd">size = 12</span>
+<span class="sd">random.getrandbits(8 * size).to_bytes(size, &quot;big&quot;)</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span></pre></div></td><td class="code"><div><pre><span></span><code>    <span class="k">def</span> <span class="nf">txn_2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">Connection</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">conn</span><span class="o">.</span><span class="n">transaction</span><span class="p">()</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
+                <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                    SELECT *</span>
+<span class="sd">                    FROM ref_data</span>
+<span class="sd">                    WHERE acc_no = %s</span>
+<span class="sd">                    &quot;&quot;&quot;</span><span class="p">,</span>
+                    <span class="p">(</span>
+                        <span class="c1"># add bind parameter, </span>
+                    <span class="p">),</span> 
+                <span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+                <span class="c1"># simulate microservice doing something...</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.02</span><span class="p">)</span>
+
+                <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                    UPDATE orders</span>
+<span class="sd">                    SET status = &quot;Complete&quot;</span>
+<span class="sd">                    WHERE (acc_no,</span>
+<span class="sd">                        id) = (%s,</span>
+<span class="sd">                                %s)</span>
+<span class="sd">                    &quot;&quot;&quot;</span><span class="p">,</span>
+                    <span class="p">(</span>
+                        <span class="c1"># add bind parameter,</span>
+                        <span class="c1"># add bind parameter, </span>
+                    <span class="p">),</span> 
+                <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
 
 
 

@@ -637,7 +637,7 @@
         
   
   <span class="md-ellipsis">
-    Run the workload
+    Create the workload class
   </span>
   
 
@@ -1012,21 +1012,22 @@
 <p>Our starting point is the schema and the SQL statements we want to eventually emulate.</p>
 <h2 id="ddl">DDL</h2>
 <p>For this tutorial, the DDL is very simple, just 2 tables.</p>
-<div class="highlight"><pre><span></span><code><span class="c1">-- file: bank.sql</span>
+<div class="highlight"><pre><span></span><code><span class="c1">-- file: bank.ddl</span>
 
 <span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">ref_data</span><span class="w"> </span><span class="p">(</span>
-<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="n">UUID</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
-<span class="w">    </span><span class="n">balance</span><span class="w"> </span><span class="nb">BIGINT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">acc_no</span><span class="w"> </span><span class="nb">BIGINT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">    </span><span class="n">external_ref_id</span><span class="w"> </span><span class="n">UUID</span><span class="p">,</span>
 <span class="w">    </span><span class="n">created_time</span><span class="w"> </span><span class="n">TIMESTAMPTZ</span><span class="p">,</span>
 <span class="w">    </span><span class="n">acc_details</span><span class="w"> </span><span class="nb">VARCHAR</span>
 <span class="p">);</span>
 
-<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">transactions</span><span class="w"> </span><span class="p">(</span>
-<span class="w">    </span><span class="n">lane</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">,</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">acc_no</span><span class="w"> </span><span class="nb">BIGINT</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
 <span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="n">UUID</span><span class="p">,</span>
-<span class="w">    </span><span class="n">event</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span>
-<span class="w">    </span><span class="n">ts</span><span class="w"> </span><span class="n">TIMESTAMPTZ</span><span class="p">,</span>
-<span class="w">    </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">lane</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">event</span><span class="p">)</span>
+<span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="n">amount</span><span class="w"> </span><span class="nb">DECIMAL</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">),</span>
+<span class="w">    </span><span class="n">ts</span><span class="w"> </span><span class="n">TIMESTAMPTZ</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="n">now</span><span class="p">(),</span>
+<span class="w">    </span><span class="k">CONSTRAINT</span><span class="w"> </span><span class="n">pk</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">acc_no</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">)</span>
 <span class="p">);</span>
 </code></pre></div>
 <div class="admonition note">
@@ -1034,32 +1035,25 @@
 <p>PostgreSQL and CockroachDB share the same SQL syntax as CockroachDB has adopted the postgres wire API protocol.
 This means the above <code>CREATE TABLE</code> statements work for both technologies 🚀</p>
 </div>
-<p>Save the DDL to a file <code>bank.sql</code>.</p>
+<p>Save the DDL to a file <code>bank.ddl</code>.</p>
 <h2 id="statements">Statements</h2>
 <p>This below is the list of statements that constitute our workload.
 Bind parameters, denoted with <code>%s</code>, will vary, and we are expected to simulate them.</p>
-<div class="highlight"><pre><span></span><code><span class="c1">-- file: bank_stmts.sql</span>
+<div class="highlight"><pre><span></span><code><span class="c1">-- file: bank.sql</span>
 
 <span class="c1">-- read operation, executed 50% of the time</span>
-<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">transactions</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">lane</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">;</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">acc_no</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">;</span>
 
-<span class="c1">-- below 3 statements/transactions constitute a complete order execution</span>
+<span class="c1">-- below 2 transactions constitute a complete order execution</span>
+
 <span class="c1">-- new_order</span>
-<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">transactions</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="o">%</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">);</span>
+<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="p">(</span><span class="n">acc_no</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="n">amount</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="o">%</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="ss">&quot;Pending&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="n">RETURNING</span><span class="w"> </span><span class="n">id</span><span class="p">;</span>
 
-<span class="c1">-- verify order</span>
-<span class="k">BEGIN</span><span class="p">;</span>
-<span class="w">    </span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">ref_data</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">my_sequence</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">;</span>
-<span class="w">    </span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">transactions</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="o">%</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">);</span>
-<span class="k">COMMIT</span><span class="p">;</span>
-
-<span class="c1">-- execute order</span>
-<span class="k">BEGIN</span><span class="p">;</span>
-<span class="w">    </span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">ref_data</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">my_sequence</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">;</span>
-<span class="w">    </span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">transactions</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="o">%</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">);</span>
-<span class="k">COMMIT</span><span class="p">;</span>
+<span class="c1">-- execute order - this is an explicit transaction</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">ref_data</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">acc_no</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">;</span>
+<span class="k">UPDATE</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ss">&quot;Complete&quot;</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="p">(</span><span class="n">acc_no</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">%</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="p">);</span>
 </code></pre></div>
-<p>Save this to file <code>bank_stmts.sql</code></p>
+<p>Save this to file <code>bank.sql</code></p>
 <div class="admonition info">
 <p class="admonition-title">A quick note</p>
 <p>For this exercise, we will not spend too much time caring about what the statements do.

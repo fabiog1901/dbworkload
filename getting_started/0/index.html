@@ -521,6 +521,17 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Setup
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -530,6 +541,43 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#postgresql" class="md-nav__link">
+    <span class="md-ellipsis">
+      PostgreSQL
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cockroachdb" class="md-nav__link">
+    <span class="md-ellipsis">
+      CockroachDB
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -589,7 +637,7 @@
         
   
   <span class="md-ellipsis">
-    Run the workload
+    Create the workload class
   </span>
   
 
@@ -918,6 +966,32 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#postgresql" class="md-nav__link">
+    <span class="md-ellipsis">
+      PostgreSQL
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cockroachdb" class="md-nav__link">
+    <span class="md-ellipsis">
+      CockroachDB
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -942,7 +1016,7 @@
 <span class="nb">cd</span><span class="w"> </span>workloads
 </code></pre></div>
 <p>For reference, here are the URI used to connect to my local instances</p>
-<p>For Postgres</p>
+<h2 id="postgresql">PostgreSQL</h2>
 <div class="highlight"><pre><span></span><code>$<span class="w"> </span>psql<span class="w"> </span><span class="s1">&#39;postgres://fabio:postgres@localhost:5432/postgres?sslmode=disable&#39;</span>
 Timing<span class="w"> </span>is<span class="w"> </span>on.
 psql<span class="w"> </span><span class="o">(</span><span class="m">16</span>.2<span class="o">)</span>
@@ -957,7 +1031,7 @@ Type<span class="w"> </span><span class="s2">&quot;help&quot;</span><span class=
 Time:<span class="w"> </span><span class="m">1</span>.926<span class="w"> </span>ms
 <span class="nv">postgres</span><span class="o">=</span><span class="c1"># </span>
 </code></pre></div>
-<p>For CockroachDB</p>
+<h2 id="cockroachdb">CockroachDB</h2>
 <div class="highlight"><pre><span></span><code>$<span class="w"> </span>cockroach<span class="w"> </span>sql<span class="w"> </span>--url<span class="w"> </span><span class="s1">&#39;postgres://cockroach:cockroach@localhost:26257/defaultdb?sslmode=require&#39;</span>
 <span class="c1">#</span>
 <span class="c1"># Welcome to the CockroachDB SQL shell.</span>
