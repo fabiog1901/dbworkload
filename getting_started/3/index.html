@@ -14,7 +14,7 @@
         <link rel="prev" href="../2/">
       
       
-        <link rel="next" href="../../how_it_works/">
+        <link rel="next" href="../4/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -464,6 +464,10 @@
       
         
       
+        
+      
+        
+      
     
     
       
@@ -516,7 +520,7 @@
         
   
   <span class="md-ellipsis">
-    Setup
+    Preparation
   </span>
   
 
@@ -640,18 +644,18 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#imports" class="md-nav__link">
+  <a href="#library-imports" class="md-nav__link">
     <span class="md-ellipsis">
-      imports
+      Library imports
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#class-definition-and-init" class="md-nav__link">
+  <a href="#class-init" class="md-nav__link">
     <span class="md-ellipsis">
-      class definition and init
+      Class init
     </span>
   </a>
   
@@ -694,9 +698,9 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#final-helpful-tips" class="md-nav__link">
+  <a href="#helpful-tips" class="md-nav__link">
     <span class="md-ellipsis">
-      final helpful tips
+      Helpful tips
     </span>
   </a>
   
@@ -711,6 +715,48 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../4/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Edit the workload
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../5/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Test the workload class
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -1061,18 +1107,18 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#imports" class="md-nav__link">
+  <a href="#library-imports" class="md-nav__link">
     <span class="md-ellipsis">
-      imports
+      Library imports
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#class-definition-and-init" class="md-nav__link">
+  <a href="#class-init" class="md-nav__link">
     <span class="md-ellipsis">
-      class definition and init
+      Class init
     </span>
   </a>
   
@@ -1115,9 +1161,9 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#final-helpful-tips" class="md-nav__link">
+  <a href="#helpful-tips" class="md-nav__link">
     <span class="md-ellipsis">
-      final helpful tips
+      Helpful tips
     </span>
   </a>
   
@@ -1160,7 +1206,7 @@ which we can use as a base to get started.</p>
 <h2 id="review-the-workload-class-file">Review the workload class file</h2>
 <p>The file is pretty long to be pasted here all in one shot,
 so we will go through it in sections</p>
-<h3 id="imports">imports</h3>
+<h3 id="library-imports">Library imports</h3>
 <p>The first few lines define the imports</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
@@ -1174,7 +1220,7 @@ so we will go through it in sections</p>
 </code></pre></div></td></tr></table></div>
 <p>These are the most common libraries used when using a workload class.
 More can be added as needed.</p>
-<h3 id="class-definition-and-init">class definition and init</h3>
+<h3 id="class-init">Class init</h3>
 <p>Here is the definition of class <code>Bank</code>.</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 8</span>
 <span class="normal"> 9</span>
@@ -1295,7 +1341,7 @@ In the return list you define the function/transactions you want to execute.</p>
         <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
 <h3 id="workload-transactions">Workload transactions</h3>
-<p>Next are the stub of the functions generated from the SQL statements that where included in the input <code>bank.sql</code> file.</p>
+<p>Next are the stub of the functions generated from the SQL statements in the <code>bank.sql</code> file.</p>
 <p>This is the <strong>read</strong> operation</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">68</span>
 <span class="normal">69</span>
@@ -1371,7 +1417,7 @@ In the return list you define the function/transactions you want to execute.</p>
             <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
 <span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">                INSERT INTO orders (acc_no, status, amount)</span>
-<span class="sd">                VALUES (%s, &quot;Pending&quot;, %s) RETURNING id</span>
+<span class="sd">                VALUES (%s, &#39;Pending&#39;, %s) RETURNING id</span>
 <span class="sd">                &quot;&quot;&quot;</span><span class="p">,</span>
                 <span class="p">(</span>
                     <span class="c1"># add bind parameter,</span>
@@ -1397,7 +1443,7 @@ In the return list you define the function/transactions you want to execute.</p>
             <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
 <span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">                UPDATE orders</span>
-<span class="sd">                SET status = &quot;Complete&quot;</span>
+<span class="sd">                SET status = &#39;Complete&#39;</span>
 <span class="sd">                WHERE (acc_no,</span>
 <span class="sd">                       id) = (%s,</span>
 <span class="sd">                              %s)</span>
@@ -1408,7 +1454,7 @@ In the return list you define the function/transactions you want to execute.</p>
                 <span class="p">),</span> 
             <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-<h3 id="final-helpful-tips">final helpful tips</h3>
+<h3 id="helpful-tips">Helpful tips</h3>
 <p>Finally, the stub finishes with some tips on how to generate random data</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">126</span>
 <span class="normal">127</span>
@@ -1464,66 +1510,12 @@ In the return list you define the function/transactions you want to execute.</p>
 
 <span class="sd">&#39;&#39;&#39;</span>
 </code></pre></div></td></tr></table></div>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span></pre></div></td><td class="code"><div><pre><span></span><code>    <span class="k">def</span> <span class="nf">txn_2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">Connection</span><span class="p">):</span>
-        <span class="k">with</span> <span class="n">conn</span><span class="o">.</span><span class="n">transaction</span><span class="p">()</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
-            <span class="k">with</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
-                <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-<span class="w">                    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">                    SELECT *</span>
-<span class="sd">                    FROM ref_data</span>
-<span class="sd">                    WHERE acc_no = %s</span>
-<span class="sd">                    &quot;&quot;&quot;</span><span class="p">,</span>
-                    <span class="p">(</span>
-                        <span class="c1"># add bind parameter, </span>
-                    <span class="p">),</span> 
-                <span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
-
-                <span class="c1"># simulate microservice doing something...</span>
-                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.02</span><span class="p">)</span>
-
-                <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-<span class="w">                    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">                    UPDATE orders</span>
-<span class="sd">                    SET status = &quot;Complete&quot;</span>
-<span class="sd">                    WHERE (acc_no,</span>
-<span class="sd">                        id) = (%s,</span>
-<span class="sd">                                %s)</span>
-<span class="sd">                    &quot;&quot;&quot;</span><span class="p">,</span>
-                    <span class="p">(</span>
-                        <span class="c1"># add bind parameter,</span>
-                        <span class="c1"># add bind parameter, </span>
-                    <span class="p">),</span> 
-                <span class="p">)</span>
-</code></pre></div></td></tr></table></div>
+<p>In the next session, we customize the file to fit our workload.</p>
+<div class="admonition tip">
+<p class="admonition-title">Psycopg 3 basic usage</p>
+<p>It might be a good idea now to refresh how the <code>psycopg</code> driver works.
+Fortunately, there is a great intro <a href="https://www.psycopg.org/psycopg3/docs/basic/usage.html">doc</a> in the official website 🚀</p>
+</div>
 
 
 
@@ -1578,13 +1570,13 @@ In the return list you define the function/transactions you want to execute.</p>
         
         
           
-          <a href="../../how_it_works/" class="md-footer__link md-footer__link--next" aria-label="Next: How it works">
+          <a href="../4/" class="md-footer__link md-footer__link--next" aria-label="Next: Edit the workload">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                How it works
+                Edit the workload
               </div>
             </div>
             <div class="md-footer__button md-icon">

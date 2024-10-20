@@ -11,6 +11,10 @@
       
       
       
+        <link rel="prev" href="../3/">
+      
+      
+        <link rel="next" href="../5/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -18,7 +22,7 @@
     
     
       
-        <title>Run the workload - dbworkload</title>
+        <title>Edit the workload - dbworkload</title>
       
     
     
@@ -70,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#run-the-workload" class="md-skip">
+        <a href="#edit-the-workload" class="md-skip">
           Skip to content
         </a>
       
@@ -106,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Run the workload
+              Edit the workload
             
           </span>
         </div>
@@ -222,10 +226,12 @@
         
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
+      <li class="md-tabs__item md-tabs__item--active">
         <a href="../.." class="md-tabs__link">
           
   
@@ -328,6 +334,8 @@
       
   
   
+    
+  
   
   
     
@@ -350,14 +358,17 @@
     
     
       
+        
+        
+      
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" checked>
         
           
           
@@ -373,13 +384,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_1" id="__nav_1_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_1" id="__nav_1_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_1">
             <span class="md-nav__icon md-icon"></span>
             Home
@@ -434,6 +445,8 @@
                 
   
   
+    
+  
   
   
     
@@ -451,17 +464,21 @@
       
         
       
+        
+      
+        
+      
     
     
       
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_4" checked>
         
           
           
@@ -483,7 +500,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_1_4">
             <span class="md-nav__icon md-icon"></span>
             Getting Started
@@ -503,7 +520,7 @@
         
   
   <span class="md-ellipsis">
-    Setup
+    Preparation
   </span>
   
 
@@ -567,6 +584,181 @@
   
   <span class="md-ellipsis">
     Create the workload class
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Edit the workload
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Edit the workload
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#read-transaction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Read Transaction
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Read Transaction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#add-required-library" class="md-nav__link">
+    <span class="md-ellipsis">
+      Add required library
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-variables-and-runtime-argument" class="md-nav__link">
+    <span class="md-ellipsis">
+      Add variables and runtime argument
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-bind-parameters-to-read-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      Add bind parameters to read function
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#order-transaction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Order transaction
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Order transaction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#new-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      New Order
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#order-execution" class="md-nav__link">
+    <span class="md-ellipsis">
+      Order Execution
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#update-loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update loop()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#full-class-file-bankpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Full class file bank.py
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../5/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Test the workload class
   </span>
   
 
@@ -895,6 +1087,107 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#read-transaction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Read Transaction
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Read Transaction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#add-required-library" class="md-nav__link">
+    <span class="md-ellipsis">
+      Add required library
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-variables-and-runtime-argument" class="md-nav__link">
+    <span class="md-ellipsis">
+      Add variables and runtime argument
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-bind-parameters-to-read-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      Add bind parameters to read function
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#order-transaction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Order transaction
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Order transaction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#new-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      New Order
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#order-execution" class="md-nav__link">
+    <span class="md-ellipsis">
+      Order Execution
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#update-loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update loop()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#full-class-file-bankpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Full class file bank.py
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -911,29 +1204,297 @@
   
 
 
-<h1 id="run-the-workload">Run the workload</h1>
-<p>Run the workload using 4 connections for 120 seconds or 100k cycles, whichever comes first.</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># CockroachDB</span>
-dbworkload<span class="w"> </span>run<span class="w"> </span>-w<span class="w"> </span>bank.py<span class="w"> </span>-c<span class="w"> </span><span class="m">4</span><span class="w"> </span>--uri<span class="w"> </span><span class="s1">&#39;postgres://root@localhost:26257/bank?sslmode=disable&#39;</span><span class="w"> </span>-d<span class="w"> </span><span class="m">120</span><span class="w"> </span>-i<span class="w"> </span><span class="m">100000</span>
+<h1 id="edit-the-workload">Edit the workload</h1>
+<p>Ok, we have only a few changes to make to our stub file so that it matches our intended workload.</p>
+<h2 id="read-transaction">Read Transaction</h2>
+<p>The SELECT statement requires us to pass <code>acc_no</code> and <code>id</code>.</p>
+<p><code>acc_no</code> is a number between 0 and 999.
+This matches the data we generated for table <code>ref_data</code>.</p>
+<p><code>id</code> is a UUID and it is supposed to be generated by the database upon insertion.</p>
+<p>So how can we pass a valid <code>(acc_no, id)</code> to our query?
+We can keep track of, say, 10,000 values (tuples) into a list, and pick from it randomly.
+The list will be populated as we insert new orders into the database, so after a few 1000's iterations,
+our list will be full and the SELECT will pass existing values.</p>
+<p>A convenient Python object that can help is the <a href="https://docs.python.org/3/library/collections.html#collections.deque">deque</a>, which allows us to define a max length.</p>
+<p>We also need a way to control how many read transactions we want to do compared to order transactions.
+For this, we pass an <em>argument</em> at runtime.</p>
+<h3 id="add-required-library">Add required library</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<span class="kn">import</span> <span class="nn">psycopg</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">uuid4</span>
+<span class="hll"><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span>
+</span></code></pre></div>
+<h3 id="add-variables-and-runtime-argument">Add variables and runtime argument</h3>
+<p>We add here the runtime argument <code>read_pct</code> and 2 variables:</p>
+<ul>
+<li>the deque object called <code>order_tuples</code></li>
+<li>the <code>account_number</code> and <code>id</code> needed for the Order transaction.</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Bank</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="c1"># args is a dict of string passed with the --args flag</span>
 
-<span class="c1"># PostgreSQL</span>
-dbworkload<span class="w"> </span>run<span class="w"> </span>-w<span class="w"> </span>bank.py<span class="w"> </span>-c<span class="w"> </span><span class="m">4</span><span class="w"> </span>--uri<span class="w"> </span><span class="s1">&#39;postgres://fabio:postgres@localhost:5432/bank?sslmode=disable&#39;</span><span class="w"> </span>-d<span class="w"> </span><span class="m">120</span><span class="w"> </span>-i<span class="w"> </span><span class="m">100000</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">think_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;think_time&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span>
+
+<span class="hll">        <span class="c1"># Runtime argument to control read vs order txns</span>
+</span><span class="hll">        <span class="c1"># Percentage of read operations compared to order operations</span>
+</span><span class="hll">        <span class="bp">self</span><span class="o">.</span><span class="n">read_pct</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;read_pct&quot;</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span>
+</span>
+<span class="hll">        <span class="c1"># initiate deque with a random tuple so a read won&#39;t fail</span>
+</span><span class="hll">        <span class="bp">self</span><span class="o">.</span><span class="n">order_tuples</span> <span class="o">=</span> <span class="n">deque</span><span class="p">([(</span><span class="mi">0</span><span class="p">,</span> <span class="n">uuid4</span><span class="p">())],</span> <span class="n">maxlen</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+</span><span class="hll">
+</span><span class="hll">        <span class="c1"># keep track of the current account number and id</span>
+</span><span class="hll">        <span class="bp">self</span><span class="o">.</span><span class="n">account_number</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class="hll">        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">uuid4</span><span class="p">()</span>
+</span>
+        <span class="c1"># translation table for efficiently generating a string</span>
+        <span class="c1"># -------------------------------------------------------</span>
+        <span class="c1"># make translation table from 0..255 to A..Z, 0..9, a..z</span>
+        <span class="c1"># the length must be 256</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tbl</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">maketrans</span><span class="p">(</span>
+            <span class="nb">bytearray</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">256</span><span class="p">)),</span>
+            <span class="nb">bytearray</span><span class="p">(</span>
+                <span class="p">[</span><span class="nb">ord</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span> <span class="o">%</span> <span class="mi">26</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">113</span><span class="p">)]</span>
+                <span class="o">+</span> <span class="p">[</span><span class="nb">ord</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;0&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span> <span class="o">%</span> <span class="mi">10</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">)]</span>
+                <span class="o">+</span> <span class="p">[</span><span class="nb">ord</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;A&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span> <span class="o">%</span> <span class="mi">26</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">113</span><span class="p">)]</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
 </code></pre></div>
-<p><code>dbworkload</code> will output rolling statistics about throughput and latency for each transaction in your workload class</p>
-<div class="highlight"><pre><span></span><code>  elapsed  id               threads    tot_ops    tot_ops/s    period_ops    period_ops/s    mean(ms)    p50(ms)    p90(ms)    p95(ms)    p99(ms)    max(ms)
----------  -------------  ---------  ---------  -----------  ------------  --------------  ----------  ---------  ---------  ---------  ---------  ---------
-        8  __cycle__              4        190        23.00           190           19.00      107.20      53.90     200.14     200.71     202.06     204.84
-        8  read                   4         97        12.00            97            9.00       25.59      18.81      51.72      52.71      68.33      81.11
-        8  txn1_new               4         93        11.00            93            9.00       46.17      46.93      48.44      49.08      61.33      67.98
-        8  txn2_verify            4         93        11.00            93            9.00       76.12      83.02      84.46      84.56      95.24     102.75
-        8  txn3_finalize          4         93        11.00            93            9.00       69.99      69.03      80.65      83.21      93.16      99.95 
-[...]
+<h3 id="add-bind-parameters-to-read-function">Add bind parameters to read function</h3>
+<p>We rename the function to something more descriptive</p>
+<div class="highlight"><pre><span></span><code><span class="hll">    <span class="k">def</span> <span class="nf">txn_read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">Connection</span><span class="p">):</span>
+</span>        <span class="k">with</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
+            <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                SELECT *</span>
+<span class="sd">                FROM orders</span>
+<span class="sd">                WHERE acc_no = %s</span>
+<span class="sd">                  AND id = %s</span>
+<span class="sd">                &quot;&quot;&quot;</span><span class="p">,</span>
+<span class="hll">                <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">order_tuples</span><span class="p">),</span>  
+</span>            <span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
 </code></pre></div>
-<p>You can always use <strong>pgAdmin</strong> for PostgreSQL Server or the <strong>DB Console</strong> for CockroachDB to view your workload, too.</p>
-<p>There are many built-in options.
-Check them out with</p>
-<div class="highlight"><pre><span></span><code>dbworkload<span class="w"> </span>--help
+<p>That's it! Our read operation is complete 🚀.</p>
+<h2 id="order-transaction">Order transaction</h2>
+<p>The order transaction is made up of 2 distinct <em>database</em> transactions:</p>
+<ul>
+<li>new_order</li>
+<li>order_exec</li>
+</ul>
+<h3 id="new-order">New Order</h3>
+<p>This is the first of the 2 transactions of our Order workload.</p>
+<div class="highlight"><pre><span></span><code><span class="hll">    <span class="k">def</span> <span class="nf">txn_new_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">Connection</span><span class="p">):</span>
+</span>
+<span class="hll">        <span class="c1"># generate a random account number to be used for</span>
+</span><span class="hll">        <span class="c1"># for the order transaction</span>
+</span><span class="hll">        <span class="bp">self</span><span class="o">.</span><span class="n">account_number</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">999</span><span class="p">)</span>
+</span>
+        <span class="k">with</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
+            <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                INSERT INTO orders (acc_no, status, amount)</span>
+<span class="sd">                VALUES (%s, &#39;Pending&#39;, %s) RETURNING id</span>
+<span class="sd">                &quot;&quot;&quot;</span><span class="p">,</span>
+                <span class="p">(</span>
+<span class="hll">                    <span class="bp">self</span><span class="o">.</span><span class="n">account_number</span><span class="p">,</span>
+</span><span class="hll">                    <span class="nb">round</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">1000000</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+</span>                <span class="p">),</span>
+            <span class="p">)</span>
+
+<span class="hll">            <span class="c1"># save the id that the server generated</span>
+</span><span class="hll">            <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+</span>
+<span class="hll">            <span class="c1"># save the (acc_no, id) tuple to our deque list</span>
+</span><span class="hll">            <span class="c1"># for future read transactions</span>
+</span><span class="hll">            <span class="bp">self</span><span class="o">.</span><span class="n">order_tuples</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">account_number</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+</span></code></pre></div>
+<h3 id="order-execution">Order Execution</h3>
+<p>The order execution transaction is an explicit transaction.</p>
+<div class="highlight"><pre><span></span><code><span class="hll">    <span class="k">def</span> <span class="nf">txn_order_exec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">Connection</span><span class="p">):</span>
+</span>
+<span class="hll">        <span class="c1"># with Psycopg, this is how you start an explicit transaction</span>
+</span><span class="hll">        <span class="k">with</span> <span class="n">conn</span><span class="o">.</span><span class="n">transaction</span><span class="p">()</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
+</span>            <span class="k">with</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
+                <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                    SELECT *</span>
+<span class="sd">                    FROM ref_data</span>
+<span class="sd">                    WHERE acc_no = %s</span>
+<span class="sd">                    &quot;&quot;&quot;</span><span class="p">,</span>
+                    <span class="p">(</span>
+<span class="hll">                        <span class="bp">self</span><span class="o">.</span><span class="n">account_number</span><span class="p">,</span>
+</span>                    <span class="p">),</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+<span class="hll">                <span class="c1"># simulate microservice doing something...</span>
+</span><span class="hll">                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.02</span><span class="p">)</span>
+</span>
+                <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                    UPDATE orders</span>
+<span class="sd">                    SET status = &#39;Complete&#39;</span>
+<span class="sd">                    WHERE </span>
+<span class="sd">                        (acc_no, id) = (%s, %s)</span>
+<span class="sd">                    &quot;&quot;&quot;</span><span class="p">,</span>
+                    <span class="p">(</span>
+<span class="hll">                        <span class="bp">self</span><span class="o">.</span><span class="n">account_number</span><span class="p">,</span>
+</span><span class="hll">                        <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+</span>                    <span class="p">),</span>
+                <span class="p">)</span>
 </code></pre></div>
+<h2 id="update-loop">Update <code>loop()</code></h2>
+<p>The final change is to update the <code>loop()</code> function to return either a read txn or an order txn.</p>
+<div class="highlight"><pre><span></span><code>    <span class="k">def</span> <span class="nf">loop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="hll">        <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_pct</span><span class="p">:</span>
+</span><span class="hll">            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">txn_read</span><span class="p">]</span>
+</span><span class="hll">        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">txn_new_order</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">txn_order_exec</span><span class="p">]</span>
+</span></code></pre></div>
+<h2 id="full-class-file-bankpy">Full class file <code>bank.py</code></h2>
+<p>For completeness, here is the full edited file, minus the helpful tips</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<span class="kn">import</span> <span class="nn">psycopg</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">uuid4</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span>
+
+
+<span class="k">class</span> <span class="nc">Bank</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="c1"># args is a dict of string passed with the --args flag</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">think_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;think_time&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span>
+
+        <span class="c1"># Percentage of read operations compared to order operations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">read_pct</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;read_pct&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span>
+
+        <span class="c1"># initiate deque with 1 random UUID so a read won&#39;t fail</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">order_tuples</span> <span class="o">=</span> <span class="n">deque</span><span class="p">([(</span><span class="mi">0</span><span class="p">,</span> <span class="n">uuid4</span><span class="p">())],</span> <span class="n">maxlen</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+
+        <span class="c1"># keep track of the current account number and id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">account_number</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">uuid4</span><span class="p">()</span>
+
+        <span class="c1"># translation table for efficiently generating a string</span>
+        <span class="c1"># -------------------------------------------------------</span>
+        <span class="c1"># make translation table from 0..255 to A..Z, 0..9, a..z</span>
+        <span class="c1"># the length must be 256</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tbl</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">maketrans</span><span class="p">(</span>
+            <span class="nb">bytearray</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">256</span><span class="p">)),</span>
+            <span class="nb">bytearray</span><span class="p">(</span>
+                <span class="p">[</span><span class="nb">ord</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span> <span class="o">%</span> <span class="mi">26</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">113</span><span class="p">)]</span>
+                <span class="o">+</span> <span class="p">[</span><span class="nb">ord</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;0&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span> <span class="o">%</span> <span class="mi">10</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">)]</span>
+                <span class="o">+</span> <span class="p">[</span><span class="nb">ord</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;A&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span> <span class="o">%</span> <span class="mi">26</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">113</span><span class="p">)]</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="c1"># the setup() function is executed only once</span>
+    <span class="c1"># when a new executing thread is started.</span>
+    <span class="c1"># Also, the function is a vector to receive the excuting threads&#39;s unique id and the total thread count</span>
+    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">Connection</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">total_thread_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;My thread ID is </span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2">. The total count of threads is </span><span class="si">{</span><span class="n">total_thread_count</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;select version()&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># the loop() function returns a list of functions</span>
+    <span class="c1"># that dbworkload will execute, sequentially.</span>
+    <span class="c1"># Once every func has been executed, loop() is re-evaluated.</span>
+    <span class="c1"># This process continues until dbworkload exits.</span>
+    <span class="k">def</span> <span class="nf">loop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_pct</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">txn_read</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">txn_new_order</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">txn_order_exec</span><span class="p">]</span>
+
+    <span class="c1">#####################</span>
+    <span class="c1"># Utility Functions #</span>
+    <span class="c1">#####################</span>
+    <span class="k">def</span> <span class="nf">__think__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">Connection</span><span class="p">):</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">think_time</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">random_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">12</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">random</span><span class="o">.</span><span class="n">getrandbits</span><span class="p">(</span><span class="mi">8</span> <span class="o">*</span> <span class="n">size</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="s2">&quot;big&quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tbl</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Workload function stubs</span>
+
+    <span class="k">def</span> <span class="nf">txn_read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">Connection</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
+            <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                SELECT *</span>
+<span class="sd">                FROM orders</span>
+<span class="sd">                WHERE acc_no = %s</span>
+<span class="sd">                  AND id = %s</span>
+<span class="sd">                &quot;&quot;&quot;</span><span class="p">,</span>
+                <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">order_tuples</span><span class="p">),</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">txn_new_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">Connection</span><span class="p">):</span>
+
+        <span class="c1"># generate a random account number to be used for</span>
+        <span class="c1"># for the order transaction</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">account_number</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">999</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
+            <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                INSERT INTO orders (acc_no, status, amount)</span>
+<span class="sd">                VALUES (%s, &#39;Pending&#39;, %s) RETURNING id</span>
+<span class="sd">                &quot;&quot;&quot;</span><span class="p">,</span>
+                <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">account_number</span><span class="p">,</span>
+                    <span class="nb">round</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">1000000</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+
+            <span class="c1"># save the id that the server generated</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># save the (acc_no, id) tuple to our deque list</span>
+            <span class="c1"># for future read transactions</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">order_tuples</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">account_number</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">txn_order_exec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">Connection</span><span class="p">):</span>
+
+        <span class="c1"># with Psycopg, this is how you start an explicit transaction</span>
+        <span class="k">with</span> <span class="n">conn</span><span class="o">.</span><span class="n">transaction</span><span class="p">()</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
+                <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                    SELECT *</span>
+<span class="sd">                    FROM ref_data</span>
+<span class="sd">                    WHERE acc_no = %s</span>
+<span class="sd">                    &quot;&quot;&quot;</span><span class="p">,</span>
+                    <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">account_number</span><span class="p">,</span>
+                    <span class="p">),</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+                <span class="c1"># simulate microservice doing something...</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.02</span><span class="p">)</span>
+
+                <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                    UPDATE orders</span>
+<span class="sd">                    SET status = &#39;Complete&#39;</span>
+<span class="sd">                    WHERE </span>
+<span class="sd">                        (acc_no, id) = (%s, %s)</span>
+<span class="sd">                    &quot;&quot;&quot;</span><span class="p">,</span>
+                    <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">account_number</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+</code></pre></div>
+<p>We are now finally ready to run our workload!</p>
 
 
 
@@ -966,6 +1527,44 @@ Check them out with</p>
       
         <footer class="md-footer">
   
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../3/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Create the workload class">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Create the workload class
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../5/" class="md-footer__link md-footer__link--next" aria-label="Next: Test the workload class">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Test the workload class
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
     
   
   <div class="md-footer-meta md-typeset">
