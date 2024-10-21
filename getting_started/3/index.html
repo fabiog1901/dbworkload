@@ -468,6 +468,10 @@
       
         
       
+        
+      
+        
+      
     
     
       
@@ -752,7 +756,49 @@
         
   
   <span class="md-ellipsis">
-    Test the workload class
+    Check for runtime errors
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../6/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Run the workload
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../7/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Plot the metrics
   </span>
   
 
@@ -1193,8 +1239,8 @@
 
 
 <h1 id="create-the-workload-class">Create the workload class</h1>
-<p>We now need to create the Python class file that describes our workload.</p>
-<p>This is going to be a regular <code>.py</code> file which needs to be created from scratch.</p>
+<p>We now create the Python class file that describes our workload.</p>
+<p>This is going to be a regular <code>.py</code> file which we need to create from scratch.</p>
 <p>Fortunately, we can use built-in function <code>dbworkload util gen_stub</code> to generate a skeleton
 which we can use as a base to get started.</p>
 <p>Read the helpful doc page for the <a href="../../util/gen_stub/">gen_stub</a> command.</p>
@@ -1205,7 +1251,7 @@ which we can use as a base to get started.</p>
 <p>A new file, <code>bank.py</code>, will be created in your directory.</p>
 <h2 id="review-the-workload-class-file">Review the workload class file</h2>
 <p>The file is pretty long to be pasted here all in one shot,
-so we will go through it in sections</p>
+so we will go through it in sections.</p>
 <h3 id="library-imports">Library imports</h3>
 <p>The first few lines define the imports</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
@@ -1289,7 +1335,7 @@ More can be added as needed.</p>
 </code></pre></div></td></tr></table></div>
 <h3 id="loop">loop()</h3>
 <p>Function <code>loop()</code> is what is repeatedly executed by <code>dbworkload</code>.
-In the return list you define the function/transactions you want to execute.</p>
+In the return list you define the functions you want to execute.</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">40</span>
 <span class="normal">41</span>
 <span class="normal">42</span>

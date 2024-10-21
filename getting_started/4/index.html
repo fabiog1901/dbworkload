@@ -468,6 +468,10 @@
       
         
       
+        
+      
+        
+      
     
     
       
@@ -758,7 +762,49 @@
         
   
   <span class="md-ellipsis">
-    Test the workload class
+    Check for runtime errors
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../6/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Run the workload
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../7/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Plot the metrics
   </span>
   
 
@@ -1314,7 +1360,7 @@ For this, we pass an <em>argument</em> at runtime.</p>
 <p>The order execution transaction is an explicit transaction.</p>
 <div class="highlight"><pre><span></span><code><span class="hll">    <span class="k">def</span> <span class="nf">txn_order_exec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">Connection</span><span class="p">):</span>
 </span>
-<span class="hll">        <span class="c1"># with Psycopg, this is how you start an explicit transaction</span>
+<span class="hll">        <span class="c1"># this is how you start an explicit transaction with psycopg</span>
 </span><span class="hll">        <span class="k">with</span> <span class="n">conn</span><span class="o">.</span><span class="n">transaction</span><span class="p">()</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
 </span>            <span class="k">with</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
                 <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
@@ -1549,13 +1595,13 @@ For this, we pass an <em>argument</em> at runtime.</p>
         
         
           
-          <a href="../5/" class="md-footer__link md-footer__link--next" aria-label="Next: Test the workload class">
+          <a href="../5/" class="md-footer__link md-footer__link--next" aria-label="Next: Check for runtime errors">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Test the workload class
+                Check for runtime errors
               </div>
             </div>
             <div class="md-footer__button md-icon">

@@ -14,7 +14,7 @@
         <link rel="prev" href="../4/">
       
       
-        <link rel="next" href="../../how_it_works/">
+        <link rel="next" href="../6/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>Test the workload class - dbworkload</title>
+        <title>Check for runtime errors - dbworkload</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#test-the-workload-class" class="md-skip">
+        <a href="#check-for-runtime-errors" class="md-skip">
           Skip to content
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Test the workload class
+              Check for runtime errors
             
           </span>
         </div>
@@ -468,6 +468,10 @@
       
         
       
+        
+      
+        
+      
     
     
       
@@ -634,7 +638,7 @@
           
   
   <span class="md-ellipsis">
-    Test the workload class
+    Check for runtime errors
   </span>
   
 
@@ -645,7 +649,7 @@
         
   
   <span class="md-ellipsis">
-    Test the workload class
+    Check for runtime errors
   </span>
   
 
@@ -688,6 +692,48 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../6/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Run the workload
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../7/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Plot the metrics
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -1054,9 +1100,15 @@
   
 
 
-<h1 id="test-the-workload-class">Test the workload class</h1>
+<h1 id="check-for-runtime-errors">Check for runtime errors</h1>
 <p>As a test, we want to try to execute only 1 function at the time, once.
-We want to make sure we don't run into any runtime errors.</p>
+We want to make sure we don't run into any <strong>runtime errors</strong>.</p>
+<p>Runtime errors can occur for various reasons, here are a few:</p>
+<ul>
+<li>your bind parameter type isn't compatible with the column datatype you try to insert into.
+  For example, you pass an <code>int</code> but the column is of type <code>VARCHAR</code>.</li>
+<li>The table you try to access does not exists.</li>
+</ul>
 <h2 id="test-the-read-transaction">Test the Read transaction</h2>
 <div class="highlight"><pre><span></span><code><span class="c1"># we set read_pct to 100 to force just the read_txn</span>
 <span class="c1"># -i stands for iterations</span>
@@ -1065,8 +1117,8 @@ We want to make sure we don't run into any runtime errors.</p>
 dbworkload<span class="w"> </span>run<span class="w"> </span>-w<span class="w"> </span>bank.py<span class="w"> </span>--uri<span class="w"> </span><span class="s1">&#39;postgres://fabio:postgres@localhost:5432/bank?sslmode=disable&#39;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-i<span class="w"> </span><span class="m">1</span><span class="w"> </span>--args<span class="w"> </span><span class="s1">&#39;{&quot;read_pct&quot;: 100}&#39;</span>
 
-<span class="c1"># CockroachDB - notice we set the uri to point at the `bank` database ⬇️⬇️ </span>
-dbworkload<span class="w"> </span>run<span class="w"> </span>-w<span class="w"> </span>bank.py<span class="w"> </span>-c<span class="w"> </span><span class="m">4</span><span class="w"> </span>--uri<span class="w"> </span><span class="s1">&#39;postgres://root@localhost:26257/bank?sslmode=disable&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="c1"># CockroachDB - notice we set the uri to point at the `bank` database           ⬇️⬇️ </span>
+dbworkload<span class="w"> </span>run<span class="w"> </span>-w<span class="w"> </span>bank.py<span class="w"> </span>--uri<span class="w"> </span><span class="s1">&#39;postgres://cockroach:cockroach@localhost:26257/bank?sslmode=require&#39;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-i<span class="w"> </span><span class="m">1</span><span class="w"> </span>--args<span class="w"> </span><span class="s1">&#39;{&quot;read_pct&quot;: 100}&#39;</span>
 </code></pre></div>
 <p>The output is the same for any driver you choose, and it looks like below, stripped of
@@ -1118,8 +1170,7 @@ CockroachDB CCL v24.2.3 (x86_64-apple-darwin19, built 2024/09/23 22:30:57, go1.2
 <p class="admonition-title">Important</p>
 <p>You should always, as a good practice, follow these 2 instructions:</p>
 <ul>
-<li>use <code>print()</code> throughout your workload class file to make sure you are generating, retrieving and querying the correct data.
-  Print out your bind parameters, the result of <code>cur.fetchone()</code>, your variables like <code>self.order_tuples</code>.</li>
+<li>use <code>print()</code> throughout your workload class file to make sure you are generating, retrieving and querying the correct data. For example, print out your bind parameters, the result of <code>cur.fetchone()</code> and your variables like <code>self.order_tuples</code>, to make sure they contain the items you expect.</li>
 <li>inspect the mutated data on the SQL prompt matches with the intended workload goal.</li>
 </ul>
 </div>
@@ -1177,13 +1228,13 @@ CockroachDB CCL v24.2.3 (x86_64-apple-darwin19, built 2024/09/23 22:30:57, go1.2
         
         
           
-          <a href="../../how_it_works/" class="md-footer__link md-footer__link--next" aria-label="Next: How it works">
+          <a href="../6/" class="md-footer__link md-footer__link--next" aria-label="Next: Run the workload">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                How it works
+                Run the workload
               </div>
             </div>
             <div class="md-footer__button md-icon">

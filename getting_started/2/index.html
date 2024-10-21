@@ -468,6 +468,10 @@
       
         
       
+        
+      
+        
+      
     
     
       
@@ -678,6 +682,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#review-imported-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      Review imported data
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -740,7 +753,49 @@
         
   
   <span class="md-ellipsis">
-    Test the workload class
+    Check for runtime errors
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../6/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Run the workload
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../7/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Plot the metrics
   </span>
   
 
@@ -1150,6 +1205,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#review-imported-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      Review imported data
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1178,7 +1242,7 @@
 <div class="highlight"><pre><span></span><code>psql<span class="w"> </span><span class="s1">&#39;postgres://fabio:postgres@localhost:5432/bank?sslmode=disable&#39;</span>
 </code></pre></div>
 <p>Once on the SQL prompt, import the file, or copy-paste, as you prefer.</p>
-<div class="highlight"><pre><span></span><code><span class="n">bank</span><span class="o">=#</span><span class="w"> </span><span class="err">\</span><span class="n">i</span><span class="w"> </span><span class="n">bank</span><span class="p">.</span><span class="k">sql</span>
+<div class="highlight"><pre><span></span><code><span class="n">bank</span><span class="o">=#</span><span class="w"> </span><span class="err">\</span><span class="n">i</span><span class="w"> </span><span class="n">bank</span><span class="p">.</span><span class="n">ddl</span>
 
 <span class="n">bank</span><span class="o">=#</span><span class="w"> </span><span class="err">\</span><span class="n">d</span>
 <span class="c1">--          List of relations</span>
@@ -1193,7 +1257,7 @@
 
 <span class="n">defaultdb</span><span class="o">&gt;</span><span class="w"> </span><span class="n">USE</span><span class="w"> </span><span class="n">bank</span><span class="p">;</span>
 
-<span class="n">bank</span><span class="o">&gt;</span><span class="w"> </span><span class="err">\</span><span class="n">i</span><span class="w"> </span><span class="n">bank</span><span class="p">.</span><span class="k">sql</span>
+<span class="n">bank</span><span class="o">&gt;</span><span class="w"> </span><span class="err">\</span><span class="n">i</span><span class="w"> </span><span class="n">bank</span><span class="p">.</span><span class="n">ddl</span>
 
 <span class="n">bank</span><span class="o">&gt;</span><span class="w"> </span><span class="k">SHOW</span><span class="w"> </span><span class="n">TABLES</span><span class="p">;</span>
 <span class="c1">--   schema_name | table_name | type  |   owner   | estimated_row_count | locality</span>
@@ -1279,6 +1343,25 @@ python3<span class="w"> </span>-m<span class="w"> </span>http.server<span class=
 <span class="w">  </span><span class="mi">1013454367369822209</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">succeeded</span><span class="w"> </span><span class="o">|</span><span class="w">                  </span><span class="mi">1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">1000</span><span class="w"> </span><span class="o">|</span><span class="w">             </span><span class="mi">0</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">71401</span>
 <span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="k">row</span><span class="p">)</span>
 </code></pre></div>
+<h2 id="review-imported-data">Review imported data</h2>
+<p>Good stuff, your dataset has been successfully imported, confirm on the SQL prompt</p>
+<div class="highlight"><pre><span></span><code><span class="n">bank</span><span class="o">=#</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">ref_data</span><span class="w"> </span><span class="k">LIMIT</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+<span class="w"> </span><span class="n">acc_no</span><span class="w"> </span><span class="o">|</span><span class="w">           </span><span class="n">external_ref_id</span><span class="w">            </span><span class="o">|</span><span class="w">         </span><span class="n">created_time</span><span class="w">          </span><span class="o">|</span><span class="w">       </span><span class="n">acc_details</span><span class="w">        </span>
+<span class="c1">--------+--------------------------------------+-------------------------------+--------------------------</span>
+<span class="w">      </span><span class="mi">0</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">a4a689d3</span><span class="o">-</span><span class="n">ae12</span><span class="o">-</span><span class="mi">4</span><span class="n">ca2</span><span class="o">-</span><span class="mi">8</span><span class="n">b74</span><span class="o">-</span><span class="n">a9929c89f420</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">2015</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">03</span><span class="w"> </span><span class="mi">04</span><span class="p">:</span><span class="mi">03</span><span class="p">:</span><span class="mi">48</span><span class="p">.</span><span class="mi">248701</span><span class="o">-</span><span class="mi">04</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">DiKysAoJeZ9hqDehOhE2N</span>
+<span class="w">      </span><span class="mi">1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">01</span><span class="n">abe15c</span><span class="o">-</span><span class="n">fcae</span><span class="o">-</span><span class="mi">4492</span><span class="o">-</span><span class="mi">812</span><span class="n">e</span><span class="o">-</span><span class="mi">37</span><span class="n">b2212ababa</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">2019</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">11</span><span class="w"> </span><span class="mi">17</span><span class="p">:</span><span class="mi">57</span><span class="p">:</span><span class="mi">05</span><span class="p">.</span><span class="mi">76814</span><span class="o">-</span><span class="mi">04</span><span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">nEYyCwhTJTXXaMfeHeWj</span>
+<span class="w">      </span><span class="mi">2</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">40</span><span class="n">cc3ccd</span><span class="o">-</span><span class="mi">74</span><span class="n">bf</span><span class="o">-</span><span class="mi">4688</span><span class="o">-</span><span class="n">ae85</span><span class="o">-</span><span class="mi">7</span><span class="n">f68cd0e44f2</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">2001</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">10</span><span class="w"> </span><span class="mi">18</span><span class="p">:</span><span class="mi">42</span><span class="p">:</span><span class="mi">21</span><span class="p">.</span><span class="mi">865742</span><span class="o">-</span><span class="mi">04</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">DFhQ0aUbjqJ9CsczdyWv</span>
+<span class="w">      </span><span class="mi">3</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">9491509</span><span class="n">e</span><span class="o">-</span><span class="mi">0424</span><span class="o">-</span><span class="mi">4</span><span class="n">cdf</span><span class="o">-</span><span class="mi">879</span><span class="n">f</span><span class="o">-</span><span class="mi">790</span><span class="n">cff2d7289</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">2003</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">13</span><span class="w"> </span><span class="mi">20</span><span class="p">:</span><span class="mi">26</span><span class="p">:</span><span class="mi">49</span><span class="p">.</span><span class="mi">484942</span><span class="o">-</span><span class="mi">04</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ggpx35EPH698N2MGlUPV13P0</span>
+<span class="w">      </span><span class="mi">4</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">a54b9e47</span><span class="o">-</span><span class="mi">10</span><span class="n">c7</span><span class="o">-</span><span class="mi">4</span><span class="n">dce</span><span class="o">-</span><span class="mi">9</span><span class="n">db8</span><span class="o">-</span><span class="mi">12</span><span class="n">c7eaf80e17</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">2022</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">02</span><span class="w"> </span><span class="mi">22</span><span class="p">:</span><span class="mi">56</span><span class="p">:</span><span class="mi">20</span><span class="p">.</span><span class="mi">445508</span><span class="o">-</span><span class="mi">04</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">JCOhKbB3YMrOOBm</span>
+<span class="p">(</span><span class="mi">5</span><span class="w"> </span><span class="k">rows</span><span class="p">)</span>
+
+<span class="n">bank</span><span class="o">=#</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">ref_data</span><span class="p">;</span>
+<span class="w"> </span><span class="k">count</span><span class="w"> </span>
+<span class="c1">-------</span>
+<span class="w">  </span><span class="mi">1000</span>
+<span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="k">row</span><span class="p">)</span>
+</code></pre></div>
+<p>We're then ready to proceed to the next section.</p>
 
 
 
