@@ -138,6 +138,10 @@ class Stats:
             else 1
         )
 
+        window_elapsed = (
+            endtime - self.window_start_time if endtime - self.window_start_time else 1
+        )
+
         def get_stats_row(id: str):
             td = TDigest(compression=1000).combine(self.window_stats[id])
 
@@ -153,7 +157,7 @@ class Stats:
                 int(self.cumulative_counts[id].weight),
                 int(self.cumulative_counts[id].weight // elapsed),
                 int(td.weight),
-                int(td.weight // (endtime - self.window_start_time)),
+                int(td.weight // (endtime - window_elapsed)),
                 round(td.mean * 1000, 2),
             ] + [round(x * 1000, 2) for x in td.inverse_cdf(self.quantiles)]
 
@@ -161,7 +165,12 @@ class Stats:
 
     def calculate_final_stats(self, active_connections: int, endtime: int) -> list:
         def get_stats_row(id: str):
-            elapsed = endtime - self.instantiation_time
+            # cover the case where elapsed is zero and runs into ZeroDivisionError
+            elapsed = (
+                endtime - self.instantiation_time
+                if endtime - self.instantiation_time
+                else 1
+            )
             return [
                 elapsed,
                 id,
