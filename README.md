@@ -1,5 +1,7 @@
 # dbworkload - DBMS workload utility
 
+Visit the [online documentation](https://fabiog1901.github.io/dbworkload/).
+
 ## Overview
 
 The goal of `dbworkload` is to ease the creation and execution of bespoke database workload scripts.

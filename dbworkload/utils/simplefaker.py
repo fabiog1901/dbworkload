@@ -6,6 +6,7 @@ import os
 import pandas as pd
 import uuid
 import random
+import builtins
 
 logger = logging.getLogger("dbworkload")
 
@@ -28,10 +29,8 @@ class SimpleFaker:
     class Constant(Abc):
         """Iterator always yields the same value."""
 
-        def __init__(
-            self, value: str = "simplefaker", seed: float = 0, null_pct: float = 0
-        ):
-            super().__init__(seed, null_pct, 0)
+        def __init__(self, value: str = "simplefaker", null_pct: float = 0):
+            super().__init__(None, null_pct, 0)
             self.value = value
 
         def __next__(self):
@@ -53,7 +52,7 @@ class SimpleFaker:
     class UUIDv4(Abc):
         """Iterator thar yields a UUIDv4"""
 
-        def __init__(self, seed: float, null_pct: float, array: int):
+        def __init__(self, seed: float = 0, null_pct: float = 0, array: int = 0):
             super().__init__(seed, null_pct, array)
 
         def __next__(self):
@@ -208,14 +207,14 @@ class SimpleFaker:
 
         def __init__(
             self,
-            min_num: int = 10,
-            max_num: int = 50,
+            min: int = 10,
+            max: int = 50,
             seed: float = 0,
             null_pct: float = 0,
         ):
             # 9 is the number of characters in the hardcoded string
-            self.min = max(min_num - 9, 1)
-            self.max = max(max_num - 9, 2)
+            self.min = builtins.max(min - 9, 1)
+            self.max = builtins.max(max - 9, 2)
             super().__init__(
                 min=self.min, max=self.max, null_pct=null_pct, seed=seed, array=0
             )
@@ -231,15 +230,15 @@ class SimpleFaker:
 
         def __init__(
             self,
-            min_num: int = 1,
-            max_num: int = 1000000000,
+            min: int = 1,
+            max: int = 1000000000,
             seed: float = 0,
             null_pct: float = 0,
             array: int = 0,
         ):
             super().__init__(seed, null_pct, array)
-            self.min_num = min_num
-            self.max_num = max_num
+            self.min_num = min
+            self.max_num = max
 
         def __next__(self):
             if self.null_pct and self.rng.random() < self.null_pct:
@@ -292,7 +291,7 @@ class SimpleFaker:
     class Bool(Abc):
         """Iterator that yields a random boolean (0, 1)"""
 
-        def __init__(self, seed: float, null_pct: float, array: int):
+        def __init__(self, seed: float, null_pct: float = 0, array: int = 0):
             super().__init__(seed, null_pct, array)
 
         def __next__(self):
@@ -493,9 +492,9 @@ class SimpleFaker:
                 sort_by = item.get("sort-by", [])
                 for col, col_details in item["columns"].items():
                     # get the list of simplefaker objects with different seeds
-                    item["columns"][col] = self.__get_simplefaker_objects(
+                    item["columns"][col] = self.get_simplefaker_objects(
                         col_details["type"],
-                        col_details["args"],
+                        col_details.get("args", {}),
                         item["count"],
                         exec_threads,
                     )
@@ -534,118 +533,60 @@ class SimpleFaker:
                 for p in procs:
                     p.join()
 
-    def __get_simplefaker_objects(
-        self, type: str, args: dict, count: int, exec_threads: int
+    def get_simplefaker_objects(
+        self, obj_type: str, args: dict, count: int, exec_threads: int
     ):
         """Returns a list of SimpleFaker objects based on the number of execution threads.
         Each SimpleFaker object in the list has its own seed number
 
         Args:
-            type (str): the name of object to create
+            obj_type (str): the name of object to create
             args (dict): args required to create the SimpleFaker object
             count (int): count of rows to generate (for SimpleFaker.Sequence obj)
             exec_threads (int): count of parallel processes/threads used for data generation
 
         Returns:
-            list: a <exec_threads> long list of SimpleFaker objects of type <type>
+            list: a <exec_threads> long list of SimpleFaker objects of type <obj_type>
         """
-
-        # Extract all possible args for all possible types to avoid repetition
-        # date, time, timestamp, string.
-        array: int = args.get("array", 0)
-        null_pct: float = args.get("null_pct", 0.0)
-
-        start: str = args.get("start", "")
-        end: str = args.get("end", "")
-        prefix: str = args.get("prefix", "")
-        format: str = args.get("format", "")
-        micros: bool = args.get("micros", False)
-
-        # integer/float
-        min: int = args.get("min", 0)
-        max: int = args.get("max", 10)
-        round: int = args.get("round", 2)
-
-        # choice
-        population: list = args.get("population", ["a", "b", "c"])
-        weights: list = args.get("weights", None)
-        cum_weights: list = args.get("cum_weights", None)
-
-        # constant
-        value: str = args.get("value", "")
-
-        # bit
-        size: int = args.get("size", 10)
-
-        # all types
-        seed: float = args.get("seed", self.rng.random())
-
         # create a list of pseudo random seeds
-        r = random.Random(seed)
+        r = random.Random(args.pop("seed", None))
         seeds = [r.random() for _ in range(exec_threads)]
 
-        type = type.lower()
+        obj_type = obj_type.lower()
 
-        if type == "integer":
-            return [
-                SimpleFaker.Integer(min, max, seed, null_pct, array) for seed in seeds
-            ]
-        elif type in ["float", "decimal"]:
-            return [
-                SimpleFaker.Float(min, max, round, seed, null_pct, array)
-                for seed in seeds
-            ]
-        elif type == "bool":
-            return [SimpleFaker.Bool(seed, null_pct, array) for seed in seeds]
-        elif type == "string":
-            return [
-                SimpleFaker.String(min, max, prefix, seed, null_pct, array)
-                for seed in seeds
-            ]
-        elif type in ["json", "jsonb"]:
-            return [SimpleFaker.Json(min, max, seed, null_pct) for seed in seeds]
-        elif type == "bytes":
-            return [SimpleFaker.Bytes(size, seed, null_pct, array) for seed in seeds]
-        elif type == "choice":
-            return [
-                SimpleFaker.Choice(
-                    population, weights, cum_weights, seed, null_pct, array
-                )
-                for seed in seeds
-            ]
-        elif type in ["uuidv4", "uuid"]:
-            return [SimpleFaker.UUIDv4(seed, null_pct, array) for seed in seeds]
-        elif type == "timestamp":
-            return [
-                SimpleFaker.Timestamp(start, end, format, seed, null_pct, array)
-                for seed in seeds
-            ]
-        elif type == "time":
-            return [
-                SimpleFaker.Time(start, end, micros, seed, null_pct, array)
-                for seed in seeds
-            ]
-        elif type == "date":
-            return [
-                SimpleFaker.Date(start, end, format, seed, null_pct, array)
-                for seed in seeds
-            ]
-        elif type == "constant":
-            return [SimpleFaker.Constant(value, seed, null_pct) for seed in seeds]
-        elif type == "sequence":
+        if obj_type == "constant":
+            return [SimpleFaker.Constant(**args) for _ in range(exec_threads)]
+        elif obj_type == "sequence":
             div = int(count / exec_threads)
-            return [
-                SimpleFaker.Sequence(div * x + int(start)) for x in range(exec_threads)
-            ]
-        elif type == "bit":
-            div = int(count / exec_threads)
-            return [
-                SimpleFaker.Bit(size, seed, null_pct, array)
-                for x in range(exec_threads)
-            ]
+            start = int(args.get("start", 0))
+            return [SimpleFaker.Sequence(div * x + start) for x in range(exec_threads)]
+        elif obj_type == "integer":
+            return [SimpleFaker.Integer(seed=s, **args) for s in seeds]
+        elif obj_type == "float":
+            return [SimpleFaker.Float(seed=s, **args) for s in seeds]
+        elif obj_type == "string":
+            return [SimpleFaker.String(seed=s, **args) for s in seeds]
+        elif obj_type == "json":
+            return [SimpleFaker.Json(seed=s, **args) for s in seeds]
+        elif obj_type == "choice":
+            return [SimpleFaker.Choice(seed=s, **args) for s in seeds]
+        elif obj_type == "timestamp":
+            return [SimpleFaker.Timestamp(seed=s, **args) for s in seeds]
+        elif obj_type == "time":
+            return [SimpleFaker.Time(seed=s, **args) for s in seeds]
+        elif obj_type == "date":
+            return [SimpleFaker.Date(seed=s, **args) for s in seeds]
+        elif obj_type == "uuid":
+            return [SimpleFaker.UUIDv4(seed=s, **args) for s in seeds]
+        elif obj_type == "bool":
+            return [SimpleFaker.Bool(seed=s, **args) for s in seeds]
+        elif obj_type == "bit":
+            return [SimpleFaker.Bit(seed=s, **args) for s in seeds]
+        elif obj_type == "bytes":
+            return [SimpleFaker.Bytes(seed=s, **args) for s in seeds]
         else:
             raise ValueError(
-                f"SimpleFaker type not implemented or recognized: '{type}'"
+                f"SimpleFaker type not implemented or recognized: '{obj_type}'"
             )
 
     def worker(

@@ -372,7 +372,7 @@ def ddl_to_yaml(ddl: str):
             return {
                 "type": "bool",
                 "args": {
-                    "seed": random.random(),
+                    "seed": random.randint(0, 100),
                     "null_pct": (
                         0.0
                         if is_not_null
@@ -407,7 +407,7 @@ def ddl_to_yaml(ddl: str):
                 "args": {
                     "min": int_min,
                     "max": int_max,
-                    "seed": random.random(),
+                    "seed": random.randint(0, 100),
                     "null_pct": (
                         0.0
                         if is_not_null
@@ -437,7 +437,7 @@ def ddl_to_yaml(ddl: str):
                     "min": _min,
                     "max": _max,
                     "prefix": "",
-                    "seed": random.random(),
+                    "seed": random.randint(0, 100),
                     "null_pct": (
                         0.0
                         if is_not_null
@@ -477,7 +477,7 @@ def ddl_to_yaml(ddl: str):
                     "min": _min,
                     "max": _max,
                     "round": _round,
-                    "seed": random.random(),
+                    "seed": random.randint(0, 100),
                     "null_pct": (
                         0.0
                         if is_not_null
@@ -494,7 +494,7 @@ def ddl_to_yaml(ddl: str):
                     "start": "07:30:00",
                     "end": "15:30:00",
                     "micros": False,
-                    "seed": random.random(),
+                    "seed": random.randint(0, 100),
                     "null_pct": (
                         0.0
                         if is_not_null
@@ -506,11 +506,11 @@ def ddl_to_yaml(ddl: str):
 
         elif datatype.lower() in ["json", "jsonb"]:
             return {
-                "type": "jsonb",
+                "type": "json",
                 "args": {
                     "min": 10,
                     "max": 50,
-                    "seed": random.random(),
+                    "seed": random.randint(0, 100),
                     "null_pct": (
                         0.0
                         if is_not_null
@@ -526,7 +526,7 @@ def ddl_to_yaml(ddl: str):
                     "start": "2000-01-01",
                     "end": "2024-12-31",
                     "format": "%Y-%m-%d",
-                    "seed": random.random(),
+                    "seed": random.randint(0, 100),
                     "null_pct": (
                         0.0
                         if is_not_null
@@ -543,7 +543,7 @@ def ddl_to_yaml(ddl: str):
                     "start": "2000-01-01",
                     "end": "2024-12-31",
                     "format": "%Y-%m-%d %H:%M:%S.%f",
-                    "seed": random.random(),
+                    "seed": random.randint(0, 100),
                     "null_pct": (
                         0.0
                         if is_not_null
@@ -555,9 +555,9 @@ def ddl_to_yaml(ddl: str):
 
         elif datatype.lower() == "uuid":
             return {
-                "type": "UUIDv4",
+                "type": "uuid",
                 "args": {
-                    "seed": random.random(),
+                    "seed": random.randint(0, 100),
                     "null_pct": (
                         0.0
                         if is_not_null
@@ -576,7 +576,7 @@ def ddl_to_yaml(ddl: str):
                 "type": "bit",
                 "args": {
                     "size": _size,
-                    "seed": random.random(),
+                    "seed": random.randint(0, 100),
                     "null_pct": (
                         0.0
                         if is_not_null
@@ -591,7 +591,7 @@ def ddl_to_yaml(ddl: str):
                 "type": "bytes",
                 "args": {
                     "size": 20,
-                    "seed": random.random(),
+                    "seed": random.randint(0, 100),
                     "null_pct": (
                         0.0
                         if is_not_null

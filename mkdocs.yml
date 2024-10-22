@@ -74,6 +74,8 @@ nav:
       - getting_started/3.md
       - getting_started/4.md
       - getting_started/5.md
+      - getting_started/6.md
+      - getting_started/7.md
     - how_it_works.md
     - Utility Functions:
         - util/index.md
