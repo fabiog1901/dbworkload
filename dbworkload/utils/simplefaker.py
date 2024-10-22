@@ -311,7 +311,7 @@ class SimpleFaker:
         def __init__(
             self,
             min: int = 0,
-            max: int = 1000,
+            max: int = 1000000,
             round: int = 2,
             seed: float = 0,
             null_pct: float = 0,

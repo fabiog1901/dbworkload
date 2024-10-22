@@ -2,30 +2,29 @@
 
 ## Generating Python stub files
 
-`dbworkload` requires a Python file that will be the foundation of the workload. In addition to setup and utility functions, this `.py` file will also require your SQL transactions in order to mirror the workload you want to re-create. 
+`dbworkload` requires a Python file that will be the foundation of the workload. In addition to setup and utility functions, this `.py` file will also require your SQL transactions in order to mirror the workload you want to re-create.
 
 Each SQL transaction will be contained within its own python function. We can speed up creation of these functions via the `gen_stub` command, which accepts a `.sql` file as an argument.  
 
-This page will only cover the stub functions generated, [you can read more about the rest of the workload class here.](/docs/getting_started/3.md) 
+This page will only cover the stub functions generated, [you can read more about the rest of the workload class here.](/docs/getting_started/3.md)
 
 ### Create the stub file
 
-`gen_stub` accepts a `.sql` file as input and will create a `.py` as output. 
+`gen_stub` accepts a `.sql` file as input and will create a `.py` as output.
 
 ```bash
 dbworkload util gen_stub -i bank.sql
 ```
 
-### Subcommands
+### Options
 
-|Command | Usage  |
+|Option | Usage  |
 | ------ | ------ |
 | `--input`<br><br>`-i` | A `.sql` file containing one or more statements ending in a semi colon. <br><br>Required: Yes <br> Default: None |
 
-
 ### Example
 
-1. Create a `.sql` file with various SQL statements. Let's call it `bank.sql`. 
+1. Create a `.sql` file with various SQL statements. Let's call it `bank.sql`.
 
     ```sql
     select * from t1 where id = 123;
