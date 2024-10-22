@@ -815,6 +815,17 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    gen_stub
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -824,6 +835,76 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#generating-python-stub-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Generating Python stub files
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Generating Python stub files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-the-stub-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create the stub file
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subcommands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Subcommands
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      See also
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1010,6 +1091,65 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#generating-python-stub-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Generating Python stub files
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Generating Python stub files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-the-stub-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create the stub file
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subcommands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Subcommands
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      See also
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1027,6 +1167,149 @@
 
 
 <h1 id="gen_stub">gen_stub</h1>
+<h2 id="generating-python-stub-files">Generating Python stub files</h2>
+<p><code>dbworkload</code> requires a Python file that will be the foundation of the workload. In addition to setup and utility functions, this <code>.py</code> file will also require your SQL transactions in order to mirror the workload you want to re-create. </p>
+<p>Each SQL transaction will be contained within its own python function. We can speed up creation of these functions via the <code>gen_stub</code> command, which accepts a <code>.sql</code> file as an argument.  </p>
+<p>This page will only cover the stub functions generated, <a href="/docs/getting_started/3.md">you can read more about the rest of the workload class here.</a> </p>
+<h3 id="create-the-stub-file">Create the stub file</h3>
+<p><code>gen_stub</code> accepts a <code>.sql</code> file as input and will create a <code>.py</code> as output. </p>
+<div class="highlight"><pre><span></span><code>dbworkload<span class="w"> </span>util<span class="w"> </span>gen_stub<span class="w"> </span>-i<span class="w"> </span>bank.sql
+</code></pre></div>
+<h3 id="subcommands">Subcommands</h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--input</code><br><br><code>-i</code></td>
+<td>A <code>.sql</code> file containing one or more statements ending in a semi colon. <br><br>Required: Yes <br> Default: None</td>
+</tr>
+</tbody>
+</table>
+<h3 id="example">Example</h3>
+<ol>
+<li>
+<p>Create a <code>.sql</code> file with various SQL statements. Let's call it <code>bank.sql</code>. </p>
+<div class="highlight"><pre><span></span><code><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">123</span><span class="p">;</span>
+
+<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">t2</span><span class="w"> </span><span class="k">values</span><span class="w"> </span><span class="p">(</span><span class="o">%</span><span class="n">s</span><span class="p">,</span><span class="o">%</span><span class="n">s</span><span class="p">);</span>
+
+<span class="k">DELETE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span>
+<span class="w">    </span><span class="n">t3</span><span class="w"> </span><span class="k">where</span><span class="w"> </span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">%</span><span class="n">s</span><span class="w"> </span><span class="n">returning</span><span class="w"> </span><span class="o">*</span><span class="p">;</span>
+
+<span class="k">SELECT</span><span class="w"> </span><span class="n">now</span><span class="p">();</span>
+</code></pre></div>
+</li>
+<li>
+<p>Run the <code>gen_stub</code> command, passing in <code>bank.sql</code> as the input.</p>
+<div class="highlight"><pre><span></span><code>dbworkload<span class="w"> </span>util<span class="w"> </span>gen_stub<span class="w"> </span>-i<span class="w"> </span>bank.sql
+</code></pre></div>
+</li>
+<li>
+<p>Open <code>bank.py</code> output and inspect function stubs. Notice one function per statement.</p>
+<div class="highlight"><pre><span></span><code><span class="o">.</span>
+<span class="o">.</span>
+<span class="n">setup</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">utility</span> <span class="n">functions</span>
+<span class="o">.</span>
+<span class="o">.</span>
+
+<span class="c1"># Workload function stubs</span>
+
+    <span class="k">def</span> <span class="nf">txn_0</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">Connection</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
+            <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                SELECT *</span>
+<span class="sd">                FROM t1</span>
+<span class="sd">                WHERE id = 123</span>
+<span class="sd">                &quot;&quot;&quot;</span><span class="p">,</span>
+                <span class="p">(</span>
+
+                <span class="p">),</span> 
+            <span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">txn_1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">Connection</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
+            <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                INSERT INTO t2</span>
+<span class="sd">                VALUES (%s,%s)</span>
+<span class="sd">                &quot;&quot;&quot;</span><span class="p">,</span>
+                <span class="p">(</span>
+                    <span class="c1"># add bind parameter, </span>
+                    <span class="c1"># add bind parameter, </span>
+
+                <span class="p">),</span> 
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">txn_2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">Connection</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
+            <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                DELETE</span>
+<span class="sd">                FROM t3</span>
+<span class="sd">                WHERE id = %s RETURNING *</span>
+<span class="sd">                &quot;&quot;&quot;</span><span class="p">,</span>
+                <span class="p">(</span>
+                    <span class="c1"># add bind parameter, </span>
+
+                <span class="p">),</span> 
+            <span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">txn_3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">Connection</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
+            <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                SELECT now()</span>
+<span class="sd">                &quot;&quot;&quot;</span><span class="p">,</span>
+                <span class="p">(</span>
+
+                <span class="p">),</span> 
+            <span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+</code></pre></div>
+</li>
+<li>
+<p>View helpful tips at the bottom of the file.</p>
+<div class="highlight"><pre><span></span><code><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd"># Quick random generators reminder</span>
+
+<span class="sd"># random string of 25 chars</span>
+<span class="sd">self.random_str(25),</span>
+
+<span class="sd"># random int between 0 and 100k</span>
+<span class="sd">random.randint(0, 100000),</span>
+
+<span class="sd"># random float with 2 decimals </span>
+<span class="sd">round(random.random()*1000000, 2)</span>
+
+<span class="sd"># now()</span>
+<span class="sd">dt.datetime.utcnow()</span>
+
+<span class="sd"># random timestamptz between certain dates,</span>
+<span class="sd"># expressed as unix ts</span>
+<span class="sd">dt.datetime.fromtimestamp(random.randint(1655032268, 1759232268))</span>
+
+<span class="sd"># random UUID</span>
+<span class="sd">uuid4()</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+</code></pre></div>
+</li>
+<li>
+<p>Edit the workload</p>
+<p>Now that we have a stub and some hints, it's likely we'll need to make some edits and tune the workload to make it look more like what we want. Further reading on editing the workload can be found here: <a href="/docs/getting_started/4.md">Edit the workload</a></p>
+</li>
+</ol>
+<h2 id="see-also">See also</h2>
+<ul>
+<li><a href="/docs/getting_started/3.md">Create the workload class</a></li>
+<li><a href="/docs/getting_started/4.md">Edit the workload</a></li>
+</ul>
 
 
 
