@@ -837,6 +837,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Generating CSV files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1071,6 +1086,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Generating CSV files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1108,10 +1138,40 @@
 <p>You can also specify what is the percentage of NULL for any column, or how many elements in an ARRAY type.
 You then specify the total row count, how many rows per file, and in what order, if any, to sort by.</p>
 <p>Then <code>dbworkload</code> will generate the data into CSV or TSV files, compress them if so requested.</p>
-<p>You can then optionally <a href="../merge_csvs/">merge-sort the files</a>.</p>
-<p>Consult file <code>workloads/postgres/bank.yaml</code> for a list of all available generators and options.</p>
+<p>You can then optionally <a href="../merge/">merge-sort the files</a>.</p>
+<h3 id="example">Example</h3>
+<p>Here is a sample input YAML file, <code>bank.yaml</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">ref_data</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">  </span><span class="nt">sort-by</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">acc_no</span>
+<span class="w">  </span><span class="nt">columns</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">acc_no</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sequence</span>
+<span class="w">    </span><span class="nt">external_ref_id</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uuid</span>
+<span class="w">    </span><span class="nt">created_time</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">timestamp</span>
+<span class="w">    </span><span class="nt">acc_details</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+</code></pre></div>
+<p>Now let's create a CSV dataset, using only 1 processor.</p>
+<div class="highlight"><pre><span></span><code>dbworkload<span class="w"> </span>util<span class="w"> </span>csv<span class="w"> </span>-i<span class="w"> </span>bank.yaml<span class="w"> </span>-x<span class="w"> </span><span class="m">1</span>
+</code></pre></div>
+<p>The CSV files will be located inside a <code>bank</code> directory.</p>
+<p>Inspect it</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>head<span class="w"> </span>-n5<span class="w"> </span>bank/ref_data.0_0_0.tsv<span class="w"> </span>
+<span class="m">0</span><span class="w">       </span>3a2edc9d-a96b-4541-99ae-0098527545f7<span class="w">    </span><span class="m">2008</span>-03-19<span class="w"> </span><span class="m">06</span>:20:27.209214<span class="w">      </span>CWUh0FWashpmWCx4LF3kb1
+<span class="m">1</span><span class="w">       </span>829de6d6-103c-4707-9668-c4359ef5373c<span class="w">    </span><span class="m">2014</span>-02-13<span class="w"> </span><span class="m">22</span>:04:20.168239<span class="w">      </span>QGspICZBHYpRLnHNcg
+<span class="m">2</span><span class="w">       </span>5dd183af-d728-4e12-8b11-2900b6f6880a<span class="w">    </span><span class="m">2019</span>-04-01<span class="w"> </span><span class="m">16</span>:14:40.388236<span class="w">      </span>sEUukccOePdnIbiQyVUSi0HS7rL
+<span class="m">3</span><span class="w">       </span>21f00778-5fca-4302-8380-56fa461adfc8<span class="w">    </span><span class="m">2003</span>-05-21<span class="w"> </span><span class="m">19</span>:21:21.598455<span class="w">      </span>OQTNwxoZIAdNmcA6fJM5eGDvMJgKJ
+<span class="m">4</span><span class="w">       </span>035dac61-b4a3-40a4-9e4d-0deb50fef3ae<span class="w">    </span><span class="m">2011</span>-08-15<span class="w"> </span><span class="m">06</span>:15:40.405698<span class="w">      </span>RvToVnn20BEXoxFzw9QFpCt
+</code></pre></div>
 <h2 id="see-also">See also</h2>
 <ul>
+<li>
+<p><a href="../../cli/#dbworkload-util-csv"><code>dbworkload util csv</code></a></p>
+</li>
 <li>
 <p><a href="../yaml/">Generating intermediate data definition YAML file</a></p>
 </li>

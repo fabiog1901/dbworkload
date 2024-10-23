@@ -967,24 +967,6 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#create-the-stub-file" class="md-nav__link">
-    <span class="md-ellipsis">
-      Create the stub file
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#options" class="md-nav__link">
-    <span class="md-ellipsis">
-      Options
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#example" class="md-nav__link">
     <span class="md-ellipsis">
       Example
@@ -1002,6 +984,24 @@
   <a href="#types" class="md-nav__link">
     <span class="md-ellipsis">
       Types
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#yaml-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      YAML Structure
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#foreign-key-relationship" class="md-nav__link">
+    <span class="md-ellipsis">
+      Foreign Key relationship
     </span>
   </a>
   
@@ -1117,24 +1117,6 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#create-the-stub-file" class="md-nav__link">
-    <span class="md-ellipsis">
-      Create the stub file
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#options" class="md-nav__link">
-    <span class="md-ellipsis">
-      Options
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#example" class="md-nav__link">
     <span class="md-ellipsis">
       Example
@@ -1152,6 +1134,24 @@
   <a href="#types" class="md-nav__link">
     <span class="md-ellipsis">
       Types
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#yaml-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      YAML Structure
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#foreign-key-relationship" class="md-nav__link">
+    <span class="md-ellipsis">
+      Foreign Key relationship
     </span>
   </a>
   
@@ -1187,25 +1187,6 @@
 <h1 id="yaml">yaml</h1>
 <h2 id="generate-yaml-data-generation-file-from-a-ddl-sql-file">Generate YAML data generation file from a DDL SQL file</h2>
 <p><code>dbworkload</code> can assist with generating a stub of the <em>data generation definition</em> file, required by the <a href="../csv/"><code>csv</code></a> command.</p>
-<h3 id="create-the-stub-file">Create the stub file</h3>
-<p><code>yaml</code> accepts a file with DDL statements as input and will create a <code>.yaml</code> file as output.</p>
-<div class="highlight"><pre><span></span><code>dbworkload<span class="w"> </span>util<span class="w"> </span>yaml<span class="w"> </span>-i<span class="w"> </span>bank.ddl.sql
-</code></pre></div>
-<h3 id="options">Options</h3>
-<table>
-<thead>
-<tr>
-<th>Option</th>
-<th>Usage</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>--input</code><br><br><code>-i</code></td>
-<td>A SQL file containing one or more <code>CREATE TABLE</code> statements ending in a semi colon. <br><br>Required: Yes <br> Default: None</td>
-</tr>
-</tbody>
-</table>
 <h3 id="example">Example</h3>
 <ol>
 <li>
@@ -1486,7 +1467,7 @@
 <tbody>
 <tr>
 <td>seed <code>float</code></td>
-<td>0</td>
+<td>random</td>
 </tr>
 <tr>
 <td>null_pct <code>float</code></td>
@@ -1500,8 +1481,146 @@
 </table>
 <p><code>json</code> does not take <code>array</code>.</p>
 <p><code>constant</code> does not take <code>seed</code> and <code>array</code>.</p>
+<h2 id="yaml-structure">YAML Structure</h2>
+<p>The structure of the YAML file might look intuitive already, but here is a formal description.</p>
+<p>For every <code>CREATE TABLE</code> statement in the input file, you'll find a key with the same name</p>
+<div class="highlight"><pre><span></span><code><span class="hll"><span class="nt">ref_data</span><span class="p">:</span>
+</span><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+<span class="w">    </span><span class="nt">sort-by</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">    </span><span class="nt">columns</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># truncated for brevity</span>
+<span class="hll"><span class="nt">orders</span><span class="p">:</span>
+</span><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+<span class="w">    </span><span class="nt">sort-by</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">    </span><span class="nt">columns</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># truncated for brevity</span>
+</code></pre></div>
+<p>The value type of the table key is a <strong>list</strong>: notice the <code>-</code> prefixing the first item of the list, <code>count</code>.</p>
+<p>This is helpful if you want to generate detasets with different seed numbers for the same table,
+as shown in <a href="#foreign-key-relationship">an example below</a>.
+Mostly though, the list will contain only 1 item.</p>
+<p>The items in the list are of type dict with 3 keys:</p>
+<ul>
+<li><code>count</code>: takes an <code>int</code> as a value and represents the desired count of rows in the dataset you want to generate.</li>
+<li><code>sort-by</code>: takes a list of <code>str</code>. Here you pass the exact column names you want to sort by, in ascending order.</li>
+<li><code>columns</code>: takes a dict as value. The dict uses the column names in the <code>CREATE TABLE</code> as keys.</li>
+</ul>
+<p>Here's an example of generating 1000 rows sorted by <code>acc_no</code>, a column of type <code>integer</code> with default <code>args</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">ref_data</span><span class="p">:</span>
+<span class="hll"><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+</span><span class="hll"><span class="w">    </span><span class="nt">sort-by</span><span class="p">:</span>
+</span><span class="hll"><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">acc_no</span>
+</span><span class="w">    </span><span class="nt">columns</span><span class="p">:</span>
+<span class="hll"><span class="w">      </span><span class="nt">acc_no</span><span class="p">:</span>
+</span><span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">integer</span>
+<span class="w">        </span><span class="c1"># notice the absence of the `args` key</span>
+</code></pre></div>
+<p>Each key in <code>columns</code> has a dict as value with 2 keys:</p>
+<ul>
+<li><code>type</code>: the generator type you want to use.</li>
+<li><code>args</code>: yet another dictionary with the specific generator arguments and values.</li>
+</ul>
+<p>Here is an example of column <code>external_ref_id</code>, which features all available arguments for its type.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">ref_data</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">    </span><span class="nt">sort-by</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">acc_no</span>
+<span class="w">    </span><span class="nt">columns</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">acc_no</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">integer</span>
+<span class="w">      </span><span class="nt">external_ref_id</span><span class="p">:</span>
+<span class="hll"><span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uuid</span>
+</span><span class="hll"><span class="w">        </span><span class="nt">args</span><span class="p">:</span>
+</span><span class="hll"><span class="w">          </span><span class="nt">seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">76</span>
+</span><span class="hll"><span class="w">          </span><span class="nt">null_pct</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.25</span>
+</span><span class="hll"><span class="w">          </span><span class="nt">array</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+</span></code></pre></div>
+<p>See <a href="#types">Types</a> right above for a full list of all available generator types and their arguments.</p>
+<h2 id="foreign-key-relationship">Foreign Key relationship</h2>
+<p>A common scenario is to create datasets that must be linked, for example, because of a Foreign Key constraint in the table schemas.</p>
+<p>Here is a quick example of how to use <code>seed</code> to generate same keys across 2 columns in different tables.</p>
+<p>Example tables linked by a foreign key reletionship:</p>
+<div class="highlight"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="n">UUID</span><span class="p">,</span>
+<span class="w">    </span><span class="n">v</span><span class="w"> </span><span class="n">STRING</span><span class="p">,</span>
+<span class="w">    </span><span class="k">CONSTRAINT</span><span class="w"> </span><span class="n">pk</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">c</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="n">UUID</span><span class="p">,</span>
+<span class="w">    </span><span class="n">p_id</span><span class="w"> </span><span class="n">UUID</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="n">v</span><span class="w"> </span><span class="n">STRING</span><span class="p">,</span>
+<span class="w">    </span><span class="k">CONSTRAINT</span><span class="w"> </span><span class="n">pk</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="p">),</span>
+<span class="hll"><span class="w">    </span><span class="k">CONSTRAINT</span><span class="w"> </span><span class="n">pid_in_p</span><span class="w"> </span><span class="k">FOREIGN</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">p_id</span><span class="p">)</span><span class="w"> </span><span class="k">REFERENCES</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="p">)</span>
+</span><span class="p">);</span>
+</code></pre></div>
+<p>Create a YAML file so that the data generated for the <code>p.id</code> column matches <code>c.p_id</code>.
+Notice how the <code>seed</code> number, 1, is the same for table <code>p</code> and some rows in <code>c</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">p</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">    </span><span class="nt">sort-by</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">    </span><span class="nt">columns</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">id</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uuid</span>
+<span class="w">        </span><span class="nt">args</span><span class="p">:</span>
+<span class="hll"><span class="w">          </span><span class="nt">seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</span><span class="w">      </span><span class="nt">v</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="nt">c</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">  </span><span class="nt">sort-by</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">  </span><span class="nt">columns</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">id</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uuid</span>
+<span class="w">    </span><span class="nt">p_id</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uuid</span>
+<span class="w">      </span><span class="nt">args</span><span class="p">:</span>
+<span class="hll"><span class="w">        </span><span class="nt">seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</span><span class="w">    </span><span class="nt">v</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8</span>
+<span class="w">  </span><span class="nt">sort-by</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">  </span><span class="nt">columns</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">id</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uuid</span>
+<span class="w">    </span><span class="nt">p_id</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uuid</span>
+<span class="w">    </span><span class="nt">v</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+</code></pre></div>
+<p>For table <code>p</code>, this will create:</p>
+<ul>
+<li>a 10 rows dataset.</li>
+</ul>
+<p>For table <code>c</code>, it will create:</p>
+<ul>
+<li>a 2 rows dataset where <code>c.p_id</code> is the same as <code>p.id</code>;</li>
+<li>a 8 rows dataset with random rows.</li>
+</ul>
+<p>That gives a FK relationship of 2:10 between <code>c</code> and <code>p</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># file: p.0_0_0.tsv</span>
+
+<span class="hll">19578af7-2a49-4cdc-95ff-6a05e79ff16b<span class="w">    </span>Tp5zbRSFtugZQsYJEIERXjLrozw
+</span><span class="hll">877c814b-66b2-48f3-8d2e-80cbbd74cdb7<span class="w">    </span>NGFfjmbegU7n
+</span>ceff7bf0-0dde-4c54-b3f2-1bcf7a7fb908<span class="w">    </span>4zAUXFkiHGTOlvvHk6bq
+c3aba496-5410-41e6-8d48-8da450d302fc<span class="w">    </span>OsKz6zG3dPYvEcqBMltDQGqrfpVUnSbsBeiH
+071f951d-e4ae-4c90-9b64-eb57a915b273<span class="w">    </span>OCWXgMcnpNBaODfEXRCHiHqjqD2ZGn
+e277823f-c19a-497f-8582-f29ef3fb9957<span class="w">    </span>vpC0wqGT53vBkwgGUNrTtw6pbLsV3PEy3BnsqEASk0IWj0pQbI
+bbe37e2c-d874-4ca2-8978-4463078e4206<span class="w">    </span>ksMTt13ZFXVmnt41hnjvDtdJyoZ
+32ad9dbf-0a25-463e-ba1f-f248edf3a62a<span class="w">    </span>QtLnVqUoUOauO
+fa98f2c6-00b9-4570-b36c-9673225a7afd<span class="w">    </span>yREqhAzY1YBx3cQ990
+ba66edaf-04e7-4217-beb2-671a8faa1530<span class="w">    </span>rv14QnjStbeUjtpIAdAeVuIvETSj
+</code></pre></div>
+<p>Below the 2 rows CSV generated for table <code>c</code>.
+The 2nd column, <code>p_id</code>, has matching values to the first column in above file.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># file: cat c.0_0_0.tsv </span>
+
+5d037e2b-ce8f-4e7d-a99e-4f8efe6349f9<span class="w">    </span>19578af7-2a49-4cdc-95ff-6a05e79ff16b<span class="w">    </span>Q1OYAmNzDJHKrpCChkyzNQE7wuruIa8Hkb
+ec8d601c-2500-4f6e-9fc6-697634f4bcd8<span class="w">    </span>877c814b-66b2-48f3-8d2e-80cbbd74cdb7<span class="w">    </span>VAY6PpDTDKxaDBdyVK6W02fMM6Eko492fe3pXTf9JEMgA
+</code></pre></div>
 <h2 id="see-also">See also</h2>
 <ul>
+<li><a href="../../cli/#dbworkload-util-yaml"><code>dbworkload util yaml</code></a></li>
 <li><a href="../../getting_started/2/">Seed the database tables</a></li>
 </ul>
 

@@ -857,6 +857,17 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    merge_csvs
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -866,6 +877,58 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#merge-multiple-dbworkload-statistic-csv-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Merge multiple dbworkload statistic CSV files
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Merge multiple dbworkload statistic CSV files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      See also
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1010,6 +1073,47 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#merge-multiple-dbworkload-statistic-csv-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Merge multiple dbworkload statistic CSV files
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Merge multiple dbworkload statistic CSV files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      See also
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1027,6 +1131,20 @@
 
 
 <h1 id="merge_csvs">merge_csvs</h1>
+<h2 id="merge-multiple-dbworkload-statistic-csv-files">Merge multiple dbworkload statistic CSV files</h2>
+<p>There are situations where you need to run <code>dbworkload</code> from multiple servers, for example,
+to simulate a distributed app targeting different nodes in your database technology.</p>
+<p>You can use the <code>--save|-s</code> flag in your <code>dbworkload run</code> command to save metrics to a CSV files,
+but eventually you want a unified view of your test.</p>
+<p>This function allows you to merge multiple such statistics CSV files into a single CSV file.</p>
+<h3 id="example">Example</h3>
+<p><code>merge</code> accepts a directory as input and will output a new statistic CSV file.</p>
+<div class="highlight"><pre><span></span><code>dbworkload<span class="w"> </span>util<span class="w"> </span>merge_csvs<span class="w"> </span>-i<span class="w"> </span>stats/
+</code></pre></div>
+<h2 id="see-also">See also</h2>
+<ul>
+<li><a href="../../cli/#dbworkload-util-merge_csvs"><code>dbworkload util merge_csvs</code></a></li>
+</ul>
 
 
 

@@ -878,6 +878,17 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    merge
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -887,6 +898,58 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#merge-sort-multiple-sorted-csv-files-into-1-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Merge sort multiple sorted CSV files into 1+ files
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Merge sort multiple sorted CSV files into 1+ files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      See also
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1010,6 +1073,47 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#merge-sort-multiple-sorted-csv-files-into-1-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Merge sort multiple sorted CSV files into 1+ files
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Merge sort multiple sorted CSV files into 1+ files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      See also
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1027,6 +1131,53 @@
 
 
 <h1 id="merge">merge</h1>
+<h2 id="merge-sort-multiple-sorted-csv-files-into-1-files">Merge sort multiple sorted CSV files into 1+ files</h2>
+<p>Sorted CSV files as those created using the <a href="../csv/">csv</a> function are sorted on a file by file basis, but not across the files.</p>
+<p><code>dbworkload</code> can assist you with re-writing all rows into new CSV files where the rows are sorted across all files.</p>
+<p>This is known as a <strong>merge-sort</strong> operation.</p>
+<h3 id="example">Example</h3>
+<p>Create 2 files such as these.
+Notice the rows are sorted alphabetically on a file by file basis, but not across all files.</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>cat<span class="w"> </span>bank/t.0.csv<span class="w"> </span>
+aaa
+ddd
+fff
+kkk
+rrr
+zzz
+
+$<span class="w"> </span>cat<span class="w"> </span>bank/t.1.csv<span class="w"> </span>
+bbb
+ggg
+lll
+ooo
+ttt
+yyy
+</code></pre></div>
+<p>Run the <code>merge</code> command</p>
+<div class="highlight"><pre><span></span><code>dbworkload<span class="w"> </span>util<span class="w"> </span>merge<span class="w"> </span>-i<span class="w"> </span>bank/
+</code></pre></div>
+<p>You will notice a new directory has been created. Inspect the file</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>cat<span class="w"> </span>bank.merged/out_000.csv<span class="w"> </span>
+aaa
+bbb
+ddd
+fff
+ggg
+kkk
+lll
+ooo
+rrr
+ttt
+yyy
+zzz
+</code></pre></div>
+<p>Rows are now correctly sorted. Use option <code>--csv-max-rows</code> to split the output in many, smaller files.</p>
+<h2 id="see-also">See also</h2>
+<ul>
+<li><a href="../../cli/#dbworkload-util-merge"><code>dbworkload util merge</code></a></li>
+<li><a href="https://dev.to/cockroachlabs/generate-multiple-large-sorted-csv-files-with-pseudo-random-data-1jo4" target="_blank">Blog: Generate multiple large sorted CSV files with pseudo-random data</a></li>
+</ul>
 
 
 

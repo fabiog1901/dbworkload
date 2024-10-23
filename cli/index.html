@@ -1027,136 +1027,471 @@
 <div class="highlight"><pre><span></span><code>dbworkload [OPTIONS] COMMAND [ARGS]...
 </code></pre></div>
 <p><strong>Options:</strong></p>
-<div class="highlight"><pre><span></span><code>  -v, --version         Print the version and exit
-  --install-completion  Install completion for the current shell.
-  --show-completion     Show completion for the current shell, to copy it or
-                        customize the installation.
-  --help                Show this message and exit.
-</code></pre></div>
-<h2 id="run">run</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--version</code>, <code>-v</code></td>
+<td>boolean</td>
+<td>Print the version and exit</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>--install-completion</code></td>
+<td>boolean</td>
+<td>Install completion for the current shell.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--show-completion</code></td>
+<td>boolean</td>
+<td>Show completion for the current shell, to copy it or customize the installation.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Subcommands</strong></p>
+<ul>
+<li><em><a href="#dbworkload-run">run</a></em>: Run the workload.</li>
+<li><em><a href="#dbworkload-util">util</a></em>: Various utils.</li>
+</ul>
+<h2 id="dbworkload-run">dbworkload run</h2>
 <p>Run the workload.</p>
 <p><strong>Usage:</strong></p>
 <div class="highlight"><pre><span></span><code>dbworkload run [OPTIONS]
 </code></pre></div>
 <p><strong>Options:</strong></p>
-<div class="highlight"><pre><span></span><code>  -w, --workload FILE             Filepath to the workload module.
-  --driver [postgres|mysql|maria|oracle|sqlserver|mongo|cassandra]
-                                  DBMS driver.
-  --uri TEXT                      The connection URI to the database.
-  -x, --procs INTEGER             Number of processes to spawn. Defaults to
-                                  &lt;system-cpu-count&gt;.
-  --args TEXT                     JSON string, or filepath to a JSON/YAML
-                                  file, to pass to Workload.
-  -c, --concurrency INTEGER       Number of concurrent workers.  [default: 1]
-  -r, --ramp INTEGER              Ramp up time in seconds.  [default: 0]
-  -i, --iterations INTEGER        Total number of iterations. Defaults to &lt;ad
-                                  infinitum&gt;.
-  -d, --duration INTEGER          Duration in seconds. Defaults to &lt;ad
-                                  infinitum&gt;.
-  -k, --conn-duration INTEGER     The number of seconds to keep database
-                                  connection alive before restarting. Defaults
-                                  to &lt;ad infinitum&gt;.
-  -a, --app-name TEXT             The application name specified by the
-                                  client. Defaults to &lt;db-name&gt;.
-  --no-autocommit                 Unset autocommit in the connections.
-  -p, --port INTEGER              The port of the Prometheus server.
-                                  [default: 26260]
-  -q, --quiet                     Disable printing intermediate stats.
-  -s, --save                      Save stats to CSV files.
-  -l, --log-level [debug|info|warning|error]
-                                  Set the logging level.  [default: info]
-  --help                          Show this message and exit.
-</code></pre></div>
-<h2 id="util">util</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--workload</code>, <code>-w</code></td>
+<td>file</td>
+<td>Filepath to the workload module.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--driver</code></td>
+<td>choice (<code>postgres</code> &#x7C; <code>mysql</code> &#x7C; <code>maria</code> &#x7C; <code>oracle</code> &#x7C; <code>sqlserver</code> &#x7C; <code>mongo</code> &#x7C; <code>cassandra</code>)</td>
+<td>DBMS driver.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--uri</code></td>
+<td>text</td>
+<td>The connection URI to the database.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--procs</code>, <code>-x</code></td>
+<td>integer</td>
+<td>Number of processes to spawn. Defaults to <system-cpu-count>.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--args</code></td>
+<td>text</td>
+<td>JSON string, or filepath to a JSON/YAML file, to pass to Workload.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>-c</code>, <code>--concurrency</code></td>
+<td>integer</td>
+<td>Number of concurrent workers.</td>
+<td><code>1</code></td>
+</tr>
+<tr>
+<td><code>-r</code>, <code>--ramp</code></td>
+<td>integer</td>
+<td>Ramp up time in seconds.</td>
+<td><code>0</code></td>
+</tr>
+<tr>
+<td><code>-i</code>, <code>--iterations</code></td>
+<td>integer</td>
+<td>Total number of iterations. Defaults to <ad infinitum>.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>-d</code>, <code>--duration</code></td>
+<td>integer</td>
+<td>Duration in seconds. Defaults to <ad infinitum>.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>-k</code>, <code>--conn-duration</code></td>
+<td>integer</td>
+<td>The number of seconds to keep database connection alive before restarting. Defaults to <ad infinitum>.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--app-name</code>, <code>-a</code></td>
+<td>text</td>
+<td>The application name specified by the client. Defaults to <db-name>.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--no-autocommit</code></td>
+<td>boolean</td>
+<td>Unset autocommit in the connections.</td>
+<td><code>True</code></td>
+</tr>
+<tr>
+<td><code>-p</code>, <code>--port</code></td>
+<td>integer</td>
+<td>The port of the Prometheus server.</td>
+<td><code>26260</code></td>
+</tr>
+<tr>
+<td><code>--quiet</code>, <code>-q</code></td>
+<td>boolean</td>
+<td>Disable printing intermediate stats.</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>--save</code>, <code>-s</code></td>
+<td>boolean</td>
+<td>Save stats to CSV files.</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>--log-level</code>, <code>-l</code></td>
+<td>choice (<code>debug</code> &#x7C; <code>info</code> &#x7C; <code>warning</code> &#x7C; <code>error</code>)</td>
+<td>Set the logging level.</td>
+<td><code>info</code></td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="dbworkload-util">dbworkload util</h2>
 <p>Various utils.</p>
 <p><strong>Usage:</strong></p>
 <div class="highlight"><pre><span></span><code>dbworkload util [OPTIONS] COMMAND [ARGS]...
 </code></pre></div>
 <p><strong>Options:</strong></p>
-<div class="highlight"><pre><span></span><code>  --help  Show this message and exit.
-</code></pre></div>
-<h3 id="csv">csv</h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Subcommands</strong></p>
+<ul>
+<li><em><a href="#dbworkload-util-csv">csv</a></em>: Generate CSV files from a YAML data generation file.</li>
+<li><em><a href="#dbworkload-util-gen_stub">gen_stub</a></em>: Generate a dbworkload class stub.</li>
+<li><em><a href="#dbworkload-util-html">html</a></em>: Save charts to HTML from the dbworkload statistics CSV file.</li>
+<li><em><a href="#dbworkload-util-merge">merge</a></em>: Merge multiple sorted CSV files into 1+ files.</li>
+<li><em><a href="#dbworkload-util-merge_csvs">merge_csvs</a></em>: Merge multiple dbworkload statistic CSV files.</li>
+<li><em><a href="#dbworkload-util-plot">plot</a></em>: Plot charts from the dbworkload statistics CSV file.</li>
+<li><em><a href="#dbworkload-util-yaml">yaml</a></em>: Generate YAML data generation file from a DDL SQL file.</li>
+</ul>
+<h3 id="dbworkload-util-csv">dbworkload util csv</h3>
 <p>Generate CSV files from a YAML data generation file.</p>
 <p><strong>Usage:</strong></p>
 <div class="highlight"><pre><span></span><code>dbworkload util csv [OPTIONS]
 </code></pre></div>
 <p><strong>Options:</strong></p>
-<div class="highlight"><pre><span></span><code>  -i, --input FILE                Filepath to the YAML data generation file.
-                                  [required]
-  -o, --output DIRECTORY          Output directory for the CSV files. Defaults
-                                  to &lt;input-basename&gt;.
-  -x, --procs INTEGER             Number of processes to spawn. Defaults to
-                                  &lt;system-cpu-count&gt;.
-  --csv-max-rows INTEGER          Max count of rows per resulting CSV file.
-                                  [default: 100000]
-  -n, --hostname TEXT             The hostname of the http server that serves
-                                  the CSV files.
-  -p, --port INTEGER              The port of the http server that servers the
-                                  CSV files.  [default: 3000]
-  -c, --compression [bz2|gzip|xz|zip]
-                                  The compression format.
-  -d, --delimiter TEXT            The delimeter char to use for the CSV files.
-                                  Defaults to &quot;tab&quot;.
-  --help                          Show this message and exit.
-</code></pre></div>
-<h3 id="gen_stub">gen_stub</h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--input</code>, <code>-i</code></td>
+<td>file</td>
+<td>Filepath to the YAML data generation file.</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--output</code>, <code>-o</code></td>
+<td>directory</td>
+<td>Output directory for the CSV files. Defaults to <input-basename>.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--procs</code>, <code>-x</code></td>
+<td>integer</td>
+<td>Number of processes to spawn. Defaults to <system-cpu-count>.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--csv-max-rows</code></td>
+<td>integer</td>
+<td>Max count of rows per resulting CSV file.</td>
+<td><code>100000</code></td>
+</tr>
+<tr>
+<td><code>-n</code>, <code>--hostname</code></td>
+<td>text</td>
+<td>The hostname of the http server that serves the CSV files.</td>
+<td><code>localhost</code></td>
+</tr>
+<tr>
+<td><code>-p</code>, <code>--port</code></td>
+<td>integer</td>
+<td>The port of the http server that servers the CSV files.</td>
+<td><code>3000</code></td>
+</tr>
+<tr>
+<td><code>-c</code>, <code>--compression</code></td>
+<td>choice (<code>bz2</code> &#x7C; <code>gzip</code> &#x7C; <code>xz</code> &#x7C; <code>zip</code>)</td>
+<td>The compression format.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>-d</code>, <code>--delimiter</code></td>
+<td>text</td>
+<td>The delimeter char to use for the CSV files. Defaults to "tab".</td>
+<td><code></code></td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="dbworkload-util-gen_stub">dbworkload util gen_stub</h3>
 <p>Generate a dbworkload class stub.</p>
 <p><strong>Usage:</strong></p>
 <div class="highlight"><pre><span></span><code>dbworkload util gen_stub [OPTIONS]
 </code></pre></div>
 <p><strong>Options:</strong></p>
-<div class="highlight"><pre><span></span><code>  -i, --input FILE  Input SQL file  [required]
-  --help            Show this message and exit.
-</code></pre></div>
-<h3 id="html">html</h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--input</code>, <code>-i</code></td>
+<td>file</td>
+<td>Input SQL file</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="dbworkload-util-html">dbworkload util html</h3>
 <p>Save charts to HTML from the dbworkload statistics CSV file.</p>
 <p><strong>Usage:</strong></p>
 <div class="highlight"><pre><span></span><code>dbworkload util html [OPTIONS]
 </code></pre></div>
 <p><strong>Options:</strong></p>
-<div class="highlight"><pre><span></span><code>  -i, --input FILE  Input CSV file  [required]
-  --help            Show this message and exit.
-</code></pre></div>
-<h3 id="merge">merge</h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--input</code>, <code>-i</code></td>
+<td>file</td>
+<td>Input CSV file</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="dbworkload-util-merge">dbworkload util merge</h3>
 <p>Merge multiple sorted CSV files into 1+ files.</p>
 <p><strong>Usage:</strong></p>
 <div class="highlight"><pre><span></span><code>dbworkload util merge [OPTIONS]
 </code></pre></div>
 <p><strong>Options:</strong></p>
-<div class="highlight"><pre><span></span><code>  -i, --input DIRECTORY   Directory of files to be merged  [required]
-  -o, --output PATH       Output filepath. Defaults to &lt;input&gt;.merged.
-  --csv-max-rows INTEGER  Max count of rows per resulting CSV file.  [default:
-                          100000]
-  --help                  Show this message and exit.
-</code></pre></div>
-<h3 id="merge_csvs">merge_csvs</h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--input</code>, <code>-i</code></td>
+<td>directory</td>
+<td>Directory of files to be merged</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--output</code>, <code>-o</code></td>
+<td>path</td>
+<td>Output filepath. Defaults to <input>.merged.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--csv-max-rows</code></td>
+<td>integer</td>
+<td>Max count of rows per resulting CSV file.</td>
+<td><code>100000</code></td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="dbworkload-util-merge_csvs">dbworkload util merge_csvs</h3>
 <p>Merge multiple dbworkload statistic CSV files.</p>
 <p><strong>Usage:</strong></p>
 <div class="highlight"><pre><span></span><code>dbworkload util merge_csvs [OPTIONS]
 </code></pre></div>
 <p><strong>Options:</strong></p>
-<div class="highlight"><pre><span></span><code>  -i, --input_dir DIRECTORY  Input CSV directory  [required]
-  --help                     Show this message and exit.
-</code></pre></div>
-<h3 id="plot">plot</h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--input_dir</code>, <code>-i</code></td>
+<td>directory</td>
+<td>Input CSV directory</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="dbworkload-util-plot">dbworkload util plot</h3>
 <p>Plot charts from the dbworkload statistics CSV file.</p>
 <p><strong>Usage:</strong></p>
 <div class="highlight"><pre><span></span><code>dbworkload util plot [OPTIONS]
 </code></pre></div>
 <p><strong>Options:</strong></p>
-<div class="highlight"><pre><span></span><code>  -i, --input FILE  Input CSV file  [required]
-  --help            Show this message and exit.
-</code></pre></div>
-<h3 id="yaml">yaml</h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--input</code>, <code>-i</code></td>
+<td>file</td>
+<td>Input CSV file</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="dbworkload-util-yaml">dbworkload util yaml</h3>
 <p>Generate YAML data generation file from a DDL SQL file.</p>
 <p><strong>Usage:</strong></p>
 <div class="highlight"><pre><span></span><code>dbworkload util yaml [OPTIONS]
 </code></pre></div>
 <p><strong>Options:</strong></p>
-<div class="highlight"><pre><span></span><code>  -i, --input FILE   Filepath to the DDL SQL file.  [required]
-  -o, --output PATH  Output filepath. Defaults to &lt;input-basename&gt;.yaml.
-  --help             Show this message and exit.
-</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--input</code>, <code>-i</code></td>
+<td>file</td>
+<td>Filepath to the DDL SQL file.</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--output</code>, <code>-o</code></td>
+<td>path</td>
+<td>Output filepath. Defaults to <input-basename>.yaml.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
 
 
 
