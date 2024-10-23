@@ -1,7 +1,7 @@
 site_name: dbworkload
 site_description: Simulator utility for DBMS workloads.
-repo_name: fabiog1901/dbworkload
-repo_url: https://github.com/fabiog1901/dbworkload
+repo_name: dbworkload/dbworkload
+repo_url: https://github.com/dbworkload/dbworkload
 
 plugins:
   - search
