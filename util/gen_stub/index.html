@@ -1170,7 +1170,7 @@
 <h2 id="generating-python-stub-files">Generating Python stub files</h2>
 <p><code>dbworkload</code> requires a Python file that will be the foundation of the workload. In addition to setup and utility functions, this <code>.py</code> file will also require your SQL transactions in order to mirror the workload you want to re-create.</p>
 <p>Each SQL transaction will be contained within its own python function. We can speed up creation of these functions via the <code>gen_stub</code> command, which accepts a <code>.sql</code> file as an argument.  </p>
-<p>This page will only cover the stub functions generated, <a href="/docs/getting_started/3.md">you can read more about the rest of the workload class here.</a></p>
+<p>This page will only cover the stub functions generated, <a href="../../getting_started/3/">you can read more about the rest of the workload class here.</a></p>
 <h3 id="create-the-stub-file">Create the stub file</h3>
 <p><code>gen_stub</code> accepts a <code>.sql</code> file as input and will create a <code>.py</code> as output.</p>
 <div class="highlight"><pre><span></span><code>dbworkload<span class="w"> </span>util<span class="w"> </span>gen_stub<span class="w"> </span>-i<span class="w"> </span>bank.sql
@@ -1302,13 +1302,13 @@
 </li>
 <li>
 <p>Edit the workload</p>
-<p>Now that we have a stub and some hints, it's likely we'll need to make some edits and tune the workload to make it look more like what we want. Further reading on editing the workload can be found here: <a href="/docs/getting_started/4.md">Edit the workload</a></p>
+<p>Now that we have a stub and some hints, it's likely we'll need to make some edits and tune the workload to make it look more like what we want. Further reading on editing the workload can be found here: <a href="../../getting_started/4/">Edit the workload</a></p>
 </li>
 </ol>
 <h2 id="see-also">See also</h2>
 <ul>
-<li><a href="/docs/getting_started/3.md">Create the workload class</a></li>
-<li><a href="/docs/getting_started/4.md">Edit the workload</a></li>
+<li><a href="../../getting_started/3/">Create the workload class</a></li>
+<li><a href="../../getting_started/4/">Edit the workload</a></li>
 </ul>
 
 
