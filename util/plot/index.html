@@ -899,6 +899,17 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    plot
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -908,6 +919,76 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#plot-terminal-charts-from-the-statistics-csv-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Plot terminal charts from the statistics CSV file
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Plot terminal charts from the statistics CSV file">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#plot-the-metrics-in-the-workload-statistic-csv-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Plot the metrics in the workload statistic CSV file
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#options" class="md-nav__link">
+    <span class="md-ellipsis">
+      Options
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      See also
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1010,6 +1091,65 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#plot-terminal-charts-from-the-statistics-csv-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Plot terminal charts from the statistics CSV file
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Plot terminal charts from the statistics CSV file">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#plot-the-metrics-in-the-workload-statistic-csv-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Plot the metrics in the workload statistic CSV file
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#options" class="md-nav__link">
+    <span class="md-ellipsis">
+      Options
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      See also
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1027,6 +1167,38 @@
 
 
 <h1 id="plot">plot</h1>
+<h2 id="plot-terminal-charts-from-the-statistics-csv-file">Plot terminal charts from the statistics CSV file</h2>
+<p><code>dbworkload</code> can plot terminal charts so you can inspect the workload directly from the instance
+you are running the workload.</p>
+<h3 id="plot-the-metrics-in-the-workload-statistic-csv-file">Plot the metrics in the workload statistic CSV file</h3>
+<p><code>plot</code> accepts a <code>.csv</code> file as input and will output directly to <code>stdout</code>.</p>
+<div class="highlight"><pre><span></span><code>dbworkload<span class="w"> </span>util<span class="w"> </span>plot<span class="w"> </span>-i<span class="w"> </span>Bank.20241022_175006.csv
+</code></pre></div>
+<h3 id="options">Options</h3>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--input</code><br><br><code>-i</code></td>
+<td>A <code>.csv</code> file resulting from running a workload with the <code>-s</code> option. <br><br>Required: Yes <br> Default: None</td>
+</tr>
+</tbody>
+</table>
+<h3 id="example">Example</h3>
+<p>Run the <code>plot</code> command, passing in your CSV as the input.</p>
+<div class="highlight"><pre><span></span><code>dbworkload<span class="w"> </span>util<span class="w"> </span>plot<span class="w"> </span>-i<span class="w"> </span>Bank.20241021_145825.csv<span class="w"> </span>
+</code></pre></div>
+<p>The output is displayed right on the terminal</p>
+<p><img alt="plot" src="../../getting_started/media/plot.png" /></p>
+<h2 id="see-also">See also</h2>
+<ul>
+<li><a href="../../getting_started/7/">Plot the metrics</a></li>
+</ul>
 
 
 
