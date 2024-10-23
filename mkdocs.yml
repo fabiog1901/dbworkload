@@ -7,6 +7,7 @@ plugins:
   - search
 
 markdown_extensions:
+  - attr_list
   - mkdocs-click
   - admonition
   - pymdownx.details

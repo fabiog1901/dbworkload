@@ -4,20 +4,6 @@
 
 `dbworkload` can assist with generating a stub of the _data generation definition_ file, required by the [`csv`](./csv.md) command.
 
-### Create the stub file
-
-`yaml` accepts a file with DDL statements as input and will create a `.yaml` file as output.
-
-```bash
-dbworkload util yaml -i bank.ddl.sql
-```
-
-### Options
-
-|Option | Usage  |
-| ------ | ------ |
-| `--input`<br><br>`-i` | A SQL file containing one or more `CREATE TABLE` statements ending in a semi colon. <br><br>Required: Yes <br> Default: None |
-
 ### Example
 
 1. Create a DDL file. Let's call it `bank.ddl`.
@@ -175,7 +161,7 @@ Furthermore, all but `sequence` take these common arguments.
 
 | Arguments              | Default        |
 | -----------------------| ---------------|
-| seed `float`           | 0              |
+| seed `float`           | random         |
 | null_pct `float`       | 0              |
 | array `int`            | 0              |
 
@@ -183,6 +169,173 @@ Furthermore, all but `sequence` take these common arguments.
 
 `constant` does not take `seed` and `array`.
 
+## YAML Structure
+
+The structure of the YAML file might look intuitive already, but here is a formal description.
+
+For every `CREATE TABLE` statement in the input file, you'll find a key with the same name
+
+```yaml hl_lines="1 6"
+ref_data:
+  - count: 100
+    sort-by: []
+    columns:
+    # truncated for brevity
+orders:
+  - count: 100
+    sort-by: []
+    columns:
+    # truncated for brevity
+```
+
+The value type of the table key is a **list**: notice the `-` prefixing the first item of the list, `count`.
+
+This is helpful if you want to generate detasets with different seed numbers for the same table,
+as shown in [an example below](#foreign-key-relationship).
+Mostly though, the list will contain only 1 item.
+
+The items in the list are of type dict with 3 keys:
+
+- `count`: takes an `int` as a value and represents the desired count of rows in the dataset you want to generate.
+- `sort-by`: takes a list of `str`. Here you pass the exact column names you want to sort by, in ascending order.
+- `columns`: takes a dict as value. The dict uses the column names in the `CREATE TABLE` as keys.
+
+Here's an example of generating 1000 rows sorted by `acc_no`, a column of type `integer` with default `args`.
+
+```yaml hl_lines="2-4 6"
+ref_data:
+  - count: 1000
+    sort-by:
+      - acc_no
+    columns:
+      acc_no:
+        type: integer
+        # notice the absence of the `args` key
+```
+
+Each key in `columns` has a dict as value with 2 keys:
+
+- `type`: the generator type you want to use.
+- `args`: yet another dictionary with the specific generator arguments and values.
+
+Here is an example of column `external_ref_id`, which features all available arguments for its type.
+
+```yaml hl_lines="9-13"
+ref_data:
+  - count: 1000
+    sort-by:
+      - acc_no
+    columns:
+      acc_no:
+        type: integer
+      external_ref_id:
+        type: uuid
+        args:
+          seed: 76
+          null_pct: 0.25
+          array: 0
+```
+
+See [Types](#types) right above for a full list of all available generator types and their arguments.
+
+## Foreign Key relationship
+
+A common scenario is to create datasets that must be linked, for example, because of a Foreign Key constraint in the table schemas.
+
+Here is a quick example of how to use `seed` to generate same keys across 2 columns in different tables.
+
+Example tables linked by a foreign key reletionship:
+
+```sql hl_lines="12"
+CREATE TABLE p (
+    id UUID,
+    v STRING,
+    CONSTRAINT pk PRIMARY KEY (id)
+);
+
+CREATE TABLE c (
+    id UUID,
+    p_id UUID NOT NULL,
+    v STRING,
+    CONSTRAINT pk PRIMARY KEY (id),
+    CONSTRAINT pid_in_p FOREIGN KEY (p_id) REFERENCES p (id)
+);
+```
+
+Create a YAML file so that the data generated for the `p.id` column matches `c.p_id`.
+Notice how the `seed` number, 1, is the same for table `p` and some rows in `c`.
+
+```yaml hl_lines="8 20"
+p:
+  - count: 10
+    sort-by: []
+    columns:
+      id:
+        type: uuid
+        args:
+          seed: 1
+      v:
+        type: string
+c:
+- count: 2
+  sort-by: []
+  columns:
+    id:
+      type: uuid
+    p_id:
+      type: uuid
+      args:
+        seed: 1
+    v:
+      type: string
+- count: 8
+  sort-by: []
+  columns:
+    id:
+      type: uuid
+    p_id:
+      type: uuid
+    v:
+      type: string
+```
+
+For table `p`, this will create:
+
+- a 10 rows dataset.
+
+For table `c`, it will create:
+
+- a 2 rows dataset where `c.p_id` is the same as `p.id`;
+- a 8 rows dataset with random rows.
+
+That gives a FK relationship of 2:10 between `c` and `p`.
+
+```bash hl_lines="3 4"
+# file: p.0_0_0.tsv
+ 
+19578af7-2a49-4cdc-95ff-6a05e79ff16b    Tp5zbRSFtugZQsYJEIERXjLrozw
+877c814b-66b2-48f3-8d2e-80cbbd74cdb7    NGFfjmbegU7n
+ceff7bf0-0dde-4c54-b3f2-1bcf7a7fb908    4zAUXFkiHGTOlvvHk6bq
+c3aba496-5410-41e6-8d48-8da450d302fc    OsKz6zG3dPYvEcqBMltDQGqrfpVUnSbsBeiH
+071f951d-e4ae-4c90-9b64-eb57a915b273    OCWXgMcnpNBaODfEXRCHiHqjqD2ZGn
+e277823f-c19a-497f-8582-f29ef3fb9957    vpC0wqGT53vBkwgGUNrTtw6pbLsV3PEy3BnsqEASk0IWj0pQbI
+bbe37e2c-d874-4ca2-8978-4463078e4206    ksMTt13ZFXVmnt41hnjvDtdJyoZ
+32ad9dbf-0a25-463e-ba1f-f248edf3a62a    QtLnVqUoUOauO
+fa98f2c6-00b9-4570-b36c-9673225a7afd    yREqhAzY1YBx3cQ990
+ba66edaf-04e7-4217-beb2-671a8faa1530    rv14QnjStbeUjtpIAdAeVuIvETSj
+```
+
+Below the 2 rows CSV generated for table `c`.
+The 2nd column, `p_id`, has matching values to the first column in above file.
+
+```bash
+# file: cat c.0_0_0.tsv 
+ 
+5d037e2b-ce8f-4e7d-a99e-4f8efe6349f9    19578af7-2a49-4cdc-95ff-6a05e79ff16b    Q1OYAmNzDJHKrpCChkyzNQE7wuruIa8Hkb
+ec8d601c-2500-4f6e-9fc6-697634f4bcd8    877c814b-66b2-48f3-8d2e-80cbbd74cdb7    VAY6PpDTDKxaDBdyVK6W02fMM6Eko492fe3pXTf9JEMgA
+```
+
 ## See also
 
+- [`dbworkload util yaml`](../cli.md#dbworkload-util-yaml)
 - [Seed the database tables](../getting_started/2.md)

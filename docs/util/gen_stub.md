@@ -8,20 +8,6 @@ Each SQL transaction will be contained within its own python function. We can sp
 
 This page will only cover the stub functions generated, [you can read more about the rest of the workload class here.](../getting_started/3.md)
 
-### Create the stub file
-
-`gen_stub` accepts a `.sql` file as input and will create a `.py` as output.
-
-```bash
-dbworkload util gen_stub -i bank.sql
-```
-
-### Options
-
-|Option | Usage  |
-| ------ | ------ |
-| `--input`<br><br>`-i` | A `.sql` file containing one or more statements ending in a semi colon. <br><br>Required: Yes <br> Default: None |
-
 ### Example
 
 1. Create a `.sql` file with various SQL statements. Let's call it `bank.sql`.
@@ -142,5 +128,6 @@ dbworkload util gen_stub -i bank.sql
 
 ## See also
 
+- [`dbworkload util gen_stub`](../cli.md#dbworkload-util-gen_stub)
 - [Create the workload class](../getting_started/3.md)
 - [Edit the workload](../getting_started/4.md)
