@@ -282,7 +282,15 @@ def run(
 
     iterations_per_thread = None
     if iterations:
+        # ensure we don't create more threads than the total number of iterations requested.
+        # eg. we don't need 8 threads if iterations is 4: we only need 4 threads
+        concurrency = min(iterations, concurrency)
         iterations_per_thread = iterations // concurrency
+
+        if iterations % concurrency > 0:
+            logger.warning(
+                f"You have requested {iterations} iterations on {concurrency} threads. {iterations} modulo {concurrency} = {iterations%concurrency} iterations will not be executed."
+            )
 
     duration_endtime = None
     if duration:
@@ -292,8 +300,8 @@ def run(
     kill_q = mp.Queue(maxsize=concurrency)
 
     # calculate the ramp up schedule, if any
-    threads_per_proc = dbworkload.utils.common.get_threads_per_proc(procs, conc)
-    ramp_interval = ramp / conc
+    threads_per_proc = dbworkload.utils.common.get_threads_per_proc(procs, concurrency)
+    ramp_interval = ramp / concurrency
 
     # each Process must generate an ID for each of its threads,
     # starting from the id_base_counter and incrementing by 1.
@@ -317,7 +325,7 @@ def run(
                     iterations_per_thread,
                     duration_endtime,
                     conn_duration,
-                    conc,
+                    concurrency,
                     offset,
                     id_base_counter,
                     id_base_counter,
