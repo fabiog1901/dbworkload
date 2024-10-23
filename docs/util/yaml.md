@@ -171,7 +171,7 @@ Below is a table with all available generators and their arguments
 | bit       | size `int`             | 10             |
 | bytes     | size `int`             | 10             |
 
-Furthermore, all but `constant`, `sequence`, `json` take these common arguments
+Furthermore, all but `sequence` take these common arguments.
 
 | Arguments              | Default        |
 | -----------------------| ---------------|
@@ -179,6 +179,10 @@ Furthermore, all but `constant`, `sequence`, `json` take these common arguments
 | null_pct `float`       | 0              |
 | array `int`            | 0              |
 
+`json` does not take `array`.
+
+`constant` does not take `seed` and `array`.
+
 ## See also
 
-- [Seed the database tables](/docs/getting_started/2.md)
+- [Seed the database tables](../getting_started/2.md)

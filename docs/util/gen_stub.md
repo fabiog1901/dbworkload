@@ -6,7 +6,7 @@
 
 Each SQL transaction will be contained within its own python function. We can speed up creation of these functions via the `gen_stub` command, which accepts a `.sql` file as an argument.  
 
-This page will only cover the stub functions generated, [you can read more about the rest of the workload class here.](/docs/getting_started/3.md)
+This page will only cover the stub functions generated, [you can read more about the rest of the workload class here.](../getting_started/3.md)
 
 ### Create the stub file
 
@@ -138,9 +138,9 @@ dbworkload util gen_stub -i bank.sql
 
 5. Edit the workload
 
-    Now that we have a stub and some hints, it's likely we'll need to make some edits and tune the workload to make it look more like what we want. Further reading on editing the workload can be found here: [Edit the workload](/docs/getting_started/4.md)
+    Now that we have a stub and some hints, it's likely we'll need to make some edits and tune the workload to make it look more like what we want. Further reading on editing the workload can be found here: [Edit the workload](../getting_started/4.md)
 
 ## See also
 
-- [Create the workload class](/docs/getting_started/3.md)
-- [Edit the workload](/docs/getting_started/4.md)
+- [Create the workload class](../getting_started/3.md)
+- [Edit the workload](../getting_started/4.md)
