@@ -30,6 +30,7 @@ class Driver(str, Enum):
     sqlserver = "sqlserver"
     mongo = "mongo"
     cassandra = "cassandra"
+    spanner = "spanner"
 
 
 app = typer.Typer(

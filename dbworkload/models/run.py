@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+from contextlib import contextmanager
 from dbworkload.cli.dep import ConnInfo
 import dbworkload.utils.common
 import logging
@@ -708,6 +709,21 @@ def run_transaction(conn, op, driver: str, max_retries=3):
     return retry
 
 
+@contextmanager
+def get_connection_with_context(driver: str, conn_info: ConnInfo):
+    if driver == "spanner":
+        from google.cloud import spanner
+
+        try:
+            yield spanner.Client().instance(conn_info.params["instance"]).database(
+                conn_info.params["database"]
+            )
+        except Exception as e:
+            logger.error(e)
+        finally:
+            pass
+
+
 def get_connection(driver: str, conn_info: ConnInfo):
     if driver == "postgres":
         import psycopg
@@ -733,6 +749,10 @@ def get_connection(driver: str, conn_info: ConnInfo):
         import pymongo
 
         return pymongo.MongoClient(**conn_info)
+
+    else:
+        return get_connection_with_context(driver, conn_info)
+
     # elif driver == "cassandra":
     #     profile = ExecutionProfile(
     #         load_balancing_policy=WhiteListRoundRobinPolicy(["127.0.0.1"]),
