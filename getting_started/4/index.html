@@ -267,6 +267,23 @@
   
   
     <li class="md-tabs__item">
+      <a href="../../faq/" class="md-tabs__link">
+        
+  
+    
+  
+  FAQ
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
       <a href="../../about/" class="md-tabs__link">
         
   
@@ -1100,6 +1117,26 @@
   
   
     <li class="md-nav__item">
+      <a href="../../faq/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FAQ
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../about/" class="md-nav__link">
         
   
@@ -1309,7 +1346,7 @@ For this, we pass an <em>argument</em> at runtime.</p>
         <span class="p">)</span>
 </code></pre></div>
 <h3 id="add-bind-parameters-to-read-function">Add bind parameters to read function</h3>
-<p>We rename the function to something more descriptive</p>
+<p>Rename function <code>txn_0</code> to something more descriptive</p>
 <div class="highlight"><pre><span></span><code><span class="hll">    <span class="k">def</span> <span class="nf">txn_read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">Connection</span><span class="p">):</span>
 </span>        <span class="k">with</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
             <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
@@ -1330,7 +1367,8 @@ For this, we pass an <em>argument</em> at runtime.</p>
 <li>order_exec</li>
 </ul>
 <h3 id="new-order">New Order</h3>
-<p>This is the first of the 2 transactions of our Order workload.</p>
+<p>This is the first of the 2 transactions of our Order workload.
+Rename function <code>txn_1</code> to <code>txn_new_order</code>.</p>
 <div class="highlight"><pre><span></span><code><span class="hll">    <span class="k">def</span> <span class="nf">txn_new_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">Connection</span><span class="p">):</span>
 </span>
 <span class="hll">        <span class="c1"># generate a random account number to be used for</span>
@@ -1357,7 +1395,8 @@ For this, we pass an <em>argument</em> at runtime.</p>
 </span><span class="hll">            <span class="bp">self</span><span class="o">.</span><span class="n">order_tuples</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">account_number</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
 </span></code></pre></div>
 <h3 id="order-execution">Order Execution</h3>
-<p>The order execution transaction is an explicit transaction.</p>
+<p>The order execution transaction is an explicit transaction.
+Rename function <code>txn_2</code> accordingly.</p>
 <div class="highlight"><pre><span></span><code><span class="hll">    <span class="k">def</span> <span class="nf">txn_order_exec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">Connection</span><span class="p">):</span>
 </span>
 <span class="hll">        <span class="c1"># this is how you start an explicit transaction with psycopg</span>

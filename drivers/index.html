@@ -267,6 +267,23 @@
   
   
     <li class="md-tabs__item">
+      <a href="../faq/" class="md-tabs__link">
+        
+  
+    
+  
+  FAQ
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
       <a href="../about/" class="md-tabs__link">
         
   
@@ -530,6 +547,15 @@
   <a href="#scylla-driver" class="md-nav__link">
     <span class="md-ellipsis">
       scylla-driver
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spanner" class="md-nav__link">
+    <span class="md-ellipsis">
+      spanner
     </span>
   </a>
   
@@ -1068,6 +1094,26 @@
   
   
     <li class="md-nav__item">
+      <a href="../faq/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FAQ
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../about/" class="md-nav__link">
         
   
@@ -1170,6 +1216,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#spanner" class="md-nav__link">
+    <span class="md-ellipsis">
+      spanner
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1264,6 +1319,17 @@ pip3<span class="w"> </span>install<span class="w"> </span>dbworkload<span class
 dbworkload<span class="w"> </span>run<span class="w"> </span>-w<span class="w"> </span>workloads/cassandra/bank.py<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--uri<span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">   </span>--driver<span class="w"> </span>cassandra<span class="w"> </span>--args<span class="o">=</span><span class="s1">&#39;{&quot;read_pct&quot;:50}&#39;</span><span class="w"> </span>-i<span class="w"> </span><span class="m">10</span>
+</code></pre></div>
+<h2 id="spanner">spanner</h2>
+<p>For technologies such as Google Spanner</p>
+<p>Driver documentation: <a href="https://cloud.google.com/spanner/docs/getting-started/python">SpannerSQL Driver</a>.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># installation</span>
+pip<span class="w"> </span>install<span class="w"> </span>dbworkload<span class="o">[</span>spanner<span class="o">]</span>
+
+<span class="c1"># sample use</span>
+dbworkload<span class="w"> </span>run<span class="w"> </span>-w<span class="w"> </span>workloads/spanner/bank.py<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--driver<span class="w"> </span>spanner<span class="w"> </span>--uri<span class="w"> </span><span class="s1">&#39;instance=my-spanner-1, database=bank&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-l<span class="w"> </span>debug<span class="w"> </span>--args<span class="w"> </span><span class="s1">&#39;{&quot;read_pct&quot;:50}&#39;</span><span class="w"> </span>-i<span class="w"> </span><span class="m">1</span><span class="w"> </span>-c<span class="w"> </span><span class="m">1</span>
 </code></pre></div>
 
 
