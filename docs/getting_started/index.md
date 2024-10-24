@@ -2,8 +2,10 @@
 
 The best way to understand how `dbworkload` works is by running through a good example.
 
-We will be using PostgreSQL Server and CockroachDB, but the same logic can be applied to any of the other
+We will be using PostgreSQL Server and CockroachDB, but the same logic applies to any of the
 supported technologies.
+You can find equivalent files for other DBMS's in the
+<a href="https://github.com/dbworkload/dbworkload/tree/main/workloads" target="_blank">`workloads`</a> directory.
 
 In this tutorial, we will go through the following tasks:
 

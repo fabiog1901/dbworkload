@@ -109,3 +109,19 @@ dbworkload run -w workloads/cassandra/bank.py \
   --uri "" \
    --driver cassandra --args='{"read_pct":50}' -i 10
 ```
+
+## spanner
+
+For technologies such as Google Spanner
+
+Driver documentation: [SpannerSQL Driver](https://cloud.google.com/spanner/docs/getting-started/python).
+
+```bash
+# installation
+pip install dbworkload[spanner]
+
+# sample use
+dbworkload run -w workloads/spanner/bank.py \
+  --driver spanner --uri 'instance=my-spanner-1, database=bank' \
+  -l debug --args '{"read_pct":50}' -i 1 -c 1
+```

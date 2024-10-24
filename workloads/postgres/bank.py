@@ -2,26 +2,38 @@ import datetime as dt
 import psycopg
 import random
 import time
-import uuid
+from uuid import uuid4
+from collections import deque
 
 
 class Bank:
     def __init__(self, args: dict):
         # args is a dict of string passed with the --args flag
-        # user passed a yaml/json, in python that's a dict object
 
-        self.read_pct: float = float(args.get("read_pct", 50) / 100)
+        self.think_time: float = float(args.get("think_time", 5) / 1000)
 
-        self.lane: str = (
-            random.choice(["ACH", "DEPO", "WIRE"])
-            if not args.get("lane", "")
-            else args["lane"]
+        # Percentage of read operations compared to order operations
+        self.read_pct: float = float(args.get("read_pct", 0) / 100)
+
+        # initiate deque with 1 random UUID so a read won't fail
+        self.order_tuples = deque([(0, uuid4())], maxlen=10000)
+
+        # keep track of the current account number and id
+        self.account_number = 0
+        self.id = uuid4()
+
+        # translation table for efficiently generating a string
+        # -------------------------------------------------------
+        # make translation table from 0..255 to A..Z, 0..9, a..z
+        # the length must be 256
+        self.tbl = bytes.maketrans(
+            bytearray(range(256)),
+            bytearray(
+                [ord(b"a") + b % 26 for b in range(113)]
+                + [ord(b"0") + b % 10 for b in range(30)]
+                + [ord(b"A") + b % 26 for b in range(113)]
+            ),
         )
-
-        # you can arbitrarely add any variables you want
-        self.uuid: uuid.UUID = uuid.uuid4()
-        self.ts: dt.datetime = ""
-        self.event: str = ""
 
     # the setup() function is executed only once
     # when a new executing thread is started.
@@ -33,79 +45,94 @@ class Bank:
             )
             print(cur.execute(f"select version()").fetchone()[0])
 
-    # the run() function returns a list of functions
+    # the loop() function returns a list of functions
     # that dbworkload will execute, sequentially.
-    # Once every func has been executed, run() is re-evaluated.
+    # Once every func has been executed, loop() is re-evaluated.
     # This process continues until dbworkload exits.
     def loop(self):
         if random.random() < self.read_pct:
-            return [self.read]
-        return [self.txn1_new, self.txn2_verify, self.txn3_finalize]
+            return [self.txn_read]
+        return [self.txn_new_order, self.txn_order_exec]
 
-    # conn is an instance of a psycopg connection object
-    # conn is set by default with autocommit=True, so no need to send a commit message
-    def read(self, conn: psycopg.Connection):
+    #####################
+    # Utility Functions #
+    #####################
+    def __think__(self, conn: psycopg.Connection):
+        time.sleep(self.think_time)
+
+    def random_str(self, size: int = 12):
+        return (
+            random.getrandbits(8 * size)
+            .to_bytes(size, "big")
+            .translate(self.tbl)
+            .decode()
+        )
+
+    # Workload function stubs
+
+    def txn_read(self, conn: psycopg.Connection):
         with conn.cursor() as cur:
             cur.execute(
-                "select * from transactions where lane = %s and id = %s",
-                (self.lane, self.uuid),
-            )
-            cur.fetchone()
-
-    def txn1_new(self, conn: psycopg.Connection):
-        # simulate microservice doing something
-        self.uuid = uuid.uuid4()
-        self.ts = dt.datetime.now()
-        self.event = 0
-
-        # make sure you pass the arguments in this fashion
-        # so the statement can be PREPAREd (extended protocol).
-
-        # Simple SQL strings will use the Simple Protocol.
-        with conn.cursor() as cur:
-            stmt = """
-                insert into transactions values (%s, %s, %s, %s);
                 """
-            cur.execute(stmt, (self.lane, self.uuid, self.event, self.ts))
+                SELECT *
+                FROM orders
+                WHERE acc_no = %s
+                  AND id = %s
+                """,
+                random.choice(self.order_tuples),
+            ).fetchall()
 
-    # example on how to create a transaction with multiple queries
-    def txn2_verify(self, conn: psycopg.Connection):
-        # all queries sent within 'tx' will commit only when tx is exited
+    def txn_new_order(self, conn: psycopg.Connection):
+
+        # generate a random account number to be used for
+        # for the order transaction
+        self.account_number = random.randint(0, 999)
+
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO orders (acc_no, status, amount)
+                VALUES (%s, 'Pending', %s) RETURNING id
+                """,
+                (
+                    self.account_number,
+                    round(random.random() * 1000000, 2),
+                ),
+            )
+
+            # save the id that the server generated
+            self.id = cur.fetchone()[0]
+
+            # save the (acc_no, id) tuple to our deque list
+            # for future read transactions
+            self.order_tuples.append((self.account_number, self.id))
+
+    def txn_order_exec(self, conn: psycopg.Connection):
+
+        # with Psycopg, this is how you start an explicit transaction
         with conn.transaction() as tx:
             with conn.cursor() as cur:
-                # as we're inside 'tx', the below will not autocommit
                 cur.execute(
-                    "select * from ref_data where my_sequence = %s",
-                    (random.randint(0, 100000),),
-                )
-                cur.fetchone()
-
-                # simulate microservice doing something
-                time.sleep(0.01)
-                self.ts = dt.datetime.now()
-                self.event = 1
-
-                stmt = """
-                    insert into transactions values (%s, %s, %s, %s);
                     """
-                # as we're inside 'tx', the below will not autocommit
-                cur.execute(stmt, (self.lane, self.uuid, self.event, self.ts))
+                    SELECT *
+                    FROM ref_data
+                    WHERE acc_no = %s
+                    """,
+                    (self.account_number,),
+                ).fetchall()
 
-    def txn3_finalize(self, conn: psycopg.Connection):
-        with conn.transaction() as tx:
-            with conn.cursor() as cur:
+                # simulate microservice doing something...
+                time.sleep(0.02)
+
                 cur.execute(
-                    "select * from ref_data where my_sequence = %s",
-                    (random.randint(0, 100000),),
-                )
-                cur.fetchone()
-
-                # simulate microservice doing something
-                self.ts = dt.datetime.now()
-                self.event = 2
-                time.sleep(0.01)
-
-                stmt = """
-                    insert into transactions values (%s, %s, %s, %s);
                     """
-                cur.execute(stmt, (self.lane, self.uuid, self.event, self.ts))
+                    UPDATE orders
+                    SET status = 'Complete'
+                    WHERE 
+                        (acc_no, id) = (%s, %s)
+                    """,
+                    (
+                        self.account_number,
+                        self.id,
+                    ),
+                )

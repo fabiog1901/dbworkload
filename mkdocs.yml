@@ -88,4 +88,5 @@ nav:
         - util/plot.md
         - util/yaml.md
   - cli.md
+  - faq.md
   - about.md
